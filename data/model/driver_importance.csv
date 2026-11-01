@@ -1,0 +1,43 @@
+feature,importance_t_ha_yr,label,group,share_pct
+palm_age_years,2.187,Palm age,Palm and stand,60.8
+stand_density_palms_ha,0.387,Stand density,Palm and stand,10.8
+rainfall_prior_90d_mm,0.296,Prior 90-day rainfall,Water and weather,8.2
+soil_ph,0.114,Soil pH,Soil and nutrients,3.2
+genetic_line,0.1,Genetic line,Site and genetics,2.8
+ganoderma_incidence_pct,0.09,Ganoderma,Pests and disease,2.5
+soil_moisture_pct,0.074,Soil moisture,Water and weather,2.1
+missing_palm_pct,0.061,Missing palms,Palm and stand,1.7
+harvest_interval_days,0.06,Harvest interval,Field operations,1.7
+soil_n_pct,0.044,Soil N,Soil and nutrients,1.2
+soil_type,0.041,Soil type,Soil and nutrients,1.1
+water_deficit_prior_90d_mm,0.038,Prior 90-day water deficit,Water and weather,1.1
+flooding_days,0.037,Flooding days,Water and weather,1.0
+bagworm_incidence_pct,0.024,Bagworm,Pests and disease,0.7
+road_accessibility_score_1_5,0.01,Road access,Field operations,0.3
+rhinoceros_beetle_incidence_pct,0.008,Rhinoceros beetle,Pests and disease,0.2
+leaf_n_pct,0.007,Leaf N,Soil and nutrients,0.2
+rat_damage_pct,0.007,Rat damage,Pests and disease,0.2
+leaf_k_pct,0.003,Leaf K,Soil and nutrients,0.1
+drainage_class,0.002,Drainage class,Water and weather,0.1
+soil_organic_carbon_pct,0.002,Soil organic carbon,Soil and nutrients,0.1
+leaf_p_pct,0.001,Leaf P,Soil and nutrients,0.0
+soil_mg_cmol_kg,0.001,Soil Mg,Soil and nutrients,0.0
+soil_k_cmol_kg,0.001,Soil K,Soil and nutrients,0.0
+pruning_completion_pct,0.001,Pruning completion,Field operations,0.0
+rainfall_cycle_mm,0.001,Rainfall in cycle,Water and weather,0.0
+slope_pct,0.001,Slope,Site and genetics,0.0
+leaf_mg_pct,0.0,Leaf Mg,Soil and nutrients,0.0
+fertilizer_mgo_kg_ha,0.0,MgO applied,Inputs,0.0
+fertilizer_total_kg_ha,0.0,Fertilizer applied,Inputs,0.0
+treatment_program,-0.0,Treatment program,Pests and disease,-0.0
+field_labour_hours_ha,-0.0,Field labour,Field operations,-0.0
+efb_mulch_t_ha,-0.0,EFB mulch,Inputs,-0.0
+days_since_last_fertilizer,-0.0,Days since fertilizer,Inputs,-0.0
+max_dry_spell_days,-0.0,Longest dry spell,Water and weather,-0.0
+fertilizer_k2o_kg_ha,-0.001,K2O applied,Inputs,0.0
+soil_p_mg_kg,-0.001,Soil P,Soil and nutrients,0.0
+elevation_m,-0.001,Elevation,Site and genetics,0.0
+leaf_b_ppm,-0.001,Leaf B,Soil and nutrients,0.0
+fertilizer_program,-0.001,Fertilizer program,Inputs,0.0
+drainage_maintenance_score_1_5,-0.001,Drainage upkeep,Water and weather,0.0
+weed_cover_pct,-0.001,Weed cover,Field operations,0.0

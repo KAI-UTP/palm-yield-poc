@@ -1,0 +1,186 @@
+feature,label,value,yield_t_ha_yr
+palm_age_years,Palm age,6.0,17.828
+palm_age_years,Palm age,6.775,19.712
+palm_age_years,Palm age,7.549,22.403
+palm_age_years,Palm age,8.324,22.403
+palm_age_years,Palm age,9.098,23.035
+palm_age_years,Palm age,9.873,23.428
+palm_age_years,Palm age,10.648,25.27
+palm_age_years,Palm age,11.422,25.27
+palm_age_years,Palm age,12.197,25.658
+palm_age_years,Palm age,12.971,26.165
+palm_age_years,Palm age,13.746,26.282
+palm_age_years,Palm age,14.52,26.306
+palm_age_years,Palm age,15.295,26.306
+palm_age_years,Palm age,16.07,26.306
+palm_age_years,Palm age,16.844,25.528
+palm_age_years,Palm age,17.619,25.055
+palm_age_years,Palm age,18.393,25.055
+palm_age_years,Palm age,19.168,24.069
+palm_age_years,Palm age,19.943,23.621
+palm_age_years,Palm age,20.717,22.787
+palm_age_years,Palm age,21.492,22.787
+palm_age_years,Palm age,22.266,20.941
+palm_age_years,Palm age,23.041,20.179
+palm_age_years,Palm age,23.815,20.091
+palm_age_years,Palm age,24.59,19.414
+stand_density_palms_ha,Stand density,126.4,22.354
+stand_density_palms_ha,Stand density,127.261,22.674
+stand_density_palms_ha,Stand density,128.122,22.697
+stand_density_palms_ha,Stand density,128.982,22.789
+stand_density_palms_ha,Stand density,129.843,22.838
+stand_density_palms_ha,Stand density,130.704,22.908
+stand_density_palms_ha,Stand density,131.565,23.372
+stand_density_palms_ha,Stand density,132.426,23.504
+stand_density_palms_ha,Stand density,133.286,23.776
+stand_density_palms_ha,Stand density,134.147,23.808
+stand_density_palms_ha,Stand density,135.008,23.833
+stand_density_palms_ha,Stand density,135.869,23.844
+stand_density_palms_ha,Stand density,136.73,24.275
+stand_density_palms_ha,Stand density,137.59,24.337
+stand_density_palms_ha,Stand density,138.451,24.347
+stand_density_palms_ha,Stand density,139.312,24.372
+stand_density_palms_ha,Stand density,140.173,24.858
+stand_density_palms_ha,Stand density,141.033,24.919
+stand_density_palms_ha,Stand density,141.894,24.927
+stand_density_palms_ha,Stand density,142.755,24.927
+stand_density_palms_ha,Stand density,143.616,25.123
+stand_density_palms_ha,Stand density,144.477,25.151
+stand_density_palms_ha,Stand density,145.337,25.151
+stand_density_palms_ha,Stand density,146.198,25.178
+stand_density_palms_ha,Stand density,147.059,25.189
+rainfall_prior_90d_mm,Prior 90-day rainfall,764.241,23.123
+rainfall_prior_90d_mm,Prior 90-day rainfall,777.825,23.291
+rainfall_prior_90d_mm,Prior 90-day rainfall,791.409,23.348
+rainfall_prior_90d_mm,Prior 90-day rainfall,804.993,23.355
+rainfall_prior_90d_mm,Prior 90-day rainfall,818.576,23.522
+rainfall_prior_90d_mm,Prior 90-day rainfall,832.16,24.142
+rainfall_prior_90d_mm,Prior 90-day rainfall,845.744,24.215
+rainfall_prior_90d_mm,Prior 90-day rainfall,859.328,24.287
+rainfall_prior_90d_mm,Prior 90-day rainfall,872.912,24.714
+rainfall_prior_90d_mm,Prior 90-day rainfall,886.496,24.753
+rainfall_prior_90d_mm,Prior 90-day rainfall,900.08,24.753
+rainfall_prior_90d_mm,Prior 90-day rainfall,913.664,24.753
+rainfall_prior_90d_mm,Prior 90-day rainfall,927.248,24.753
+rainfall_prior_90d_mm,Prior 90-day rainfall,940.831,24.595
+rainfall_prior_90d_mm,Prior 90-day rainfall,954.415,24.347
+rainfall_prior_90d_mm,Prior 90-day rainfall,967.999,24.222
+rainfall_prior_90d_mm,Prior 90-day rainfall,981.583,24.18
+rainfall_prior_90d_mm,Prior 90-day rainfall,995.167,24.01
+rainfall_prior_90d_mm,Prior 90-day rainfall,1008.751,23.768
+rainfall_prior_90d_mm,Prior 90-day rainfall,1022.335,23.691
+rainfall_prior_90d_mm,Prior 90-day rainfall,1035.919,23.382
+rainfall_prior_90d_mm,Prior 90-day rainfall,1049.502,23.057
+rainfall_prior_90d_mm,Prior 90-day rainfall,1063.086,22.795
+rainfall_prior_90d_mm,Prior 90-day rainfall,1076.67,22.696
+rainfall_prior_90d_mm,Prior 90-day rainfall,1090.254,22.629
+soil_ph,Soil pH,3.96,23.16
+soil_ph,Soil pH,4.019,23.16
+soil_ph,Soil pH,4.077,23.337
+soil_ph,Soil pH,4.136,23.377
+soil_ph,Soil pH,4.195,23.524
+soil_ph,Soil pH,4.254,23.591
+soil_ph,Soil pH,4.312,23.676
+soil_ph,Soil pH,4.371,23.689
+soil_ph,Soil pH,4.43,23.711
+soil_ph,Soil pH,4.489,23.749
+soil_ph,Soil pH,4.548,23.885
+soil_ph,Soil pH,4.606,24.137
+soil_ph,Soil pH,4.665,24.137
+soil_ph,Soil pH,4.724,24.332
+soil_ph,Soil pH,4.782,24.373
+soil_ph,Soil pH,4.841,24.375
+soil_ph,Soil pH,4.9,24.396
+soil_ph,Soil pH,4.959,24.396
+soil_ph,Soil pH,5.018,24.396
+soil_ph,Soil pH,5.076,24.27
+soil_ph,Soil pH,5.135,24.219
+soil_ph,Soil pH,5.194,24.216
+soil_ph,Soil pH,5.252,24.195
+soil_ph,Soil pH,5.311,24.065
+soil_ph,Soil pH,5.37,24.065
+ganoderma_incidence_pct,Ganoderma,0.05,24.353
+ganoderma_incidence_pct,Ganoderma,0.135,24.351
+ganoderma_incidence_pct,Ganoderma,0.22,24.309
+ganoderma_incidence_pct,Ganoderma,0.305,24.295
+ganoderma_incidence_pct,Ganoderma,0.39,24.254
+ganoderma_incidence_pct,Ganoderma,0.475,24.213
+ganoderma_incidence_pct,Ganoderma,0.56,24.121
+ganoderma_incidence_pct,Ganoderma,0.645,24.11
+ganoderma_incidence_pct,Ganoderma,0.73,24.109
+ganoderma_incidence_pct,Ganoderma,0.815,23.988
+ganoderma_incidence_pct,Ganoderma,0.9,23.935
+ganoderma_incidence_pct,Ganoderma,0.985,23.935
+ganoderma_incidence_pct,Ganoderma,1.07,23.935
+ganoderma_incidence_pct,Ganoderma,1.155,23.919
+ganoderma_incidence_pct,Ganoderma,1.24,23.849
+ganoderma_incidence_pct,Ganoderma,1.325,23.663
+ganoderma_incidence_pct,Ganoderma,1.41,23.657
+ganoderma_incidence_pct,Ganoderma,1.495,23.542
+ganoderma_incidence_pct,Ganoderma,1.58,23.398
+ganoderma_incidence_pct,Ganoderma,1.665,23.358
+ganoderma_incidence_pct,Ganoderma,1.75,23.358
+ganoderma_incidence_pct,Ganoderma,1.835,23.253
+ganoderma_incidence_pct,Ganoderma,1.92,23.209
+ganoderma_incidence_pct,Ganoderma,2.005,23.171
+ganoderma_incidence_pct,Ganoderma,2.09,23.093
+soil_moisture_pct,Soil moisture,37.8,24.181
+soil_moisture_pct,Soil moisture,39.425,24.184
+soil_moisture_pct,Soil moisture,41.05,24.19
+soil_moisture_pct,Soil moisture,42.675,24.193
+soil_moisture_pct,Soil moisture,44.3,24.189
+soil_moisture_pct,Soil moisture,45.925,24.188
+soil_moisture_pct,Soil moisture,47.55,24.188
+soil_moisture_pct,Soil moisture,49.175,24.188
+soil_moisture_pct,Soil moisture,50.8,24.189
+soil_moisture_pct,Soil moisture,52.425,24.184
+soil_moisture_pct,Soil moisture,54.05,24.172
+soil_moisture_pct,Soil moisture,55.675,24.089
+soil_moisture_pct,Soil moisture,57.3,24.084
+soil_moisture_pct,Soil moisture,58.925,23.893
+soil_moisture_pct,Soil moisture,60.55,23.893
+soil_moisture_pct,Soil moisture,62.175,23.871
+soil_moisture_pct,Soil moisture,63.8,23.871
+soil_moisture_pct,Soil moisture,65.425,23.741
+soil_moisture_pct,Soil moisture,67.05,23.702
+soil_moisture_pct,Soil moisture,68.675,23.702
+soil_moisture_pct,Soil moisture,70.3,23.508
+soil_moisture_pct,Soil moisture,71.925,23.512
+soil_moisture_pct,Soil moisture,73.55,23.473
+soil_moisture_pct,Soil moisture,75.175,23.442
+soil_moisture_pct,Soil moisture,76.8,23.23
+missing_palm_pct,Missing palms,0.5,24.291
+missing_palm_pct,Missing palms,0.751,24.291
+missing_palm_pct,Missing palms,1.001,24.27
+missing_palm_pct,Missing palms,1.252,24.27
+missing_palm_pct,Missing palms,1.503,24.24
+missing_palm_pct,Missing palms,1.754,24.226
+missing_palm_pct,Missing palms,2.004,24.228
+missing_palm_pct,Missing palms,2.255,24.202
+missing_palm_pct,Missing palms,2.506,24.149
+missing_palm_pct,Missing palms,2.757,24.136
+missing_palm_pct,Missing palms,3.007,24.016
+missing_palm_pct,Missing palms,3.258,23.997
+missing_palm_pct,Missing palms,3.509,23.946
+missing_palm_pct,Missing palms,3.76,23.739
+missing_palm_pct,Missing palms,4.01,23.713
+missing_palm_pct,Missing palms,4.261,23.711
+missing_palm_pct,Missing palms,4.512,23.711
+missing_palm_pct,Missing palms,4.763,23.711
+missing_palm_pct,Missing palms,5.013,23.642
+missing_palm_pct,Missing palms,5.264,23.601
+missing_palm_pct,Missing palms,5.515,23.574
+missing_palm_pct,Missing palms,5.765,23.574
+missing_palm_pct,Missing palms,6.016,23.574
+missing_palm_pct,Missing palms,6.267,23.487
+missing_palm_pct,Missing palms,6.518,23.376
+harvest_interval_days,Harvest interval,10.0,24.276
+harvest_interval_days,Harvest interval,11.0,24.276
+harvest_interval_days,Harvest interval,12.0,24.276
+harvest_interval_days,Harvest interval,13.0,24.268
+harvest_interval_days,Harvest interval,14.0,24.247
+harvest_interval_days,Harvest interval,15.0,23.917
+harvest_interval_days,Harvest interval,16.0,23.677
+harvest_interval_days,Harvest interval,17.0,23.457
+harvest_interval_days,Harvest interval,18.0,23.295
+harvest_interval_days,Harvest interval,19.0,23.295

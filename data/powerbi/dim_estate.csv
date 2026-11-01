@@ -1,0 +1,11 @@
+estate_id,estate_name,estate_subsidiary,region_name,mill_name,estate_reference_area_ha,estate_latitude,estate_longitude
+EST001,Lambir 1 Estate,Sarawak Oil Palms Berhad,Miri-Lambir,Lambir POM,2088.24,4.128,113.9802
+EST002,Taniku 1 Estate,SOP Plantations (Borneo) Sdn Bhd,Miri-Lambir,Lambir POM,2362.63,4.4242,114.0979
+EST003,Telong Estate,SOP Plantations (Suai) Sdn Bhd,Suai-Niah,Galasah POM,1472.83,3.6834,113.5464
+EST004,Lamaus Estate,SOP Plantations (Suai) Sdn Bhd,Suai-Niah,Galasah POM,1208.61,3.689,113.7874
+EST005,Sepakau 1 Estate,SOP Plantations (Borneo) Sdn Bhd,Sepakau-Bakun,Sepakau POM,2564.56,2.962,113.8221
+EST006,Sepakau 2 Estate,SOP Plantations (Borneo) Sdn Bhd,Sepakau-Bakun,Sepakau POM,2131.15,2.9398,113.8797
+EST007,Sg. Meris Estate,SOP Plantations (Balingian) Sdn Bhd,Balingian-Tatau,Balingian POM,1912.77,2.975,112.5049
+EST008,Sg. Liuk Estate,SOP Plantations (Balingian) Sdn Bhd,Balingian-Tatau,Balingian POM,1945.06,2.988,112.5447
+EST009,Kuala Tatau 1 Estate,SOP Plantations (Kemena) Sdn Bhd,Balingian-Tatau,Balingian POM,1907.05,3.0185,112.847
+EST010,Sabaju 1 Estate,SOP Plantations (Kemena) Sdn Bhd,Sabaju-Kemena,Sabaju POM,2281.66,3.209194,113.510361

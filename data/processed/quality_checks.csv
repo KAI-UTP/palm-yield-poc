@@ -1,0 +1,23 @@
+area,check,records_failed,records_checked,pass_rate_pct,status,note
+Validity,Number and date columns readable,0,3200,100.0,Pass,
+Completeness,"Key fields present (block, cycle, yield, area, interval)",0,3200,100.0,Pass,
+Completeness,No missing values outside water table depth,0,3200,100.0,Pass,
+Completeness,Water table depth recorded on peat soils only,0,3200,100.0,Pass,"2,265 blanks are mineral and alluvial soils, where it is not measured. Left blank, not filled."
+Grain,One row per block per harvest cycle,0,3200,100.0,Pass,
+Grain,Every block has every harvest cycle (blocks x cycles),0,3200,100.0,Pass,"3,200 rows, 3,200 expected"
+Validity,Percentages between 0 and 100,0,3200,100.0,Pass,
+Validity,Soil pH between 3 and 8,0,3200,100.0,Pass,
+Validity,No negative measurements,0,3200,100.0,Pass,
+Validity,Productive area not larger than block area,0,3200,100.0,Pass,
+Consistency,Yield per ha = FFB tonnes / productive area (within 2%),0,3200,100.0,Pass,
+Consistency,Bunch count x bunch weight = FFB tonnes (within 5%),0,3200,100.0,Pass,
+Consistency,Bunch ripeness mix sums to 100% (within 1 point),0,3200,100.0,Pass,
+Consistency,Harvest start date before end date,0,3200,100.0,Pass,
+Consistency,Palm age matches planting year (within 1 year),0,3200,100.0,Pass,
+Outliers,ffb_yield_t_ha: within 4 robust SDs of median,0,3200,100.0,Pass,
+Outliers,avg_bunch_weight_kg: within 4 robust SDs of median,0,3200,100.0,Pass,
+Outliers,fertilizer_total_kg_ha: within 4 robust SDs of median,0,3200,100.0,Pass,
+Outliers,rainfall_cycle_mm: within 4 robust SDs of median,0,3200,100.0,Pass,
+Outliers,leaf_k_pct: within 4 robust SDs of median,0,3200,100.0,Pass,
+Analytical trap,Raw cycle yield rises with harvest interval,0,3200,,Handled,Correlation 0.39. Yield annualised (x 365 / interval days) before comparing blocks.
+Analytical trap,Weather repeats across blocks of one estate and cycle,0,3200,,Handled,"Weather is averaged, never summed, at higher levels."

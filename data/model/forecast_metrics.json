@@ -1,0 +1,23 @@
+{
+  "model": {
+    "mae": 1.632,
+    "rmse": 2.057,
+    "r2": 0.77
+  },
+  "chosen_model": "Gradient boosting",
+  "baseline_same_as_last_cycle": {
+    "mae": 1.951,
+    "rmse": 2.479,
+    "r2": 0.666
+  },
+  "baseline_age_band_median": {
+    "mae": 2.189,
+    "rmse": 2.734,
+    "r2": 0.593
+  },
+  "rows": 2560,
+  "blocks": 640,
+  "mae_improvement_vs_last_cycle_pct": 16.4,
+  "range_80_half_width": 2.64,
+  "range_80_coverage_pct": 79.8
+}

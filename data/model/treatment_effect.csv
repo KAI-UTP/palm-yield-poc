@@ -1,0 +1,20 @@
+pest,treatment_program,block_cycles,incidence_now_pct,incidence_next_pct,change_pct_points
+Bagworm,Bagworm Biological,62,4.48,2.94,-1.54
+Bagworm,Bagworm Chemical,67,4.28,2.8,-1.48
+Bagworm,Targeted Weed Control,29,3.39,2.65,-0.74
+Bagworm,Rat Baiting,12,3.45,2.79,-0.66
+Bagworm,No Special Treatment,26,3.45,2.82,-0.63
+Bagworm,Routine IPM,102,3.38,2.79,-0.58
+Bagworm,Rhinoceros Beetle Control,25,3.38,3.0,-0.38
+Ganoderma,Routine IPM,145,1.95,1.95,0.0
+Ganoderma,Bagworm Chemical,10,1.93,1.94,0.01
+Ganoderma,No Special Treatment,49,1.93,1.93,0.01
+Ganoderma,Ganoderma Sanitation,29,3.83,3.86,0.02
+Ganoderma,Targeted Weed Control,39,1.85,1.87,0.02
+Ganoderma,Rhinoceros Beetle Control,18,2.08,2.11,0.03
+Ganoderma,Bagworm Biological,10,1.92,1.98,0.06
+Ganoderma,Rat Baiting,28,2.08,2.14,0.07
+Rhinoceros beetle,Rhinoceros Beetle Control,123,3.07,2.48,-0.59
+Rhinoceros beetle,Targeted Weed Control,21,2.3,2.06,-0.24
+Rhinoceros beetle,No Special Treatment,29,2.31,2.13,-0.17
+Rhinoceros beetle,Routine IPM,99,2.34,2.21,-0.13

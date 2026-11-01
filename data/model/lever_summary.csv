@@ -1,0 +1,11 @@
+lever,issue,action,blocks_with_gain,avg_gain_where_applies_t_ha_yr,total_gain_t_yr
+road_access,Poor road access,Repair field roads and harvesting paths,631,0.52,10199.0
+ganoderma,Ganoderma,Run a Ganoderma census; sanitise and isolate infected palms,380,0.56,6755.0
+missing_palms,Missing palms,Supply-plant vacant points,344,0.49,5345.0
+harvest_round,Long harvest round,Cut the harvest round to 10 days (good practice is 7 to 10); rebalance harvest teams,297,0.52,4855.0
+flooding,Flooding,Install or repair water gates and outlets in flood-prone blocks,73,0.74,1681.0
+bagworm,Bagworm,Census bagworm; apply biological or targeted chemical control,168,0.25,1479.0
+leaf_k,Low leaf K,"Raise potassium (MOP) in the next round, then re-sample leaf 17",18,0.21,165.0
+drain_upkeep,Drains poorly kept,Clear and deepen drains; check outlets before the wet season,1,0.14,8.0
+leaf_mg,Low leaf Mg,"Apply kieserite for magnesium, then re-sample leaf 17",0,0.0,6.0
+weeds,Weed competition,Bring weed cover under 15% with targeted circle and path weeding,1,0.11,6.0

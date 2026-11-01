@@ -1,0 +1,641 @@
+block_id,block_name,division_id,division_name,estate_id,block_area_ha,productive_area_ha,soil_type,terrain_class,drainage_class,planting_year,genetic_line,block_latitude,block_longitude,elevation_m,slope_pct
+EST001-D01-B01,Block 01-01,EST001-D01,Division 01,EST001,34.31,34.27,Peat - Moderate,Low-lying Basin,Moderately Well Drained,2006,Deli x Calabar,4.117392,113.962845,55.9,2.0
+EST001-D01-B02,Block 01-02,EST001-D01,Division 01,EST001,31.61,31.41,Mineral Loam,Moderate Slope 12-18%,Well Drained,2015,Deli x Ghana,4.140723,113.975784,159.7,9.4
+EST001-D01-B03,Block 01-03,EST001-D01,Division 01,EST001,25.21,24.92,Alluvial Loam,Moderate Slope 12-18%,Somewhat Imperfect,2013,Deli x AVROS,4.121685,113.977811,54.4,12.1
+EST001-D01-B04,Block 01-04,EST001-D01,Division 01,EST001,30.6,30.46,Mineral Loam,Low-lying Basin,Imperfect,2010,Deli x Tanzania,4.122114,113.9743,133.0,3.1
+EST001-D01-B05,Block 01-05,EST001-D01,Division 01,EST001,31.36,31.13,Alluvial Loam,Low-lying Basin,Very Poor,2005,Deli x Ghana,4.111728,113.993133,52.9,1.1
+EST001-D01-B06,Block 01-06,EST001-D01,Division 01,EST001,32.15,31.9,Peat - Shallow,Flat 0-2%,Moderately Well Drained,2008,Deli x NIFOR,4.113875,113.963686,58.4,0.5
+EST001-D01-B07,Block 01-07,EST001-D01,Division 01,EST001,41.37,41.15,Mineral Loam,Gentle 2-4%,Well Drained,2014,Deli x Ghana,4.141895,113.994237,53.1,2.9
+EST001-D01-B08,Block 01-08,EST001-D01,Division 01,EST001,29.4,29.29,Alluvial Loam,Moderate Slope 12-18%,Excessive,2014,Deli x Nigeria,4.122773,113.959484,67.9,12.6
+EST001-D02-B01,Block 02-01,EST001-D02,Division 02,EST001,30.16,29.83,Mineral Clay Loam,Undulating 4-8%,Well Drained,2006,Deli x Tanzania,4.114875,113.987187,129.2,5.3
+EST001-D02-B02,Block 02-02,EST001-D02,Division 02,EST001,26.05,25.85,Peat - Shallow,Undulating 4-8%,Imperfect,2007,Deli x La Me,4.133373,113.966868,48.1,6.4
+EST001-D02-B03,Block 02-03,EST001-D02,Division 02,EST001,30.49,30.18,Alluvial Clay,Rolling 8-12%,Moderately Well Drained,2014,Deli x Yangambi,4.114171,113.991919,45.1,9.7
+EST001-D02-B04,Block 02-04,EST001-D02,Division 02,EST001,27.54,27.02,Alluvial Clay,Riparian / Flood-prone,Very Poor,2001,Deli x Nigeria,4.130723,113.972837,65.1,2.5
+EST001-D02-B05,Block 02-05,EST001-D02,Division 02,EST001,34.01,33.84,Alluvial Loam,Gentle 2-4%,Moderately Well Drained,2007,Deli x Ekona,4.10895,113.982868,66.5,3.0
+EST001-D02-B06,Block 02-06,EST001-D02,Division 02,EST001,30.96,30.73,Alluvial Loam,Flat 0-2%,Moderately Well Drained,2010,Deli x AVROS,4.106524,113.987203,61.9,0.7
+EST001-D02-B07,Block 02-07,EST001-D02,Division 02,EST001,24.57,24.54,Peat - Shallow,Flat 0-2%,Very Poor,2015,Deli x Tanzania,4.117645,113.984609,95.0,1.0
+EST001-D02-B08,Block 02-08,EST001-D02,Division 02,EST001,40.27,39.99,Peat - Moderate,Gentle 2-4%,Waterlogged-prone,2012,Deli x Ekona,4.149117,113.987719,53.5,2.3
+EST001-D03-B01,Block 03-01,EST001-D03,Division 03,EST001,33.73,33.13,Mineral Clay Loam,Moderate Slope 12-18%,Somewhat Imperfect,2011,Deli x Ekona,4.133693,113.974804,39.1,11.5
+EST001-D03-B02,Block 03-02,EST001-D03,Division 03,EST001,44.36,43.97,Peat - Shallow,Moderate Slope 12-18%,Poor,2017,Deli x NIFOR,4.124728,113.988992,5.0,19.1
+EST001-D03-B03,Block 03-03,EST001-D03,Division 03,EST001,24.79,24.76,Mineral Loam,Rolling 8-12%,Well Drained,2008,Deli x Nigeria,4.113904,113.985889,90.5,11.9
+EST001-D03-B04,Block 03-04,EST001-D03,Division 03,EST001,36.37,36.19,Mineral Clay Loam,Gentle 2-4%,Somewhat Imperfect,2014,Deli x Nigeria,4.122931,113.967789,5.0,2.9
+EST001-D03-B05,Block 03-05,EST001-D03,Division 03,EST001,26.68,26.52,Mineral Sandy Clay Loam,Low-lying Basin,Poor,2000,Deli x Ekona,4.106589,113.974368,60.7,2.9
+EST001-D03-B06,Block 03-06,EST001-D03,Division 03,EST001,34.59,34.23,Mineral Loam,Riparian / Flood-prone,Poor,2012,Deli x AVROS,4.106687,113.968307,62.5,2.4
+EST001-D03-B07,Block 03-07,EST001-D03,Division 03,EST001,29.31,29.07,Mineral Loam,Gentle 2-4%,Somewhat Imperfect,2006,Deli x Nigeria,4.136186,113.963044,66.4,2.5
+EST001-D03-B08,Block 03-08,EST001-D03,Division 03,EST001,37.97,37.64,Peat - Moderate,Riparian / Flood-prone,Waterlogged-prone,2008,Deli x NIFOR,4.124047,113.962793,25.1,1.4
+EST001-D04-B01,Block 04-01,EST001-D04,Division 04,EST001,29.59,29.28,Alluvial Clay,Riparian / Flood-prone,Imperfect,2013,Deli x Calabar,4.143584,113.963365,47.3,2.8
+EST001-D04-B02,Block 04-02,EST001-D04,Division 04,EST001,31.32,31.19,Peat - Moderate,Steep 18-25%,Somewhat Imperfect,2006,Deli x Tanzania,4.148184,113.96676,106.8,23.2
+EST001-D04-B03,Block 04-03,EST001-D04,Division 04,EST001,33.63,33.33,Mineral Clay Loam,Low-lying Basin,Very Poor,2004,Deli x AVROS,4.127366,113.962207,120.0,3.2
+EST001-D04-B04,Block 04-04,EST001-D04,Division 04,EST001,22.96,22.84,Mineral Clay Loam,Low-lying Basin,Somewhat Imperfect,2012,Deli x DAMI,4.138376,113.990462,49.1,3.1
+EST001-D04-B05,Block 04-05,EST001-D04,Division 04,EST001,31.19,31.15,Peat - Moderate,Undulating 4-8%,Very Poor,2020,Deli x Yangambi,4.112911,113.968423,7.2,5.0
+EST001-D04-B06,Block 04-06,EST001-D04,Division 04,EST001,35.24,35.0,Mineral Sandy Clay Loam,Flat 0-2%,Moderately Well Drained,2009,Deli x NIFOR,4.138027,113.96298,65.6,0.3
+EST001-D04-B07,Block 04-07,EST001-D04,Division 04,EST001,45.11,44.78,Mineral Sandy Clay Loam,Gentle 2-4%,Moderately Well Drained,2020,Deli x La Me,4.105583,113.978634,30.1,2.9
+EST001-D04-B08,Block 04-08,EST001-D04,Division 04,EST001,35.54,35.2,Mineral Clay Loam,Gentle 2-4%,Somewhat Imperfect,2014,Deli x Yangambi,4.1462,113.9879,78.9,1.9
+EST001-D05-B01,Block 05-01,EST001-D05,Division 05,EST001,38.69,38.64,Mineral Clay Loam,Undulating 4-8%,Well Drained,2022,Deli x Nigeria,4.130963,113.985613,5.0,5.5
+EST001-D05-B02,Block 05-02,EST001-D05,Division 05,EST001,43.97,43.73,Peat - Shallow,Undulating 4-8%,Well Drained,2009,Deli x AVROS,4.124764,113.968593,46.7,5.5
+EST001-D05-B03,Block 05-03,EST001-D05,Division 05,EST001,31.19,30.68,Mineral Clay Loam,Undulating 4-8%,Moderately Well Drained,2013,Deli x Nigeria,4.109028,113.96654,90.5,5.6
+EST001-D05-B04,Block 05-04,EST001-D05,Division 05,EST001,29.02,28.85,Alluvial Clay,Rolling 8-12%,Very Poor,2015,Deli x Ghana,4.11459,113.964207,77.7,10.3
+EST001-D05-B05,Block 05-05,EST001-D05,Division 05,EST001,54.14,53.22,Alluvial Clay,Rolling 8-12%,Well Drained,2008,Deli x La Me,4.105497,113.974291,40.8,12.1
+EST001-D05-B06,Block 05-06,EST001-D05,Division 05,EST001,28.08,27.99,Alluvial Clay,Steep 18-25%,Moderately Well Drained,2015,Deli x Nigeria,4.1292,113.969694,56.8,16.0
+EST001-D05-B07,Block 05-07,EST001-D05,Division 05,EST001,34.43,34.05,Peat - Moderate,Gentle 2-4%,Imperfect,2000,Deli x AVROS,4.124297,114.001703,91.2,3.7
+EST001-D05-B08,Block 05-08,EST001-D05,Division 05,EST001,32.07,32.02,Mineral Clay Loam,Gentle 2-4%,Excessive,2015,Deli x DAMI,4.147766,113.968495,71.4,4.8
+EST001-D06-B01,Block 06-01,EST001-D06,Division 06,EST001,31.33,31.21,Alluvial Clay,Moderate Slope 12-18%,Moderately Well Drained,2013,Deli x Ekona,4.127584,113.973436,52.2,16.2
+EST001-D06-B02,Block 06-02,EST001-D06,Division 06,EST001,26.83,26.79,Mineral Clay Loam,Riparian / Flood-prone,Poor,2009,Deli x NIFOR,4.124513,113.990881,42.7,3.8
+EST001-D06-B03,Block 06-03,EST001-D06,Division 06,EST001,26.69,26.48,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2012,Deli x Nigeria,4.115352,113.960055,60.2,4.2
+EST001-D06-B04,Block 06-04,EST001-D06,Division 06,EST001,26.48,26.09,Peat - Moderate,Flat 0-2%,Very Poor,2012,Deli x Ghana,4.149928,113.987749,60.4,1.1
+EST001-D06-B05,Block 06-05,EST001-D06,Division 06,EST001,34.27,34.01,Peat - Shallow,Rolling 8-12%,Very Poor,2013,Deli x NIFOR,4.120889,113.981653,67.1,12.4
+EST001-D06-B06,Block 06-06,EST001-D06,Division 06,EST001,45.82,45.17,Mineral Clay Loam,Low-lying Basin,Waterlogged-prone,2012,Deli x Nigeria,4.129619,113.981406,115.4,1.7
+EST001-D06-B07,Block 06-07,EST001-D06,Division 06,EST001,24.71,24.64,Peat - Deep,Flat 0-2%,Very Poor,2015,Deli x Ghana,4.119407,113.957405,5.0,0.8
+EST001-D06-B08,Block 06-08,EST001-D06,Division 06,EST001,36.29,36.0,Mineral Loam,Flat 0-2%,Very Poor,2012,Deli x AVROS,4.105678,113.975973,52.7,1.1
+EST001-D07-B01,Block 07-01,EST001-D07,Division 07,EST001,35.46,35.17,Mineral Loam,Rolling 8-12%,Well Drained,2012,Deli x DAMI,4.127364,113.997253,48.1,9.7
+EST001-D07-B02,Block 07-02,EST001-D07,Division 07,EST001,36.84,36.47,Mineral Loam,Riparian / Flood-prone,Imperfect,2001,Deli x Calabar,4.135781,113.992661,101.2,2.4
+EST001-D07-B03,Block 07-03,EST001-D07,Division 07,EST001,34.04,33.82,Alluvial Clay,Flat 0-2%,Imperfect,2010,Deli x La Me,4.11878,114.002777,9.3,1.1
+EST001-D07-B04,Block 07-04,EST001-D07,Division 07,EST001,27.42,27.18,Mineral Clay Loam,Steep 18-25%,Very Poor,2016,Deli x Ghana,4.140831,113.996645,32.5,20.4
+EST001-D07-B05,Block 07-05,EST001-D07,Division 07,EST001,30.15,30.03,Mineral Clay Loam,Riparian / Flood-prone,Waterlogged-prone,2009,Deli x Calabar,4.120533,113.975784,86.1,1.6
+EST001-D07-B06,Block 07-06,EST001-D07,Division 07,EST001,36.28,36.08,Mineral Loam,Undulating 4-8%,Poor,2019,Deli x DAMI,4.128748,113.967449,64.3,5.9
+EST001-D07-B07,Block 07-07,EST001-D07,Division 07,EST001,30.1,29.97,Alluvial Clay,Riparian / Flood-prone,Somewhat Imperfect,2012,Deli x NIFOR,4.14102,113.993063,66.3,2.0
+EST001-D07-B08,Block 07-08,EST001-D07,Division 07,EST001,32.22,31.86,Mineral Loam,Gentle 2-4%,Very Poor,2015,Deli x Tanzania,4.134337,113.962926,47.2,2.2
+EST001-D08-B01,Block 08-01,EST001-D08,Division 08,EST001,26.74,26.68,Alluvial Clay,Steep 18-25%,Somewhat Imperfect,2017,Deli x Nigeria,4.131521,113.975551,5.0,17.8
+EST001-D08-B02,Block 08-02,EST001-D08,Division 08,EST001,40.24,39.96,Alluvial Loam,Flat 0-2%,Poor,2013,Deli x AVROS,4.115529,113.982332,92.6,0.3
+EST001-D08-B03,Block 08-03,EST001-D08,Division 08,EST001,37.25,37.05,Mineral Loam,Moderate Slope 12-18%,Well Drained,2007,Deli x Tanzania,4.140426,113.974367,67.9,16.6
+EST001-D08-B04,Block 08-04,EST001-D08,Division 08,EST001,24.05,23.95,Mineral Loam,Steep 18-25%,Well Drained,2011,Deli x Ekona,4.140171,113.968268,5.0,21.4
+EST001-D08-B05,Block 08-05,EST001-D08,Division 08,EST001,28.76,28.72,Peat - Shallow,Rolling 8-12%,Very Poor,2012,Deli x DAMI,4.110715,113.968339,22.3,11.6
+EST001-D08-B06,Block 08-06,EST001-D08,Division 08,EST001,33.59,33.22,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2010,Deli x Calabar,4.112663,113.97045,85.2,6.0
+EST001-D08-B07,Block 08-07,EST001-D08,Division 08,EST001,28.8,28.27,Alluvial Loam,Gentle 2-4%,Imperfect,2014,Deli x Ekona,4.117518,113.985552,120.3,1.9
+EST001-D08-B08,Block 08-08,EST001-D08,Division 08,EST001,29.85,29.71,Mineral Loam,Low-lying Basin,Very Poor,2010,Deli x La Me,4.113443,113.969315,77.5,1.1
+EST002-D01-B01,Block 01-01,EST002-D01,Division 01,EST002,30.78,30.63,Mineral Loam,Undulating 4-8%,Moderately Well Drained,2008,Deli x NIFOR,4.426908,114.102821,27.5,6.1
+EST002-D01-B02,Block 01-02,EST002-D01,Division 01,EST002,41.94,41.66,Mineral Loam,Moderate Slope 12-18%,Very Poor,2007,Deli x Calabar,4.414882,114.073428,29.3,16.4
+EST002-D01-B03,Block 01-03,EST002-D01,Division 01,EST002,36.59,36.42,Mineral Clay Loam,Gentle 2-4%,Well Drained,2017,Deli x La Me,4.447639,114.092001,63.2,2.1
+EST002-D01-B04,Block 01-04,EST002-D01,Division 01,EST002,39.14,38.76,Mineral Clay Loam,Rolling 8-12%,Moderately Well Drained,2008,Deli x Tanzania,4.435767,114.102075,5.0,12.3
+EST002-D01-B05,Block 01-05,EST002-D01,Division 01,EST002,31.55,31.04,Alluvial Loam,Steep 18-25%,Moderately Well Drained,2000,Deli x Yangambi,4.417805,114.079535,80.8,17.6
+EST002-D01-B06,Block 01-06,EST002-D01,Division 01,EST002,35.72,35.44,Alluvial Clay,Riparian / Flood-prone,Imperfect,2022,Deli x Ekona,4.433358,114.119177,81.0,1.4
+EST002-D01-B07,Block 01-07,EST002-D01,Division 01,EST002,41.61,41.54,Peat - Moderate,Rolling 8-12%,Poor,2015,Deli x Yangambi,4.438358,114.094696,103.7,10.1
+EST002-D01-B08,Block 01-08,EST002-D01,Division 01,EST002,33.08,32.68,Mineral Loam,Undulating 4-8%,Well Drained,2011,Deli x Ekona,4.432701,114.10549,15.4,4.4
+EST002-D02-B01,Block 02-01,EST002-D02,Division 02,EST002,41.72,41.05,Alluvial Clay,Flat 0-2%,Well Drained,1998,Deli x Ghana,4.412499,114.114108,111.8,1.0
+EST002-D02-B02,Block 02-02,EST002-D02,Division 02,EST002,41.49,41.17,Mineral Clay Loam,Gentle 2-4%,Somewhat Imperfect,2020,Deli x Tanzania,4.398207,114.095521,5.0,3.2
+EST002-D02-B03,Block 02-03,EST002-D02,Division 02,EST002,30.91,30.6,Mineral Loam,Undulating 4-8%,Very Poor,2013,Deli x Ghana,4.41925,114.118856,49.8,5.6
+EST002-D02-B04,Block 02-04,EST002-D02,Division 02,EST002,30.76,30.69,Mineral Sandy Clay Loam,Low-lying Basin,Waterlogged-prone,2009,Deli x Ghana,4.445798,114.089764,65.0,2.3
+EST002-D02-B05,Block 02-05,EST002-D02,Division 02,EST002,40.47,40.28,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2011,Deli x Tanzania,4.436926,114.118284,24.8,5.4
+EST002-D02-B06,Block 02-06,EST002-D02,Division 02,EST002,46.23,45.94,Alluvial Loam,Undulating 4-8%,Moderately Well Drained,2002,Deli x La Me,4.428822,114.101442,82.6,6.2
+EST002-D02-B07,Block 02-07,EST002-D02,Division 02,EST002,32.22,31.92,Peat - Shallow,Undulating 4-8%,Moderately Well Drained,2013,Deli x Calabar,4.428111,114.080052,28.2,7.8
+EST002-D02-B08,Block 02-08,EST002-D02,Division 02,EST002,46.19,45.74,Peat - Shallow,Flat 0-2%,Somewhat Imperfect,2006,Deli x La Me,4.410918,114.119876,73.8,2.0
+EST002-D03-B01,Block 03-01,EST002-D03,Division 03,EST002,44.78,44.59,Mineral Loam,Undulating 4-8%,Somewhat Imperfect,2007,Deli x La Me,4.414717,114.095869,50.3,6.8
+EST002-D03-B02,Block 03-02,EST002-D03,Division 03,EST002,43.9,43.47,Alluvial Clay,Gentle 2-4%,Well Drained,2015,Deli x Calabar,4.430144,114.074321,21.2,4.2
+EST002-D03-B03,Block 03-03,EST002-D03,Division 03,EST002,40.56,40.37,Peat - Shallow,Rolling 8-12%,Very Poor,2006,Deli x DAMI,4.411085,114.10572,62.7,9.9
+EST002-D03-B04,Block 03-04,EST002-D03,Division 03,EST002,40.13,39.64,Alluvial Loam,Steep 18-25%,Well Drained,2021,Deli x Yangambi,4.405568,114.100404,18.6,23.3
+EST002-D03-B05,Block 03-05,EST002-D03,Division 03,EST002,28.21,27.76,Mineral Loam,Flat 0-2%,Well Drained,2013,Deli x AVROS,4.421443,114.0803,38.5,1.3
+EST002-D03-B06,Block 03-06,EST002-D03,Division 03,EST002,39.67,39.23,Alluvial Loam,Steep 18-25%,Moderately Well Drained,2022,Deli x DAMI,4.402043,114.088606,25.9,20.5
+EST002-D03-B07,Block 03-07,EST002-D03,Division 03,EST002,47.05,46.34,Mineral Clay Loam,Steep 18-25%,Well Drained,2020,Deli x Ekona,4.443704,114.093915,86.2,15.6
+EST002-D03-B08,Block 03-08,EST002-D03,Division 03,EST002,30.57,30.19,Alluvial Clay,Moderate Slope 12-18%,Moderately Well Drained,2005,Deli x AVROS,4.424751,114.072758,88.8,20.0
+EST002-D04-B01,Block 04-01,EST002-D04,Division 04,EST002,42.2,41.32,Alluvial Loam,Gentle 2-4%,Moderately Well Drained,2010,Deli x Nigeria,4.422597,114.100665,98.1,2.7
+EST002-D04-B02,Block 04-02,EST002-D04,Division 04,EST002,42.78,42.5,Alluvial Clay,Riparian / Flood-prone,Imperfect,2006,Deli x La Me,4.422612,114.079529,50.9,1.7
+EST002-D04-B03,Block 04-03,EST002-D04,Division 04,EST002,34.91,34.77,Mineral Clay Loam,Riparian / Flood-prone,Well Drained,2007,Deli x NIFOR,4.427093,114.096434,80.2,1.1
+EST002-D04-B04,Block 04-04,EST002-D04,Division 04,EST002,29.82,29.62,Peat - Moderate,Flat 0-2%,Somewhat Imperfect,2010,Deli x AVROS,4.404962,114.113784,70.0,2.1
+EST002-D04-B05,Block 04-05,EST002-D04,Division 04,EST002,37.06,36.94,Mineral Clay Loam,Riparian / Flood-prone,Poor,2021,Deli x Calabar,4.413093,114.091734,128.2,1.2
+EST002-D04-B06,Block 04-06,EST002-D04,Division 04,EST002,40.62,40.24,Mineral Clay Loam,Rolling 8-12%,Imperfect,2012,Deli x Tanzania,4.399169,114.102218,102.5,9.8
+EST002-D04-B07,Block 04-07,EST002-D04,Division 04,EST002,23.89,23.7,Mineral Clay Loam,Riparian / Flood-prone,Poor,2014,Deli x Tanzania,4.408203,114.11696,22.8,1.3
+EST002-D04-B08,Block 04-08,EST002-D04,Division 04,EST002,34.68,34.0,Peat - Shallow,Flat 0-2%,Waterlogged-prone,2012,Deli x Tanzania,4.425734,114.108201,24.1,1.6
+EST002-D05-B01,Block 05-01,EST002-D05,Division 05,EST002,33.64,33.14,Alluvial Loam,Rolling 8-12%,Somewhat Imperfect,2015,Deli x Calabar,4.406237,114.108346,67.6,10.4
+EST002-D05-B02,Block 05-02,EST002-D05,Division 05,EST002,33.79,33.51,Alluvial Loam,Flat 0-2%,Well Drained,2010,Deli x Tanzania,4.441814,114.108313,5.0,1.5
+EST002-D05-B03,Block 05-03,EST002-D05,Division 05,EST002,32.71,32.55,Peat - Shallow,Gentle 2-4%,Very Poor,2012,Deli x NIFOR,4.424811,114.119003,28.8,3.3
+EST002-D05-B04,Block 05-04,EST002-D05,Division 05,EST002,31.94,31.83,Mineral Clay Loam,Flat 0-2%,Somewhat Imperfect,2006,Deli x AVROS,4.429229,114.11997,40.5,0.7
+EST002-D05-B05,Block 05-05,EST002-D05,Division 05,EST002,43.4,43.31,Mineral Loam,Riparian / Flood-prone,Moderately Well Drained,2014,Deli x Tanzania,4.440548,114.104001,74.8,3.3
+EST002-D05-B06,Block 05-06,EST002-D05,Division 05,EST002,35.66,35.43,Mineral Sandy Clay Loam,Flat 0-2%,Well Drained,2006,Deli x Calabar,4.415409,114.107258,5.0,1.1
+EST002-D05-B07,Block 05-07,EST002-D05,Division 05,EST002,27.58,27.41,Mineral Sandy Clay Loam,Riparian / Flood-prone,Well Drained,2006,Deli x NIFOR,4.423373,114.094256,91.1,1.8
+EST002-D05-B08,Block 05-08,EST002-D05,Division 05,EST002,29.27,29.23,Mineral Clay Loam,Riparian / Flood-prone,Poor,2012,Deli x Calabar,4.41988,114.117096,80.1,1.2
+EST002-D06-B01,Block 06-01,EST002-D06,Division 06,EST002,45.23,44.94,Mineral Loam,Undulating 4-8%,Moderately Well Drained,2006,Deli x Tanzania,4.423622,114.112453,69.0,7.8
+EST002-D06-B02,Block 06-02,EST002-D06,Division 06,EST002,24.46,24.26,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Somewhat Imperfect,2011,Deli x Ekona,4.429989,114.120961,120.7,13.2
+EST002-D06-B03,Block 06-03,EST002-D06,Division 06,EST002,29.99,29.66,Mineral Sandy Clay Loam,Low-lying Basin,Poor,2022,Deli x Tanzania,4.434059,114.076226,47.7,1.6
+EST002-D06-B04,Block 06-04,EST002-D06,Division 06,EST002,39.98,39.43,Peat - Deep,Flat 0-2%,Waterlogged-prone,2009,Deli x DAMI,4.441623,114.113246,59.0,0.9
+EST002-D06-B05,Block 06-05,EST002-D06,Division 06,EST002,26.81,26.49,Mineral Clay Loam,Moderate Slope 12-18%,Well Drained,2022,Deli x Tanzania,4.421914,114.102029,30.5,15.0
+EST002-D06-B06,Block 06-06,EST002-D06,Division 06,EST002,34.71,34.5,Mineral Clay Loam,Moderate Slope 12-18%,Moderately Well Drained,2007,Deli x Nigeria,4.445723,114.093005,97.2,15.3
+EST002-D06-B07,Block 06-07,EST002-D06,Division 06,EST002,31.83,31.69,Mineral Clay Loam,Low-lying Basin,Poor,2014,Deli x AVROS,4.406677,114.104983,55.0,1.7
+EST002-D06-B08,Block 06-08,EST002-D06,Division 06,EST002,35.42,35.32,Mineral Loam,Flat 0-2%,Imperfect,2017,Deli x AVROS,4.432418,114.086923,54.7,0.5
+EST002-D07-B01,Block 07-01,EST002-D07,Division 07,EST002,35.72,35.61,Mineral Loam,Riparian / Flood-prone,Waterlogged-prone,2010,Deli x DAMI,4.405893,114.082015,99.6,2.5
+EST002-D07-B02,Block 07-02,EST002-D07,Division 07,EST002,36.35,36.3,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Imperfect,2007,Deli x Yangambi,4.423203,114.090632,54.1,16.4
+EST002-D07-B03,Block 07-03,EST002-D07,Division 07,EST002,31.96,31.89,Mineral Clay Loam,Moderate Slope 12-18%,Moderately Well Drained,2010,Deli x AVROS,4.431306,114.112231,98.6,19.1
+EST002-D07-B04,Block 07-04,EST002-D07,Division 07,EST002,36.36,36.31,Mineral Sandy Clay Loam,Low-lying Basin,Poor,2014,Deli x Ghana,4.421634,114.114849,5.3,2.0
+EST002-D07-B05,Block 07-05,EST002-D07,Division 07,EST002,32.29,32.25,Mineral Sandy Clay Loam,Rolling 8-12%,Moderately Well Drained,2009,Deli x Tanzania,4.403062,114.100269,83.1,9.0
+EST002-D07-B06,Block 07-06,EST002-D07,Division 07,EST002,38.61,38.56,Mineral Clay Loam,Flat 0-2%,Moderately Well Drained,2020,Deli x Ekona,4.429259,114.085721,24.2,0.6
+EST002-D07-B07,Block 07-07,EST002-D07,Division 07,EST002,42.04,41.5,Peat - Deep,Rolling 8-12%,Waterlogged-prone,2011,Deli x La Me,4.418078,114.096713,70.8,11.0
+EST002-D07-B08,Block 07-08,EST002-D07,Division 07,EST002,48.67,48.17,Alluvial Clay,Gentle 2-4%,Imperfect,2008,Deli x DAMI,4.42134,114.072351,112.0,3.4
+EST002-D08-B01,Block 08-01,EST002-D08,Division 08,EST002,30.26,29.96,Mineral Loam,Low-lying Basin,Poor,2012,Deli x Calabar,4.441209,114.111558,113.2,0.4
+EST002-D08-B02,Block 08-02,EST002-D08,Division 08,EST002,40.69,40.51,Peat - Moderate,Undulating 4-8%,Waterlogged-prone,2012,Deli x DAMI,4.40453,114.112456,55.0,6.4
+EST002-D08-B03,Block 08-03,EST002-D08,Division 08,EST002,32.6,32.36,Peat - Moderate,Undulating 4-8%,Poor,2015,Deli x DAMI,4.437849,114.103942,58.5,4.1
+EST002-D08-B04,Block 08-04,EST002-D08,Division 08,EST002,58.92,58.76,Mineral Sandy Clay Loam,Flat 0-2%,Well Drained,2006,Deli x Ekona,4.41066,114.110651,194.3,0.7
+EST002-D08-B05,Block 08-05,EST002-D08,Division 08,EST002,34.26,34.16,Alluvial Loam,Steep 18-25%,Well Drained,2018,Deli x Ekona,4.416995,114.114008,88.0,26.4
+EST002-D08-B06,Block 08-06,EST002-D08,Division 08,EST002,35.3,35.18,Alluvial Clay,Rolling 8-12%,Moderately Well Drained,2006,Deli x Ghana,4.400277,114.091975,28.2,9.0
+EST002-D08-B07,Block 08-07,EST002-D08,Division 08,EST002,56.78,56.71,Mineral Sandy Clay Loam,Low-lying Basin,Imperfect,2008,Deli x AVROS,4.417932,114.090806,5.0,1.8
+EST002-D08-B08,Block 08-08,EST002-D08,Division 08,EST002,34.17,33.76,Mineral Clay Loam,Moderate Slope 12-18%,Moderately Well Drained,2004,Deli x NIFOR,4.439499,114.092042,12.4,9.1
+EST003-D01-B01,Block 01-01,EST003-D01,Division 01,EST003,19.7,19.55,Alluvial Loam,Flat 0-2%,Well Drained,2012,Deli x Yangambi,3.674847,113.554115,17.5,0.7
+EST003-D01-B02,Block 01-02,EST003-D01,Division 01,EST003,22.17,21.92,Peat - Moderate,Moderate Slope 12-18%,Very Poor,2007,Deli x NIFOR,3.68221,113.548784,64.7,17.3
+EST003-D01-B03,Block 01-03,EST003-D01,Division 01,EST003,23.86,23.68,Alluvial Loam,Moderate Slope 12-18%,Imperfect,1999,Deli x Calabar,3.691635,113.539571,43.9,18.9
+EST003-D01-B04,Block 01-04,EST003-D01,Division 01,EST003,27.86,27.52,Alluvial Clay,Gentle 2-4%,Well Drained,2009,Deli x DAMI,3.676302,113.547335,65.9,1.4
+EST003-D01-B05,Block 01-05,EST003-D01,Division 01,EST003,29.73,29.29,Mineral Clay Loam,Low-lying Basin,Poor,1999,Deli x Ghana,3.70205,113.553154,18.2,1.8
+EST003-D01-B06,Block 01-06,EST003-D01,Division 01,EST003,26.4,26.25,Alluvial Loam,Rolling 8-12%,Waterlogged-prone,2014,Deli x NIFOR,3.688233,113.55745,73.7,7.3
+EST003-D01-B07,Block 01-07,EST003-D01,Division 01,EST003,17.87,17.81,Mineral Loam,Gentle 2-4%,Somewhat Imperfect,2006,Deli x Nigeria,3.681573,113.547392,28.9,3.5
+EST003-D01-B08,Block 01-08,EST003-D01,Division 01,EST003,20.76,20.41,Peat - Moderate,Flat 0-2%,Somewhat Imperfect,2003,Deli x Ghana,3.691456,113.530714,97.0,1.8
+EST003-D02-B01,Block 02-01,EST003-D02,Division 02,EST003,28.73,28.32,Alluvial Clay,Gentle 2-4%,Moderately Well Drained,1998,Deli x Tanzania,3.698753,113.53462,12.0,2.6
+EST003-D02-B02,Block 02-02,EST003-D02,Division 02,EST003,18.07,17.89,Peat - Deep,Moderate Slope 12-18%,Waterlogged-prone,1999,Deli x Ekona,3.66973,113.531058,43.6,16.4
+EST003-D02-B03,Block 02-03,EST003-D02,Division 02,EST003,15.55,15.34,Mineral Clay Loam,Steep 18-25%,Excessive,2009,Deli x Yangambi,3.672627,113.538923,55.0,21.0
+EST003-D02-B04,Block 02-04,EST003-D02,Division 02,EST003,23.23,23.04,Alluvial Clay,Flat 0-2%,Moderately Well Drained,2007,Deli x NIFOR,3.703353,113.545382,114.8,1.3
+EST003-D02-B05,Block 02-05,EST003-D02,Division 02,EST003,21.0,20.82,Peat - Shallow,Gentle 2-4%,Poor,2010,Deli x Ekona,3.681522,113.528356,56.7,3.7
+EST003-D02-B06,Block 02-06,EST003-D02,Division 02,EST003,26.64,26.48,Peat - Shallow,Flat 0-2%,Waterlogged-prone,2014,Deli x La Me,3.665684,113.53857,40.2,0.0
+EST003-D02-B07,Block 02-07,EST003-D02,Division 02,EST003,24.74,24.46,Peat - Shallow,Riparian / Flood-prone,Very Poor,2012,Deli x Nigeria,3.682636,113.56128,30.2,3.6
+EST003-D02-B08,Block 02-08,EST003-D02,Division 02,EST003,20.75,20.61,Peat - Moderate,Undulating 4-8%,Somewhat Imperfect,2011,Deli x Tanzania,3.685963,113.547517,50.3,7.8
+EST003-D03-B01,Block 03-01,EST003-D03,Division 03,EST003,26.04,25.99,Alluvial Loam,Flat 0-2%,Well Drained,2009,Deli x Yangambi,3.689994,113.537039,44.5,2.3
+EST003-D03-B02,Block 03-02,EST003-D03,Division 03,EST003,29.15,28.94,Alluvial Loam,Moderate Slope 12-18%,Moderately Well Drained,2014,Deli x Tanzania,3.687589,113.546223,87.0,13.0
+EST003-D03-B03,Block 03-03,EST003-D03,Division 03,EST003,20.44,20.19,Mineral Sandy Clay Loam,Gentle 2-4%,Moderately Well Drained,2011,Deli x Ekona,3.668897,113.557433,5.0,2.4
+EST003-D03-B04,Block 03-04,EST003-D03,Division 03,EST003,23.36,23.2,Peat - Shallow,Low-lying Basin,Poor,2007,Deli x Nigeria,3.676775,113.528926,65.4,1.5
+EST003-D03-B05,Block 03-05,EST003-D03,Division 03,EST003,15.13,14.8,Alluvial Loam,Riparian / Flood-prone,Poor,2010,Deli x Yangambi,3.684458,113.561962,44.6,3.1
+EST003-D03-B06,Block 03-06,EST003-D03,Division 03,EST003,18.56,18.48,Mineral Sandy Clay Loam,Gentle 2-4%,Excessive,2007,Deli x Tanzania,3.681366,113.560028,82.6,2.4
+EST003-D03-B07,Block 03-07,EST003-D03,Division 03,EST003,26.89,26.46,Mineral Loam,Flat 0-2%,Somewhat Imperfect,2001,Deli x Ekona,3.673424,113.534863,63.8,0.0
+EST003-D03-B08,Block 03-08,EST003-D03,Division 03,EST003,18.03,17.94,Alluvial Loam,Low-lying Basin,Waterlogged-prone,2017,Deli x NIFOR,3.68355,113.536946,19.4,0.6
+EST003-D04-B01,Block 04-01,EST003-D04,Division 04,EST003,21.64,21.55,Alluvial Loam,Low-lying Basin,Moderately Well Drained,2007,Deli x DAMI,3.683994,113.562182,5.0,0.1
+EST003-D04-B02,Block 04-02,EST003-D04,Division 04,EST003,22.34,22.19,Peat - Deep,Low-lying Basin,Somewhat Imperfect,2013,Deli x Ekona,3.672497,113.56083,52.3,0.8
+EST003-D04-B03,Block 04-03,EST003-D04,Division 04,EST003,26.99,26.39,Mineral Loam,Flat 0-2%,Moderately Well Drained,1998,Deli x DAMI,3.699131,113.554895,15.0,1.0
+EST003-D04-B04,Block 04-04,EST003-D04,Division 04,EST003,20.08,20.04,Mineral Clay Loam,Riparian / Flood-prone,Moderately Well Drained,2009,Deli x Nigeria,3.675222,113.537977,104.4,1.2
+EST003-D04-B05,Block 04-05,EST003-D04,Division 04,EST003,18.79,18.49,Alluvial Loam,Riparian / Flood-prone,Very Poor,2011,Deli x DAMI,3.672313,113.529143,80.3,1.5
+EST003-D04-B06,Block 04-06,EST003-D04,Division 04,EST003,29.04,28.85,Alluvial Clay,Undulating 4-8%,Somewhat Imperfect,2004,Deli x DAMI,3.678418,113.535501,5.0,4.6
+EST003-D04-B07,Block 04-07,EST003-D04,Division 04,EST003,23.02,22.81,Alluvial Loam,Flat 0-2%,Moderately Well Drained,2021,Deli x Ekona,3.690575,113.533297,84.7,0.3
+EST003-D04-B08,Block 04-08,EST003-D04,Division 04,EST003,24.66,24.34,Peat - Shallow,Moderate Slope 12-18%,Waterlogged-prone,2013,Deli x NIFOR,3.683468,113.53052,5.0,17.8
+EST003-D05-B01,Block 05-01,EST003-D05,Division 05,EST003,18.94,18.73,Alluvial Loam,Undulating 4-8%,Moderately Well Drained,2001,Deli x La Me,3.701843,113.538522,24.1,6.6
+EST003-D05-B02,Block 05-02,EST003-D05,Division 05,EST003,25.75,25.68,Peat - Deep,Rolling 8-12%,Somewhat Imperfect,2008,Deli x DAMI,3.672577,113.558341,44.0,8.6
+EST003-D05-B03,Block 05-03,EST003-D05,Division 05,EST003,30.19,30.01,Mineral Loam,Undulating 4-8%,Somewhat Imperfect,2006,Deli x Calabar,3.688462,113.556425,27.2,6.2
+EST003-D05-B04,Block 05-04,EST003-D05,Division 05,EST003,19.22,19.18,Alluvial Clay,Undulating 4-8%,Imperfect,2013,Deli x Yangambi,3.688486,113.558421,60.4,5.8
+EST003-D05-B05,Block 05-05,EST003-D05,Division 05,EST003,20.01,19.9,Mineral Clay Loam,Rolling 8-12%,Moderately Well Drained,2012,Deli x Yangambi,3.672264,113.530271,54.8,9.4
+EST003-D05-B06,Block 05-06,EST003-D05,Division 05,EST003,21.59,21.38,Peat - Deep,Gentle 2-4%,Poor,2014,Deli x Ghana,3.664447,113.544708,16.0,2.0
+EST003-D05-B07,Block 05-07,EST003-D05,Division 05,EST003,22.16,22.08,Peat - Shallow,Low-lying Basin,Imperfect,2017,Deli x Ghana,3.683569,113.536292,37.9,3.2
+EST003-D05-B08,Block 05-08,EST003-D05,Division 05,EST003,22.34,21.94,Mineral Clay Loam,Steep 18-25%,Poor,2010,Deli x AVROS,3.69283,113.554153,80.1,19.9
+EST003-D06-B01,Block 06-01,EST003-D06,Division 06,EST003,21.5,21.29,Mineral Clay Loam,Flat 0-2%,Moderately Well Drained,2017,Deli x AVROS,3.670681,113.555918,97.4,1.0
+EST003-D06-B02,Block 06-02,EST003-D06,Division 06,EST003,22.83,22.35,Mineral Sandy Clay Loam,Rolling 8-12%,Well Drained,2014,Deli x AVROS,3.682557,113.563739,59.9,10.6
+EST003-D06-B03,Block 06-03,EST003-D06,Division 06,EST003,22.42,22.38,Alluvial Loam,Gentle 2-4%,Somewhat Imperfect,2012,Deli x Ghana,3.690471,113.555064,5.0,2.9
+EST003-D06-B04,Block 06-04,EST003-D06,Division 06,EST003,20.58,20.43,Mineral Sandy Clay Loam,Riparian / Flood-prone,Poor,2007,Deli x DAMI,3.664971,113.549719,46.2,2.6
+EST003-D06-B05,Block 06-05,EST003-D06,Division 06,EST003,24.23,24.16,Peat - Shallow,Low-lying Basin,Poor,2013,Deli x Ghana,3.687463,113.544016,24.5,0.7
+EST003-D06-B06,Block 06-06,EST003-D06,Division 06,EST003,20.01,19.9,Alluvial Clay,Gentle 2-4%,Very Poor,2014,Deli x La Me,3.701518,113.545939,74.3,3.9
+EST003-D06-B07,Block 06-07,EST003-D06,Division 06,EST003,18.61,18.58,Alluvial Loam,Flat 0-2%,Imperfect,2007,Deli x Calabar,3.671243,113.535883,59.4,0.1
+EST003-D06-B08,Block 06-08,EST003-D06,Division 06,EST003,19.85,19.74,Mineral Sandy Clay Loam,Low-lying Basin,Well Drained,2013,Deli x Calabar,3.689995,113.539862,97.6,2.4
+EST003-D07-B01,Block 07-01,EST003-D07,Division 07,EST003,26.66,26.48,Peat - Shallow,Rolling 8-12%,Imperfect,2007,Deli x Ekona,3.666369,113.553877,24.3,13.9
+EST003-D07-B02,Block 07-02,EST003-D07,Division 07,EST003,20.71,20.49,Peat - Moderate,Low-lying Basin,Imperfect,2008,Deli x DAMI,3.670654,113.557308,10.6,0.4
+EST003-D07-B03,Block 07-03,EST003-D07,Division 07,EST003,26.89,26.76,Peat - Shallow,Steep 18-25%,Very Poor,2011,Deli x DAMI,3.665513,113.548758,88.8,15.1
+EST003-D07-B04,Block 07-04,EST003-D07,Division 07,EST003,20.42,20.39,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Moderately Well Drained,2014,Deli x La Me,3.691129,113.55727,75.6,9.2
+EST003-D07-B05,Block 07-05,EST003-D07,Division 07,EST003,27.11,27.0,Alluvial Loam,Gentle 2-4%,Moderately Well Drained,2015,Deli x Tanzania,3.681374,113.541712,35.9,2.7
+EST003-D07-B06,Block 07-06,EST003-D07,Division 07,EST003,29.55,29.24,Peat - Deep,Low-lying Basin,Imperfect,2018,Deli x La Me,3.672275,113.537705,42.5,2.2
+EST003-D07-B07,Block 07-07,EST003-D07,Division 07,EST003,21.37,21.07,Alluvial Clay,Undulating 4-8%,Imperfect,2016,Deli x La Me,3.679117,113.528957,65.6,6.5
+EST003-D07-B08,Block 07-08,EST003-D07,Division 07,EST003,23.84,23.77,Peat - Shallow,Gentle 2-4%,Very Poor,2014,Deli x Nigeria,3.684482,113.541162,53.0,3.2
+EST003-D08-B01,Block 08-01,EST003-D08,Division 08,EST003,19.16,19.08,Peat - Moderate,Low-lying Basin,Waterlogged-prone,2006,Deli x Nigeria,3.681169,113.538059,90.4,1.6
+EST003-D08-B02,Block 08-02,EST003-D08,Division 08,EST003,26.44,26.34,Alluvial Clay,Riparian / Flood-prone,Very Poor,2009,Deli x Ghana,3.678119,113.542604,84.2,1.3
+EST003-D08-B03,Block 08-03,EST003-D08,Division 08,EST003,19.55,19.45,Mineral Sandy Clay Loam,Rolling 8-12%,Somewhat Imperfect,2011,Deli x La Me,3.67336,113.55637,58.6,10.7
+EST003-D08-B04,Block 08-04,EST003-D08,Division 08,EST003,36.23,35.99,Mineral Loam,Moderate Slope 12-18%,Poor,2015,Deli x AVROS,3.677581,113.542489,63.2,13.5
+EST003-D08-B05,Block 08-05,EST003-D08,Division 08,EST003,30.26,30.19,Alluvial Clay,Undulating 4-8%,Moderately Well Drained,2011,Deli x Ekona,3.693715,113.562823,69.3,5.2
+EST003-D08-B06,Block 08-06,EST003-D08,Division 08,EST003,18.24,18.12,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Somewhat Imperfect,2012,Deli x Yangambi,3.695087,113.55092,31.8,17.7
+EST003-D08-B07,Block 08-07,EST003-D08,Division 08,EST003,19.89,19.82,Peat - Moderate,Low-lying Basin,Imperfect,2012,Deli x Ghana,3.692952,113.559617,57.5,0.3
+EST003-D08-B08,Block 08-08,EST003-D08,Division 08,EST003,25.06,24.81,Mineral Loam,Riparian / Flood-prone,Poor,2009,Deli x AVROS,3.693757,113.540926,97.7,1.1
+EST004-D01-B01,Block 01-01,EST004-D01,Division 01,EST004,21.2,21.0,Mineral Sandy Clay Loam,Gentle 2-4%,Well Drained,2009,Deli x NIFOR,3.672777,113.78503,67.7,3.2
+EST004-D01-B02,Block 01-02,EST004-D01,Division 01,EST004,18.45,18.28,Mineral Sandy Clay Loam,Rolling 8-12%,Well Drained,2014,Deli x NIFOR,3.677211,113.7933,5.0,7.4
+EST004-D01-B03,Block 01-03,EST004-D01,Division 01,EST004,22.6,22.53,Mineral Loam,Rolling 8-12%,Waterlogged-prone,2021,Deli x NIFOR,3.67754,113.799286,89.2,10.5
+EST004-D01-B04,Block 01-04,EST004-D01,Division 01,EST004,15.48,15.34,Mineral Loam,Flat 0-2%,Very Poor,2008,Deli x DAMI,3.685207,113.779723,31.9,1.2
+EST004-D01-B05,Block 01-05,EST004-D01,Division 01,EST004,17.73,17.67,Alluvial Clay,Undulating 4-8%,Waterlogged-prone,2013,Deli x Tanzania,3.687815,113.787708,93.8,4.6
+EST004-D01-B06,Block 01-06,EST004-D01,Division 01,EST004,19.54,19.5,Peat - Shallow,Flat 0-2%,Waterlogged-prone,2021,Deli x AVROS,3.692773,113.774475,96.1,1.4
+EST004-D01-B07,Block 01-07,EST004-D01,Division 01,EST004,20.17,20.05,Alluvial Loam,Steep 18-25%,Well Drained,2006,Deli x AVROS,3.672766,113.794696,5.0,20.1
+EST004-D01-B08,Block 01-08,EST004-D01,Division 01,EST004,20.92,20.61,Alluvial Loam,Gentle 2-4%,Excessive,2015,Deli x Yangambi,3.672637,113.79587,20.0,3.2
+EST004-D02-B01,Block 02-01,EST004-D02,Division 02,EST004,13.54,13.5,Mineral Loam,Gentle 2-4%,Somewhat Imperfect,2009,Deli x Nigeria,3.703062,113.798584,5.0,3.0
+EST004-D02-B02,Block 02-02,EST004-D02,Division 02,EST004,19.0,18.8,Mineral Clay Loam,Moderate Slope 12-18%,Poor,2012,Deli x Calabar,3.698036,113.795409,35.7,13.9
+EST004-D02-B03,Block 02-03,EST004-D02,Division 02,EST004,16.83,16.76,Mineral Sandy Clay Loam,Undulating 4-8%,Somewhat Imperfect,2007,Deli x AVROS,3.702707,113.798987,12.2,7.7
+EST004-D02-B04,Block 02-04,EST004-D02,Division 02,EST004,17.53,17.35,Mineral Loam,Moderate Slope 12-18%,Moderately Well Drained,2001,Deli x La Me,3.675114,113.777294,46.6,12.0
+EST004-D02-B05,Block 02-05,EST004-D02,Division 02,EST004,15.06,14.92,Peat - Deep,Gentle 2-4%,Imperfect,2007,Deli x Calabar,3.692774,113.785089,47.6,3.2
+EST004-D02-B06,Block 02-06,EST004-D02,Division 02,EST004,14.46,14.4,Peat - Moderate,Rolling 8-12%,Imperfect,2013,Deli x Yangambi,3.682797,113.799976,78.4,11.5
+EST004-D02-B07,Block 02-07,EST004-D02,Division 02,EST004,16.9,16.65,Mineral Loam,Undulating 4-8%,Moderately Well Drained,2009,Deli x Yangambi,3.697905,113.772769,35.9,7.2
+EST004-D02-B08,Block 02-08,EST004-D02,Division 02,EST004,18.42,18.34,Mineral Clay Loam,Undulating 4-8%,Somewhat Imperfect,2015,Deli x AVROS,3.691197,113.794056,101.0,7.0
+EST004-D03-B01,Block 03-01,EST004-D03,Division 03,EST004,19.6,19.53,Peat - Shallow,Flat 0-2%,Imperfect,2018,Deli x AVROS,3.686462,113.796078,6.5,1.8
+EST004-D03-B02,Block 03-02,EST004-D03,Division 03,EST004,18.93,18.82,Mineral Sandy Clay Loam,Gentle 2-4%,Poor,2013,Deli x DAMI,3.677127,113.780822,46.7,3.4
+EST004-D03-B03,Block 03-03,EST004-D03,Division 03,EST004,18.48,18.37,Peat - Moderate,Moderate Slope 12-18%,Waterlogged-prone,2015,Deli x AVROS,3.689951,113.779553,5.0,14.4
+EST004-D03-B04,Block 03-04,EST004-D03,Division 03,EST004,27.62,27.37,Mineral Sandy Clay Loam,Flat 0-2%,Poor,2019,Deli x NIFOR,3.691524,113.784108,96.1,0.8
+EST004-D03-B05,Block 03-05,EST004-D03,Division 03,EST004,15.44,15.39,Mineral Sandy Clay Loam,Gentle 2-4%,Moderately Well Drained,2007,Deli x DAMI,3.692462,113.787364,71.7,2.0
+EST004-D03-B06,Block 03-06,EST004-D03,Division 03,EST004,27.72,27.46,Peat - Deep,Rolling 8-12%,Very Poor,2022,Deli x DAMI,3.684688,113.771343,89.4,10.6
+EST004-D03-B07,Block 03-07,EST004-D03,Division 03,EST004,21.44,21.2,Mineral Sandy Clay Loam,Gentle 2-4%,Well Drained,2014,Deli x NIFOR,3.679379,113.790947,34.8,4.5
+EST004-D03-B08,Block 03-08,EST004-D03,Division 03,EST004,12.07,11.98,Mineral Clay Loam,Steep 18-25%,Imperfect,2012,Deli x DAMI,3.679468,113.776049,61.0,26.1
+EST004-D04-B01,Block 04-01,EST004-D04,Division 04,EST004,24.75,24.44,Mineral Clay Loam,Gentle 2-4%,Very Poor,2011,Deli x La Me,3.690927,113.80321,66.1,3.9
+EST004-D04-B02,Block 04-02,EST004-D04,Division 04,EST004,21.47,21.28,Mineral Sandy Clay Loam,Flat 0-2%,Somewhat Imperfect,2015,Deli x NIFOR,3.682298,113.789307,55.3,1.5
+EST004-D04-B03,Block 04-03,EST004-D04,Division 04,EST004,20.47,20.41,Peat - Moderate,Rolling 8-12%,Imperfect,2009,Deli x Yangambi,3.676478,113.800027,31.9,13.6
+EST004-D04-B04,Block 04-04,EST004-D04,Division 04,EST004,16.56,16.37,Alluvial Clay,Flat 0-2%,Somewhat Imperfect,2017,Deli x Tanzania,3.694492,113.787093,57.8,1.8
+EST004-D04-B05,Block 04-05,EST004-D04,Division 04,EST004,17.4,17.16,Mineral Clay Loam,Gentle 2-4%,Moderately Well Drained,2006,Deli x Tanzania,3.684847,113.802079,53.0,2.7
+EST004-D04-B06,Block 04-06,EST004-D04,Division 04,EST004,14.42,14.4,Peat - Moderate,Rolling 8-12%,Somewhat Imperfect,2009,Deli x DAMI,3.689553,113.792606,65.6,11.8
+EST004-D04-B07,Block 04-07,EST004-D04,Division 04,EST004,23.39,23.16,Mineral Sandy Clay Loam,Riparian / Flood-prone,Poor,2006,Deli x NIFOR,3.691677,113.773777,45.2,1.7
+EST004-D04-B08,Block 04-08,EST004-D04,Division 04,EST004,20.2,20.13,Mineral Sandy Clay Loam,Riparian / Flood-prone,Moderately Well Drained,2014,Deli x NIFOR,3.675683,113.781181,5.0,1.6
+EST004-D05-B01,Block 05-01,EST004-D05,Division 05,EST004,19.56,19.5,Mineral Clay Loam,Rolling 8-12%,Very Poor,2011,Deli x Tanzania,3.700285,113.800993,67.3,8.4
+EST004-D05-B02,Block 05-02,EST004-D05,Division 05,EST004,16.1,16.04,Peat - Moderate,Rolling 8-12%,Imperfect,2005,Deli x NIFOR,3.69719,113.790097,62.8,9.4
+EST004-D05-B03,Block 05-03,EST004-D05,Division 05,EST004,16.51,16.4,Alluvial Loam,Riparian / Flood-prone,Poor,2008,Deli x NIFOR,3.674274,113.790294,17.5,1.8
+EST004-D05-B04,Block 05-04,EST004-D05,Division 05,EST004,26.43,26.06,Peat - Shallow,Gentle 2-4%,Waterlogged-prone,2010,Deli x Nigeria,3.706605,113.792328,97.0,5.1
+EST004-D05-B05,Block 05-05,EST004-D05,Division 05,EST004,18.93,18.79,Peat - Moderate,Gentle 2-4%,Imperfect,2009,Deli x DAMI,3.684196,113.795145,106.2,2.9
+EST004-D05-B06,Block 05-06,EST004-D05,Division 05,EST004,22.7,22.46,Alluvial Loam,Moderate Slope 12-18%,Somewhat Imperfect,2015,Deli x Nigeria,3.684433,113.789273,89.6,14.6
+EST004-D05-B07,Block 05-07,EST004-D05,Division 05,EST004,24.11,23.65,Alluvial Loam,Low-lying Basin,Somewhat Imperfect,2007,Deli x AVROS,3.685271,113.793478,34.8,1.6
+EST004-D05-B08,Block 05-08,EST004-D05,Division 05,EST004,14.82,14.77,Peat - Deep,Gentle 2-4%,Imperfect,2006,Deli x DAMI,3.696597,113.783687,162.2,2.8
+EST004-D06-B01,Block 06-01,EST004-D06,Division 06,EST004,14.85,14.53,Alluvial Loam,Low-lying Basin,Poor,2006,Deli x Tanzania,3.696244,113.773238,102.1,0.0
+EST004-D06-B02,Block 06-02,EST004-D06,Division 06,EST004,16.18,15.93,Alluvial Loam,Rolling 8-12%,Moderately Well Drained,2012,Deli x Calabar,3.703293,113.797449,63.6,13.1
+EST004-D06-B03,Block 06-03,EST004-D06,Division 06,EST004,16.32,16.08,Alluvial Loam,Low-lying Basin,Imperfect,2008,Deli x Tanzania,3.696214,113.797593,87.2,1.9
+EST004-D06-B04,Block 06-04,EST004-D06,Division 06,EST004,18.07,17.99,Alluvial Loam,Gentle 2-4%,Imperfect,2013,Deli x Ekona,3.704571,113.785128,79.8,3.6
+EST004-D06-B05,Block 06-05,EST004-D06,Division 06,EST004,20.5,20.26,Mineral Sandy Clay Loam,Gentle 2-4%,Imperfect,2006,Deli x Ekona,3.699452,113.78549,57.2,3.2
+EST004-D06-B06,Block 06-06,EST004-D06,Division 06,EST004,19.46,19.2,Mineral Clay Loam,Steep 18-25%,Imperfect,2008,Deli x Ekona,3.689715,113.777355,8.8,22.8
+EST004-D06-B07,Block 06-07,EST004-D06,Division 06,EST004,21.27,20.95,Peat - Deep,Riparian / Flood-prone,Very Poor,2012,Deli x Calabar,3.682211,113.771602,56.1,2.3
+EST004-D06-B08,Block 06-08,EST004-D06,Division 06,EST004,20.0,19.87,Peat - Moderate,Gentle 2-4%,Imperfect,2003,Deli x NIFOR,3.680701,113.774412,62.9,2.6
+EST004-D07-B01,Block 07-01,EST004-D07,Division 07,EST004,14.64,14.37,Mineral Sandy Clay Loam,Riparian / Flood-prone,Waterlogged-prone,2019,Deli x Yangambi,3.697398,113.782584,8.4,3.0
+EST004-D07-B02,Block 07-02,EST004-D07,Division 07,EST004,20.95,20.77,Alluvial Loam,Moderate Slope 12-18%,Somewhat Imperfect,2020,Deli x Yangambi,3.678858,113.798796,82.1,14.8
+EST004-D07-B03,Block 07-03,EST004-D07,Division 07,EST004,16.99,16.9,Alluvial Loam,Rolling 8-12%,Imperfect,2015,Deli x NIFOR,3.684079,113.774401,75.5,9.5
+EST004-D07-B04,Block 07-04,EST004-D07,Division 07,EST004,18.23,18.08,Alluvial Loam,Low-lying Basin,Very Poor,2008,Deli x Ghana,3.690871,113.792113,91.3,2.0
+EST004-D07-B05,Block 07-05,EST004-D07,Division 07,EST004,18.55,18.28,Alluvial Loam,Undulating 4-8%,Somewhat Imperfect,2013,Deli x DAMI,3.678045,113.794348,112.3,8.3
+EST004-D07-B06,Block 07-06,EST004-D07,Division 07,EST004,10.84,10.69,Alluvial Loam,Moderate Slope 12-18%,Poor,2014,Deli x Calabar,3.695728,113.780624,71.6,18.7
+EST004-D07-B07,Block 07-07,EST004-D07,Division 07,EST004,17.29,16.96,Peat - Moderate,Rolling 8-12%,Poor,2000,Deli x Ekona,3.681712,113.779026,79.9,9.6
+EST004-D07-B08,Block 07-08,EST004-D07,Division 07,EST004,23.67,23.64,Alluvial Loam,Riparian / Flood-prone,Waterlogged-prone,2009,Deli x AVROS,3.696672,113.803778,56.5,1.4
+EST004-D08-B01,Block 08-01,EST004-D08,Division 08,EST004,20.32,20.09,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Well Drained,2011,Deli x NIFOR,3.698625,113.773739,110.8,13.7
+EST004-D08-B02,Block 08-02,EST004-D08,Division 08,EST004,24.82,24.59,Peat - Shallow,Flat 0-2%,Very Poor,2010,Deli x Ekona,3.681307,113.800578,46.3,0.5
+EST004-D08-B03,Block 08-03,EST004-D08,Division 08,EST004,18.49,18.44,Peat - Deep,Flat 0-2%,Very Poor,2011,Deli x Calabar,3.694165,113.803559,52.5,1.7
+EST004-D08-B04,Block 08-04,EST004-D08,Division 08,EST004,17.23,17.2,Alluvial Loam,Undulating 4-8%,Somewhat Imperfect,2013,Deli x AVROS,3.682685,113.782207,65.3,5.6
+EST004-D08-B05,Block 08-05,EST004-D08,Division 08,EST004,21.05,20.8,Peat - Shallow,Low-lying Basin,Imperfect,2002,Deli x Nigeria,3.699828,113.790766,21.8,1.5
+EST004-D08-B06,Block 08-06,EST004-D08,Division 08,EST004,17.14,16.94,Peat - Deep,Steep 18-25%,Poor,2010,Deli x Tanzania,3.702226,113.790025,13.8,22.1
+EST004-D08-B07,Block 08-07,EST004-D08,Division 08,EST004,18.67,18.52,Mineral Sandy Clay Loam,Gentle 2-4%,Moderately Well Drained,2012,Deli x Yangambi,3.689868,113.797555,99.0,4.6
+EST004-D08-B08,Block 08-08,EST004-D08,Division 08,EST004,16.13,15.96,Peat - Moderate,Riparian / Flood-prone,Moderately Well Drained,2011,Deli x DAMI,3.699723,113.779944,7.8,3.1
+EST005-D01-B01,Block 01-01,EST005-D01,Division 01,EST005,35.39,35.05,Alluvial Loam,Flat 0-2%,Moderately Well Drained,2009,Deli x Ghana,2.963221,113.84904,62.7,1.8
+EST005-D01-B02,Block 01-02,EST005-D01,Division 01,EST005,41.87,41.21,Peat - Shallow,Low-lying Basin,Poor,2015,Deli x Nigeria,2.95122,113.828864,127.9,2.0
+EST005-D01-B03,Block 01-03,EST005-D01,Division 01,EST005,47.06,46.39,Mineral Clay Loam,Flat 0-2%,Somewhat Imperfect,2009,Deli x Ghana,2.97061,113.816526,58.8,1.8
+EST005-D01-B04,Block 01-04,EST005-D01,Division 01,EST005,30.53,30.34,Mineral Clay Loam,Rolling 8-12%,Very Poor,2008,Deli x Yangambi,2.964964,113.841754,51.7,12.6
+EST005-D01-B05,Block 01-05,EST005-D01,Division 01,EST005,42.65,41.84,Peat - Deep,Riparian / Flood-prone,Imperfect,1998,Deli x Tanzania,2.973243,113.819776,119.4,2.8
+EST005-D01-B06,Block 01-06,EST005-D01,Division 01,EST005,35.34,35.08,Peat - Deep,Riparian / Flood-prone,Excessive,2014,Deli x Yangambi,2.971344,113.846538,66.0,2.4
+EST005-D01-B07,Block 01-07,EST005-D01,Division 01,EST005,45.21,44.87,Alluvial Clay,Flat 0-2%,Somewhat Imperfect,2015,Deli x Yangambi,2.954342,113.804815,62.0,1.5
+EST005-D01-B08,Block 01-08,EST005-D01,Division 01,EST005,44.86,44.11,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2016,Deli x Ghana,2.982339,113.822361,51.1,6.4
+EST005-D02-B01,Block 02-01,EST005-D02,Division 02,EST005,32.94,32.61,Mineral Clay Loam,Moderate Slope 12-18%,Somewhat Imperfect,2017,Deli x Tanzania,2.95837,113.817772,78.1,19.6
+EST005-D02-B02,Block 02-02,EST005-D02,Division 02,EST005,62.54,61.79,Peat - Moderate,Flat 0-2%,Imperfect,2015,Deli x DAMI,2.950653,113.830355,96.5,1.8
+EST005-D02-B03,Block 02-03,EST005-D02,Division 02,EST005,42.01,41.7,Mineral Loam,Low-lying Basin,Waterlogged-prone,2000,Deli x Calabar,2.967477,113.796917,104.5,0.9
+EST005-D02-B04,Block 02-04,EST005-D02,Division 02,EST005,31.69,31.37,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2022,Deli x AVROS,2.958609,113.812665,120.9,3.9
+EST005-D02-B05,Block 02-05,EST005-D02,Division 02,EST005,41.88,41.25,Peat - Moderate,Rolling 8-12%,Poor,2012,Deli x Yangambi,2.971679,113.797354,101.1,8.2
+EST005-D02-B06,Block 02-06,EST005-D02,Division 02,EST005,44.98,44.48,Mineral Loam,Gentle 2-4%,Moderately Well Drained,2000,Deli x Ekona,2.982613,113.816216,57.6,3.7
+EST005-D02-B07,Block 02-07,EST005-D02,Division 02,EST005,39.14,38.85,Peat - Deep,Undulating 4-8%,Somewhat Imperfect,2018,Deli x Ghana,2.948427,113.801565,60.7,5.7
+EST005-D02-B08,Block 02-08,EST005-D02,Division 02,EST005,40.94,40.78,Mineral Sandy Clay Loam,Rolling 8-12%,Moderately Well Drained,2006,Deli x NIFOR,2.942012,113.815873,147.7,9.6
+EST005-D03-B01,Block 03-01,EST005-D03,Division 03,EST005,30.18,30.04,Mineral Sandy Clay Loam,Undulating 4-8%,Moderately Well Drained,2012,Deli x AVROS,2.98776,113.823541,42.2,5.5
+EST005-D03-B02,Block 03-02,EST005-D03,Division 03,EST005,39.49,39.04,Alluvial Clay,Flat 0-2%,Well Drained,2013,Deli x Calabar,2.968998,113.82678,104.7,0.1
+EST005-D03-B03,Block 03-03,EST005-D03,Division 03,EST005,39.09,38.84,Mineral Clay Loam,Rolling 8-12%,Somewhat Imperfect,2015,Deli x Ekona,2.937242,113.822773,112.9,9.8
+EST005-D03-B04,Block 03-04,EST005-D03,Division 03,EST005,35.25,34.91,Peat - Deep,Moderate Slope 12-18%,Imperfect,2014,Deli x AVROS,2.980884,113.824679,14.3,18.8
+EST005-D03-B05,Block 03-05,EST005-D03,Division 03,EST005,32.24,32.09,Mineral Sandy Clay Loam,Rolling 8-12%,Somewhat Imperfect,2006,Deli x Calabar,2.983366,113.816932,74.8,14.7
+EST005-D03-B06,Block 03-06,EST005-D03,Division 03,EST005,38.51,38.13,Alluvial Loam,Riparian / Flood-prone,Well Drained,2007,Deli x Tanzania,2.963899,113.809862,127.1,3.2
+EST005-D03-B07,Block 03-07,EST005-D03,Division 03,EST005,36.05,35.87,Mineral Sandy Clay Loam,Gentle 2-4%,Moderately Well Drained,2015,Deli x Yangambi,2.952829,113.80553,76.2,3.1
+EST005-D03-B08,Block 03-08,EST005-D03,Division 03,EST005,29.35,29.18,Mineral Clay Loam,Undulating 4-8%,Well Drained,2011,Deli x Yangambi,2.967717,113.839239,125.0,4.9
+EST005-D04-B01,Block 04-01,EST005-D04,Division 04,EST005,37.31,36.96,Alluvial Loam,Undulating 4-8%,Imperfect,2010,Deli x Ghana,2.971276,113.804789,62.4,5.3
+EST005-D04-B02,Block 04-02,EST005-D04,Division 04,EST005,29.56,29.47,Mineral Loam,Undulating 4-8%,Well Drained,2022,Deli x DAMI,2.961937,113.822769,64.7,5.4
+EST005-D04-B03,Block 04-03,EST005-D04,Division 04,EST005,27.74,27.5,Peat - Shallow,Undulating 4-8%,Poor,2009,Deli x Calabar,2.945706,113.838791,95.2,5.9
+EST005-D04-B04,Block 04-04,EST005-D04,Division 04,EST005,56.28,55.93,Mineral Loam,Undulating 4-8%,Well Drained,2006,Deli x NIFOR,2.969399,113.79769,177.9,7.0
+EST005-D04-B05,Block 04-05,EST005-D04,Division 04,EST005,32.54,32.04,Alluvial Loam,Gentle 2-4%,Very Poor,2006,Deli x NIFOR,2.976075,113.805993,39.5,2.2
+EST005-D04-B06,Block 04-06,EST005-D04,Division 04,EST005,34.55,33.95,Peat - Deep,Moderate Slope 12-18%,Very Poor,2009,Deli x La Me,2.982442,113.837087,74.1,15.6
+EST005-D04-B07,Block 04-07,EST005-D04,Division 04,EST005,39.26,39.01,Alluvial Loam,Flat 0-2%,Moderately Well Drained,2009,Deli x Ghana,2.941214,113.812682,67.4,1.7
+EST005-D04-B08,Block 04-08,EST005-D04,Division 04,EST005,44.38,43.88,Peat - Shallow,Moderate Slope 12-18%,Waterlogged-prone,2010,Deli x NIFOR,2.956976,113.801382,159.2,15.2
+EST005-D05-B01,Block 05-01,EST005-D05,Division 05,EST005,39.51,39.34,Mineral Clay Loam,Riparian / Flood-prone,Imperfect,2022,Deli x Nigeria,2.97188,113.832741,91.2,2.5
+EST005-D05-B02,Block 05-02,EST005-D05,Division 05,EST005,40.7,40.41,Mineral Clay Loam,Moderate Slope 12-18%,Waterlogged-prone,2007,Deli x La Me,2.9878,113.818727,76.3,11.6
+EST005-D05-B03,Block 05-03,EST005-D05,Division 05,EST005,48.68,48.38,Mineral Sandy Clay Loam,Gentle 2-4%,Moderately Well Drained,2005,Deli x DAMI,2.950402,113.822996,55.3,2.4
+EST005-D05-B04,Block 05-04,EST005-D05,Division 05,EST005,42.03,41.72,Peat - Shallow,Gentle 2-4%,Waterlogged-prone,2015,Deli x AVROS,2.967496,113.821228,49.1,3.5
+EST005-D05-B05,Block 05-05,EST005-D05,Division 05,EST005,31.31,31.27,Alluvial Clay,Moderate Slope 12-18%,Poor,2006,Deli x DAMI,2.946017,113.813337,57.0,13.2
+EST005-D05-B06,Block 05-06,EST005-D05,Division 05,EST005,31.41,30.96,Alluvial Loam,Flat 0-2%,Moderately Well Drained,2014,Deli x DAMI,2.963478,113.819047,95.5,1.9
+EST005-D05-B07,Block 05-07,EST005-D05,Division 05,EST005,42.47,42.34,Peat - Shallow,Undulating 4-8%,Poor,2010,Deli x Yangambi,2.982751,113.826629,5.0,5.5
+EST005-D05-B08,Block 05-08,EST005-D05,Division 05,EST005,44.39,43.98,Mineral Loam,Rolling 8-12%,Well Drained,2012,Deli x Ghana,2.967922,113.819374,92.5,10.3
+EST005-D06-B01,Block 06-01,EST005-D06,Division 06,EST005,35.04,34.92,Mineral Loam,Undulating 4-8%,Poor,2008,Deli x AVROS,2.951324,113.822703,102.4,5.2
+EST005-D06-B02,Block 06-02,EST005-D06,Division 06,EST005,41.82,41.34,Mineral Sandy Clay Loam,Low-lying Basin,Moderately Well Drained,2015,Deli x DAMI,2.982781,113.804584,68.1,1.7
+EST005-D06-B03,Block 06-03,EST005-D06,Division 06,EST005,50.72,50.16,Peat - Shallow,Flat 0-2%,Somewhat Imperfect,2001,Deli x Tanzania,2.955886,113.831075,41.1,1.7
+EST005-D06-B04,Block 06-04,EST005-D06,Division 06,EST005,37.78,37.73,Alluvial Clay,Gentle 2-4%,Somewhat Imperfect,2013,Deli x Tanzania,2.970094,113.807546,34.8,2.9
+EST005-D06-B05,Block 06-05,EST005-D06,Division 06,EST005,51.69,51.3,Alluvial Clay,Flat 0-2%,Well Drained,2014,Deli x Nigeria,2.954218,113.823762,77.1,0.5
+EST005-D06-B06,Block 06-06,EST005-D06,Division 06,EST005,36.23,36.15,Mineral Clay Loam,Rolling 8-12%,Moderately Well Drained,2011,Deli x Nigeria,2.956176,113.805735,76.8,7.9
+EST005-D06-B07,Block 06-07,EST005-D06,Division 06,EST005,45.89,45.33,Mineral Sandy Clay Loam,Steep 18-25%,Moderately Well Drained,2018,Deli x NIFOR,2.969575,113.844122,44.7,18.0
+EST005-D06-B08,Block 06-08,EST005-D06,Division 06,EST005,29.08,28.96,Alluvial Clay,Flat 0-2%,Moderately Well Drained,2013,Deli x AVROS,2.958504,113.83751,120.9,0.2
+EST005-D07-B01,Block 07-01,EST005-D07,Division 07,EST005,45.63,45.44,Alluvial Loam,Low-lying Basin,Somewhat Imperfect,2013,Deli x La Me,2.965826,113.816469,104.7,0.4
+EST005-D07-B02,Block 07-02,EST005-D07,Division 07,EST005,46.18,45.85,Peat - Moderate,Moderate Slope 12-18%,Very Poor,2012,Deli x AVROS,2.962465,113.811101,108.4,12.3
+EST005-D07-B03,Block 07-03,EST005-D07,Division 07,EST005,31.72,31.29,Mineral Clay Loam,Gentle 2-4%,Poor,2012,Deli x DAMI,2.961792,113.820929,61.1,3.1
+EST005-D07-B04,Block 07-04,EST005-D07,Division 07,EST005,43.49,43.02,Alluvial Clay,Riparian / Flood-prone,Poor,2014,Deli x Ekona,2.948057,113.818641,67.9,2.5
+EST005-D07-B05,Block 07-05,EST005-D07,Division 07,EST005,31.45,31.15,Alluvial Loam,Low-lying Basin,Very Poor,2015,Deli x Ghana,2.96651,113.813639,84.9,1.6
+EST005-D07-B06,Block 07-06,EST005-D07,Division 07,EST005,35.96,35.66,Mineral Loam,Low-lying Basin,Imperfect,2013,Deli x Ghana,2.965884,113.843191,17.6,1.6
+EST005-D07-B07,Block 07-07,EST005-D07,Division 07,EST005,32.3,32.22,Alluvial Clay,Gentle 2-4%,Well Drained,2010,Deli x Tanzania,2.945013,113.804752,68.6,4.0
+EST005-D07-B08,Block 07-08,EST005-D07,Division 07,EST005,39.55,39.05,Alluvial Clay,Flat 0-2%,Poor,2005,Deli x Yangambi,2.951272,113.812479,169.1,2.2
+EST005-D08-B01,Block 08-01,EST005-D08,Division 08,EST005,60.53,60.01,Peat - Deep,Flat 0-2%,Very Poor,2006,Deli x La Me,2.944012,113.811808,41.2,0.9
+EST005-D08-B02,Block 08-02,EST005-D08,Division 08,EST005,42.94,42.45,Alluvial Clay,Undulating 4-8%,Moderately Well Drained,2021,Deli x La Me,2.958866,113.821084,90.6,6.1
+EST005-D08-B03,Block 08-03,EST005-D08,Division 08,EST005,43.81,43.37,Peat - Shallow,Gentle 2-4%,Very Poor,2014,Deli x DAMI,2.96433,113.798315,130.3,2.8
+EST005-D08-B04,Block 08-04,EST005-D08,Division 08,EST005,46.91,46.33,Alluvial Loam,Riparian / Flood-prone,Very Poor,2005,Deli x AVROS,2.956518,113.813372,107.7,2.1
+EST005-D08-B05,Block 08-05,EST005-D08,Division 08,EST005,61.96,61.3,Mineral Loam,Moderate Slope 12-18%,Well Drained,2011,Deli x Ekona,2.942817,113.829587,68.4,16.2
+EST005-D08-B06,Block 08-06,EST005-D08,Division 08,EST005,46.68,46.34,Alluvial Clay,Rolling 8-12%,Excessive,2010,Deli x Calabar,2.949719,113.801729,44.5,8.1
+EST005-D08-B07,Block 08-07,EST005-D08,Division 08,EST005,27.13,27.09,Alluvial Loam,Undulating 4-8%,Well Drained,2007,Deli x Ghana,2.979952,113.842012,71.5,7.1
+EST005-D08-B08,Block 08-08,EST005-D08,Division 08,EST005,38.76,38.42,Mineral Loam,Moderate Slope 12-18%,Excessive,2015,Deli x NIFOR,2.965783,113.830532,90.3,13.9
+EST006-D01-B01,Block 01-01,EST006-D01,Division 01,EST006,38.25,38.06,Peat - Shallow,Undulating 4-8%,Very Poor,2020,Deli x La Me,2.932601,113.884113,44.0,4.9
+EST006-D01-B02,Block 01-02,EST006-D01,Division 01,EST006,28.15,27.89,Peat - Moderate,Rolling 8-12%,Somewhat Imperfect,2015,Deli x NIFOR,2.924908,113.883324,64.5,11.3
+EST006-D01-B03,Block 01-03,EST006-D01,Division 01,EST006,34.17,33.95,Peat - Shallow,Riparian / Flood-prone,Very Poor,2009,Deli x Tanzania,2.926948,113.885879,115.1,1.5
+EST006-D01-B04,Block 01-04,EST006-D01,Division 01,EST006,40.79,40.68,Mineral Loam,Flat 0-2%,Moderately Well Drained,2006,Deli x Ghana,2.954985,113.899327,122.3,0.0
+EST006-D01-B05,Block 01-05,EST006-D01,Division 01,EST006,42.79,42.6,Peat - Moderate,Moderate Slope 12-18%,Somewhat Imperfect,2020,Deli x Ghana,2.916703,113.885753,38.8,17.2
+EST006-D01-B06,Block 01-06,EST006-D01,Division 01,EST006,39.76,39.37,Mineral Loam,Low-lying Basin,Waterlogged-prone,2022,Deli x La Me,2.9486,113.867178,65.8,2.3
+EST006-D01-B07,Block 01-07,EST006-D01,Division 01,EST006,31.63,31.52,Alluvial Clay,Undulating 4-8%,Moderately Well Drained,2007,Deli x Nigeria,2.921978,113.887767,85.5,7.4
+EST006-D01-B08,Block 01-08,EST006-D01,Division 01,EST006,21.95,21.51,Mineral Clay Loam,Gentle 2-4%,Moderately Well Drained,2022,Deli x NIFOR,2.937699,113.884657,154.2,2.7
+EST006-D02-B01,Block 02-01,EST006-D02,Division 02,EST006,38.77,38.33,Mineral Sandy Clay Loam,Undulating 4-8%,Somewhat Imperfect,2013,Deli x NIFOR,2.921727,113.896005,33.5,5.5
+EST006-D02-B02,Block 02-02,EST006-D02,Division 02,EST006,37.26,37.2,Alluvial Loam,Undulating 4-8%,Poor,2013,Deli x DAMI,2.916209,113.873569,130.8,3.5
+EST006-D02-B03,Block 02-03,EST006-D02,Division 02,EST006,21.63,21.43,Alluvial Clay,Low-lying Basin,Imperfect,2019,Deli x NIFOR,2.942284,113.895863,134.9,1.3
+EST006-D02-B04,Block 02-04,EST006-D02,Division 02,EST006,26.22,26.17,Alluvial Loam,Rolling 8-12%,Excessive,2011,Deli x Yangambi,2.929894,113.896516,124.6,7.6
+EST006-D02-B05,Block 02-05,EST006-D02,Division 02,EST006,38.46,38.41,Mineral Clay Loam,Moderate Slope 12-18%,Moderately Well Drained,2010,Deli x DAMI,2.933367,113.897632,136.7,15.2
+EST006-D02-B06,Block 02-06,EST006-D02,Division 02,EST006,39.16,38.88,Peat - Moderate,Riparian / Flood-prone,Well Drained,2019,Deli x DAMI,2.957446,113.892878,109.2,2.1
+EST006-D02-B07,Block 02-07,EST006-D02,Division 02,EST006,30.7,30.44,Mineral Loam,Gentle 2-4%,Moderately Well Drained,2009,Deli x Ekona,2.939999,113.885375,93.7,2.5
+EST006-D02-B08,Block 02-08,EST006-D02,Division 02,EST006,38.12,37.41,Peat - Moderate,Riparian / Flood-prone,Moderately Well Drained,2014,Deli x DAMI,2.932454,113.880336,64.6,2.2
+EST006-D03-B01,Block 03-01,EST006-D03,Division 03,EST006,21.77,21.58,Alluvial Clay,Gentle 2-4%,Moderately Well Drained,2014,Deli x Yangambi,2.920631,113.88635,77.1,3.2
+EST006-D03-B02,Block 03-02,EST006-D03,Division 03,EST006,38.28,37.95,Alluvial Clay,Gentle 2-4%,Imperfect,2015,Deli x La Me,2.941402,113.899539,98.7,3.1
+EST006-D03-B03,Block 03-03,EST006-D03,Division 03,EST006,32.8,32.41,Alluvial Loam,Flat 0-2%,Poor,2012,Deli x Calabar,2.918351,113.869493,51.1,0.0
+EST006-D03-B04,Block 03-04,EST006-D03,Division 03,EST006,37.09,37.04,Alluvial Loam,Rolling 8-12%,Excessive,2006,Deli x DAMI,2.946944,113.866154,136.0,11.0
+EST006-D03-B05,Block 03-05,EST006-D03,Division 03,EST006,30.73,30.69,Alluvial Clay,Rolling 8-12%,Well Drained,2006,Deli x DAMI,2.955338,113.866397,128.7,9.2
+EST006-D03-B06,Block 03-06,EST006-D03,Division 03,EST006,27.59,27.37,Alluvial Loam,Steep 18-25%,Very Poor,2020,Deli x DAMI,2.961599,113.88895,123.1,18.9
+EST006-D03-B07,Block 03-07,EST006-D03,Division 03,EST006,24.81,24.67,Peat - Shallow,Riparian / Flood-prone,Imperfect,2008,Deli x Tanzania,2.94932,113.865336,127.8,1.5
+EST006-D03-B08,Block 03-08,EST006-D03,Division 03,EST006,31.17,30.82,Alluvial Loam,Undulating 4-8%,Well Drained,2006,Deli x Tanzania,2.943302,113.887154,118.2,6.2
+EST006-D04-B01,Block 04-01,EST006-D04,Division 04,EST006,31.61,31.23,Alluvial Loam,Low-lying Basin,Very Poor,2008,Deli x Yangambi,2.922093,113.876296,39.1,2.0
+EST006-D04-B02,Block 04-02,EST006-D04,Division 04,EST006,26.7,26.43,Alluvial Clay,Undulating 4-8%,Somewhat Imperfect,1998,Deli x AVROS,2.932874,113.866596,95.9,6.5
+EST006-D04-B03,Block 04-03,EST006-D04,Division 04,EST006,28.28,28.23,Peat - Moderate,Moderate Slope 12-18%,Poor,2011,Deli x Nigeria,2.953804,113.86963,57.7,11.2
+EST006-D04-B04,Block 04-04,EST006-D04,Division 04,EST006,32.36,32.14,Alluvial Clay,Moderate Slope 12-18%,Somewhat Imperfect,2015,Deli x DAMI,2.922576,113.884627,73.5,16.0
+EST006-D04-B05,Block 04-05,EST006-D04,Division 04,EST006,37.68,37.33,Peat - Shallow,Low-lying Basin,Very Poor,2018,Deli x Calabar,2.924592,113.89764,47.8,1.5
+EST006-D04-B06,Block 04-06,EST006-D04,Division 04,EST006,33.59,33.32,Mineral Sandy Clay Loam,Riparian / Flood-prone,Poor,2006,Deli x La Me,2.933716,113.86251,86.8,1.5
+EST006-D04-B07,Block 04-07,EST006-D04,Division 04,EST006,36.87,36.82,Peat - Deep,Flat 0-2%,Moderately Well Drained,2008,Deli x NIFOR,2.920289,113.868358,112.2,2.0
+EST006-D04-B08,Block 04-08,EST006-D04,Division 04,EST006,30.76,30.46,Mineral Sandy Clay Loam,Gentle 2-4%,Excessive,2016,Deli x DAMI,2.92237,113.891098,155.7,2.3
+EST006-D05-B01,Block 05-01,EST006-D05,Division 05,EST006,36.29,36.08,Alluvial Loam,Undulating 4-8%,Moderately Well Drained,2015,Deli x AVROS,2.925652,113.879535,138.7,5.7
+EST006-D05-B02,Block 05-02,EST006-D05,Division 05,EST006,32.97,32.72,Peat - Shallow,Riparian / Flood-prone,Imperfect,2009,Deli x NIFOR,2.952756,113.882709,150.8,3.1
+EST006-D05-B03,Block 05-03,EST006-D05,Division 05,EST006,38.62,37.98,Alluvial Loam,Gentle 2-4%,Somewhat Imperfect,2015,Deli x AVROS,2.928209,113.881196,96.5,2.6
+EST006-D05-B04,Block 05-04,EST006-D05,Division 05,EST006,34.74,34.7,Peat - Moderate,Flat 0-2%,Moderately Well Drained,2007,Deli x DAMI,2.947932,113.90167,21.1,0.7
+EST006-D05-B05,Block 05-05,EST006-D05,Division 05,EST006,25.12,24.85,Mineral Sandy Clay Loam,Rolling 8-12%,Imperfect,2013,Deli x Calabar,2.939635,113.880098,90.3,8.1
+EST006-D05-B06,Block 05-06,EST006-D05,Division 05,EST006,44.38,43.77,Peat - Deep,Riparian / Flood-prone,Somewhat Imperfect,2007,Deli x Nigeria,2.938599,113.897259,60.7,1.5
+EST006-D05-B07,Block 05-07,EST006-D05,Division 05,EST006,29.46,29.09,Peat - Moderate,Rolling 8-12%,Poor,2013,Deli x La Me,2.931574,113.873383,140.6,8.9
+EST006-D05-B08,Block 05-08,EST006-D05,Division 05,EST006,34.17,33.82,Mineral Clay Loam,Gentle 2-4%,Imperfect,2016,Deli x NIFOR,2.960846,113.875924,76.6,3.3
+EST006-D06-B01,Block 06-01,EST006-D06,Division 06,EST006,25.96,25.7,Alluvial Loam,Rolling 8-12%,Poor,2006,Deli x Ghana,2.956451,113.883895,93.0,10.4
+EST006-D06-B02,Block 06-02,EST006-D06,Division 06,EST006,26.5,26.28,Peat - Shallow,Undulating 4-8%,Very Poor,2013,Deli x NIFOR,2.953231,113.888928,67.4,4.9
+EST006-D06-B03,Block 06-03,EST006-D06,Division 06,EST006,31.66,31.43,Mineral Sandy Clay Loam,Flat 0-2%,Very Poor,2011,Deli x AVROS,2.918754,113.8775,59.6,1.8
+EST006-D06-B04,Block 06-04,EST006-D06,Division 06,EST006,36.17,36.12,Peat - Moderate,Riparian / Flood-prone,Very Poor,2012,Deli x Tanzania,2.920879,113.879263,44.7,1.3
+EST006-D06-B05,Block 06-05,EST006-D06,Division 06,EST006,35.67,35.37,Mineral Loam,Moderate Slope 12-18%,Very Poor,2006,Deli x Ghana,2.952358,113.858539,90.8,14.9
+EST006-D06-B06,Block 06-06,EST006-D06,Division 06,EST006,33.17,32.76,Mineral Sandy Clay Loam,Riparian / Flood-prone,Waterlogged-prone,2009,Deli x Yangambi,2.955379,113.894933,84.4,0.0
+EST006-D06-B07,Block 06-07,EST006-D06,Division 06,EST006,37.85,37.8,Alluvial Clay,Gentle 2-4%,Imperfect,2018,Deli x DAMI,2.941035,113.903322,131.6,2.7
+EST006-D06-B08,Block 06-08,EST006-D06,Division 06,EST006,34.86,34.82,Mineral Clay Loam,Gentle 2-4%,Very Poor,2015,Deli x AVROS,2.942587,113.871478,130.7,2.5
+EST006-D07-B01,Block 07-01,EST006-D07,Division 07,EST006,34.9,34.57,Alluvial Loam,Flat 0-2%,Very Poor,2012,Deli x Tanzania,2.942992,113.865675,103.7,1.7
+EST006-D07-B02,Block 07-02,EST006-D07,Division 07,EST006,46.99,46.66,Alluvial Loam,Undulating 4-8%,Somewhat Imperfect,2010,Deli x Yangambi,2.931682,113.875148,83.3,7.2
+EST006-D07-B03,Block 07-03,EST006-D07,Division 07,EST006,31.17,31.12,Mineral Clay Loam,Moderate Slope 12-18%,Very Poor,2020,Deli x Tanzania,2.940454,113.894529,103.2,14.5
+EST006-D07-B04,Block 07-04,EST006-D07,Division 07,EST006,37.99,37.93,Peat - Moderate,Rolling 8-12%,Very Poor,2012,Deli x Tanzania,2.952564,113.865113,123.6,9.7
+EST006-D07-B05,Block 07-05,EST006-D07,Division 07,EST006,35.8,35.57,Mineral Clay Loam,Low-lying Basin,Moderately Well Drained,2007,Deli x La Me,2.940535,113.866741,121.8,1.3
+EST006-D07-B06,Block 07-06,EST006-D07,Division 07,EST006,43.98,43.9,Mineral Clay Loam,Flat 0-2%,Waterlogged-prone,2009,Deli x Ghana,2.945698,113.874498,105.1,0.2
+EST006-D07-B07,Block 07-07,EST006-D07,Division 07,EST006,35.34,35.14,Peat - Moderate,Gentle 2-4%,Well Drained,2010,Deli x Ekona,2.946002,113.887905,104.1,1.1
+EST006-D07-B08,Block 07-08,EST006-D07,Division 07,EST006,33.28,33.14,Alluvial Clay,Gentle 2-4%,Somewhat Imperfect,2020,Deli x DAMI,2.933406,113.873794,112.6,3.4
+EST006-D08-B01,Block 08-01,EST006-D08,Division 08,EST006,28.69,28.54,Mineral Sandy Clay Loam,Gentle 2-4%,Very Poor,2012,Deli x Ghana,2.947544,113.875982,88.0,2.7
+EST006-D08-B02,Block 08-02,EST006-D08,Division 08,EST006,30.5,30.28,Alluvial Clay,Riparian / Flood-prone,Somewhat Imperfect,2010,Deli x La Me,2.923635,113.875106,137.8,1.3
+EST006-D08-B03,Block 08-03,EST006-D08,Division 08,EST006,37.89,37.82,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2008,Deli x DAMI,2.935873,113.864963,95.6,5.8
+EST006-D08-B04,Block 08-04,EST006-D08,Division 08,EST006,32.43,32.03,Peat - Shallow,Rolling 8-12%,Somewhat Imperfect,2007,Deli x Ekona,2.943342,113.858313,27.8,10.0
+EST006-D08-B05,Block 08-05,EST006-D08,Division 08,EST006,20.4,20.3,Mineral Sandy Clay Loam,Low-lying Basin,Very Poor,2013,Deli x Nigeria,2.926877,113.876786,18.7,0.9
+EST006-D08-B06,Block 08-06,EST006-D08,Division 08,EST006,31.88,31.59,Alluvial Loam,Gentle 2-4%,Imperfect,2012,Deli x Yangambi,2.954316,113.897792,149.3,1.5
+EST006-D08-B07,Block 08-07,EST006-D08,Division 08,EST006,35.21,35.01,Alluvial Clay,Undulating 4-8%,Moderately Well Drained,2007,Deli x Ghana,2.929485,113.889479,58.1,6.1
+EST006-D08-B08,Block 08-08,EST006-D08,Division 08,EST006,27.21,27.11,Mineral Clay Loam,Gentle 2-4%,Poor,2012,Deli x Ghana,2.941646,113.892847,48.2,2.6
+EST007-D01-B01,Block 01-01,EST007-D01,Division 01,EST007,30.29,30.07,Mineral Clay Loam,Undulating 4-8%,Well Drained,2014,Deli x Calabar,2.986291,112.522154,40.9,6.0
+EST007-D01-B02,Block 01-02,EST007-D01,Division 01,EST007,34.38,34.27,Mineral Clay Loam,Moderate Slope 12-18%,Well Drained,2012,Deli x Nigeria,2.954131,112.501939,30.0,16.4
+EST007-D01-B03,Block 01-03,EST007-D01,Division 01,EST007,27.97,27.72,Alluvial Loam,Rolling 8-12%,Excessive,2012,Deli x DAMI,2.977372,112.523475,85.5,10.2
+EST007-D01-B04,Block 01-04,EST007-D01,Division 01,EST007,29.88,29.53,Mineral Loam,Rolling 8-12%,Imperfect,2019,Deli x Ekona,2.981117,112.506807,67.2,9.7
+EST007-D01-B05,Block 01-05,EST007-D01,Division 01,EST007,30.72,30.41,Peat - Shallow,Rolling 8-12%,Somewhat Imperfect,2022,Deli x Ghana,2.985252,112.510281,49.2,11.0
+EST007-D01-B06,Block 01-06,EST007-D01,Division 01,EST007,42.3,42.03,Peat - Deep,Flat 0-2%,Very Poor,2015,Deli x La Me,2.960484,112.499224,58.5,0.8
+EST007-D01-B07,Block 01-07,EST007-D01,Division 01,EST007,32.01,31.86,Alluvial Clay,Gentle 2-4%,Well Drained,2010,Deli x Ekona,2.981374,112.505541,5.0,3.2
+EST007-D01-B08,Block 01-08,EST007-D01,Division 01,EST007,29.95,29.58,Peat - Shallow,Flat 0-2%,Very Poor,2015,Deli x Ghana,2.961739,112.487178,44.3,1.3
+EST007-D02-B01,Block 02-01,EST007-D02,Division 02,EST007,27.78,27.69,Peat - Deep,Gentle 2-4%,Poor,2006,Deli x Tanzania,2.997466,112.504805,60.5,3.2
+EST007-D02-B02,Block 02-02,EST007-D02,Division 02,EST007,24.17,24.04,Alluvial Loam,Moderate Slope 12-18%,Moderately Well Drained,2009,Deli x Yangambi,2.977967,112.521436,35.5,18.5
+EST007-D02-B03,Block 02-03,EST007-D02,Division 02,EST007,30.27,29.95,Peat - Deep,Rolling 8-12%,Imperfect,2006,Deli x AVROS,2.960102,112.493442,24.8,8.0
+EST007-D02-B04,Block 02-04,EST007-D02,Division 02,EST007,31.44,31.28,Peat - Shallow,Gentle 2-4%,Very Poor,2010,Deli x Nigeria,2.967734,112.503521,35.8,3.3
+EST007-D02-B05,Block 02-05,EST007-D02,Division 02,EST007,35.23,35.11,Alluvial Loam,Flat 0-2%,Imperfect,2015,Deli x Yangambi,2.954144,112.497799,118.3,2.4
+EST007-D02-B06,Block 02-06,EST007-D02,Division 02,EST007,27.71,27.57,Alluvial Clay,Low-lying Basin,Imperfect,2010,Deli x La Me,2.976502,112.487236,84.2,1.9
+EST007-D02-B07,Block 02-07,EST007-D02,Division 02,EST007,26.81,26.44,Alluvial Clay,Low-lying Basin,Poor,2015,Deli x NIFOR,2.975346,112.505884,55.5,1.7
+EST007-D02-B08,Block 02-08,EST007-D02,Division 02,EST007,32.38,31.98,Peat - Shallow,Gentle 2-4%,Poor,2013,Deli x Tanzania,2.990456,112.497675,8.6,1.9
+EST007-D03-B01,Block 03-01,EST007-D03,Division 03,EST007,37.72,37.43,Peat - Deep,Riparian / Flood-prone,Poor,2013,Deli x Nigeria,2.987294,112.495042,60.2,3.5
+EST007-D03-B02,Block 03-02,EST007-D03,Division 03,EST007,38.05,37.37,Peat - Moderate,Low-lying Basin,Waterlogged-prone,2011,Deli x Yangambi,2.980798,112.518356,111.8,1.9
+EST007-D03-B03,Block 03-03,EST007-D03,Division 03,EST007,23.17,22.82,Peat - Moderate,Flat 0-2%,Very Poor,2003,Deli x NIFOR,2.987455,112.521705,55.5,0.0
+EST007-D03-B04,Block 03-04,EST007-D03,Division 03,EST007,25.23,24.97,Mineral Sandy Clay Loam,Gentle 2-4%,Imperfect,2008,Deli x DAMI,2.975531,112.50958,54.5,1.6
+EST007-D03-B05,Block 03-05,EST007-D03,Division 03,EST007,28.8,28.58,Peat - Deep,Flat 0-2%,Waterlogged-prone,2010,Deli x Tanzania,2.978122,112.528217,83.9,2.3
+EST007-D03-B06,Block 03-06,EST007-D03,Division 03,EST007,17.1,17.08,Alluvial Clay,Undulating 4-8%,Somewhat Imperfect,2011,Deli x Ekona,2.979443,112.482016,96.4,6.3
+EST007-D03-B07,Block 03-07,EST007-D03,Division 03,EST007,32.33,32.1,Alluvial Loam,Flat 0-2%,Somewhat Imperfect,2015,Deli x Ekona,2.979476,112.513428,88.7,0.0
+EST007-D03-B08,Block 03-08,EST007-D03,Division 03,EST007,33.76,33.49,Mineral Loam,Undulating 4-8%,Moderately Well Drained,2008,Deli x Calabar,2.968912,112.498507,90.4,6.1
+EST007-D04-B01,Block 04-01,EST007-D04,Division 04,EST007,39.86,39.4,Peat - Moderate,Steep 18-25%,Very Poor,2005,Deli x Ghana,2.991132,112.49725,33.8,22.3
+EST007-D04-B02,Block 04-02,EST007-D04,Division 04,EST007,37.13,37.08,Mineral Clay Loam,Undulating 4-8%,Moderately Well Drained,2013,Deli x Ghana,2.9544,112.504251,37.5,5.8
+EST007-D04-B03,Block 04-03,EST007-D04,Division 04,EST007,33.67,33.28,Peat - Deep,Riparian / Flood-prone,Poor,2014,Deli x Ekona,2.979635,112.490981,29.8,2.1
+EST007-D04-B04,Block 04-04,EST007-D04,Division 04,EST007,28.99,28.72,Mineral Loam,Gentle 2-4%,Somewhat Imperfect,2011,Deli x AVROS,2.959229,112.493625,42.1,2.3
+EST007-D04-B05,Block 04-05,EST007-D04,Division 04,EST007,30.73,30.49,Alluvial Loam,Rolling 8-12%,Moderately Well Drained,2008,Deli x Nigeria,2.984929,112.500595,21.3,9.5
+EST007-D04-B06,Block 04-06,EST007-D04,Division 04,EST007,45.13,45.05,Alluvial Clay,Flat 0-2%,Well Drained,2021,Deli x DAMI,2.97048,112.526288,36.9,0.8
+EST007-D04-B07,Block 04-07,EST007-D04,Division 04,EST007,21.65,21.56,Alluvial Loam,Steep 18-25%,Poor,2010,Deli x DAMI,2.955349,112.512767,70.9,22.4
+EST007-D04-B08,Block 04-08,EST007-D04,Division 04,EST007,34.1,33.87,Mineral Loam,Steep 18-25%,Imperfect,2012,Deli x Tanzania,2.98172,112.515325,5.0,22.3
+EST007-D05-B01,Block 05-01,EST007-D05,Division 05,EST007,25.25,24.98,Peat - Shallow,Gentle 2-4%,Very Poor,2005,Deli x Yangambi,2.961061,112.491151,93.9,3.5
+EST007-D05-B02,Block 05-02,EST007-D05,Division 05,EST007,23.54,23.41,Alluvial Loam,Moderate Slope 12-18%,Moderately Well Drained,2007,Deli x La Me,2.954948,112.503788,100.5,14.8
+EST007-D05-B03,Block 05-03,EST007-D05,Division 05,EST007,26.35,26.25,Alluvial Loam,Moderate Slope 12-18%,Somewhat Imperfect,2003,Deli x DAMI,2.959784,112.513841,65.8,16.9
+EST007-D05-B04,Block 05-04,EST007-D05,Division 05,EST007,25.1,24.87,Mineral Clay Loam,Flat 0-2%,Well Drained,2019,Deli x DAMI,2.973398,112.520565,76.0,0.3
+EST007-D05-B05,Block 05-05,EST007-D05,Division 05,EST007,26.43,26.36,Mineral Sandy Clay Loam,Flat 0-2%,Imperfect,2008,Deli x Ekona,2.976724,112.497049,61.0,2.5
+EST007-D05-B06,Block 05-06,EST007-D05,Division 05,EST007,30.19,29.86,Peat - Moderate,Gentle 2-4%,Poor,2011,Deli x DAMI,2.952575,112.504932,50.9,3.7
+EST007-D05-B07,Block 05-07,EST007-D05,Division 05,EST007,32.72,32.68,Mineral Loam,Flat 0-2%,Very Poor,2014,Deli x DAMI,2.969011,112.505485,5.0,1.4
+EST007-D05-B08,Block 05-08,EST007-D05,Division 05,EST007,37.61,37.33,Alluvial Clay,Flat 0-2%,Moderately Well Drained,2010,Deli x AVROS,2.973016,112.514526,27.9,0.1
+EST007-D06-B01,Block 06-01,EST007-D06,Division 06,EST007,26.23,26.07,Mineral Sandy Clay Loam,Flat 0-2%,Imperfect,2011,Deli x Ekona,2.983012,112.499847,5.0,0.4
+EST007-D06-B02,Block 06-02,EST007-D06,Division 06,EST007,28.35,28.16,Alluvial Clay,Flat 0-2%,Moderately Well Drained,2015,Deli x AVROS,2.992008,112.509207,5.0,1.5
+EST007-D06-B03,Block 06-03,EST007-D06,Division 06,EST007,29.9,29.66,Peat - Moderate,Flat 0-2%,Very Poor,2013,Deli x Tanzania,2.979891,112.493028,109.6,1.2
+EST007-D06-B04,Block 06-04,EST007-D06,Division 06,EST007,30.51,30.47,Mineral Clay Loam,Gentle 2-4%,Poor,2006,Deli x Nigeria,2.955537,112.501987,98.1,2.2
+EST007-D06-B05,Block 06-05,EST007-D06,Division 06,EST007,24.16,24.08,Peat - Deep,Undulating 4-8%,Waterlogged-prone,2012,Deli x NIFOR,2.978085,112.482775,42.8,8.0
+EST007-D06-B06,Block 06-06,EST007-D06,Division 06,EST007,30.2,30.1,Peat - Deep,Rolling 8-12%,Imperfect,2007,Deli x NIFOR,2.988792,112.515828,93.1,10.3
+EST007-D06-B07,Block 06-07,EST007-D06,Division 06,EST007,25.86,25.66,Alluvial Loam,Flat 0-2%,Somewhat Imperfect,2010,Deli x Yangambi,2.991877,112.520314,49.8,0.8
+EST007-D06-B08,Block 06-08,EST007-D06,Division 06,EST007,22.34,22.24,Mineral Clay Loam,Gentle 2-4%,Somewhat Imperfect,2015,Deli x Yangambi,2.958134,112.508394,38.5,2.8
+EST007-D07-B01,Block 07-01,EST007-D07,Division 07,EST007,37.93,37.65,Alluvial Loam,Rolling 8-12%,Somewhat Imperfect,2011,Deli x Calabar,2.98224,112.484185,84.1,12.7
+EST007-D07-B02,Block 07-02,EST007-D07,Division 07,EST007,36.24,35.98,Peat - Moderate,Undulating 4-8%,Poor,2012,Deli x NIFOR,2.974184,112.483396,69.3,5.9
+EST007-D07-B03,Block 07-03,EST007-D07,Division 07,EST007,25.65,25.42,Mineral Clay Loam,Gentle 2-4%,Imperfect,2006,Deli x AVROS,2.975581,112.491882,77.4,3.2
+EST007-D07-B04,Block 07-04,EST007-D07,Division 07,EST007,31.77,31.35,Peat - Moderate,Gentle 2-4%,Imperfect,2014,Deli x Ghana,2.966451,112.493466,24.5,3.6
+EST007-D07-B05,Block 07-05,EST007-D07,Division 07,EST007,36.99,36.53,Peat - Shallow,Gentle 2-4%,Poor,2014,Deli x Nigeria,2.97771,112.503953,71.2,3.0
+EST007-D07-B06,Block 07-06,EST007-D07,Division 07,EST007,25.29,25.15,Mineral Clay Loam,Low-lying Basin,Poor,2006,Deli x Nigeria,2.97054,112.503464,26.0,1.3
+EST007-D07-B07,Block 07-07,EST007-D07,Division 07,EST007,21.16,21.07,Peat - Deep,Flat 0-2%,Poor,2019,Deli x Calabar,2.995119,112.510436,5.0,1.8
+EST007-D07-B08,Block 07-08,EST007-D07,Division 07,EST007,26.14,26.0,Alluvial Loam,Gentle 2-4%,Poor,2006,Deli x Ekona,2.990829,112.494582,86.2,3.0
+EST007-D08-B01,Block 08-01,EST007-D08,Division 08,EST007,30.41,30.02,Peat - Moderate,Moderate Slope 12-18%,Imperfect,2021,Deli x Ekona,2.987336,112.523669,99.5,15.4
+EST007-D08-B02,Block 08-02,EST007-D08,Division 08,EST007,25.73,25.44,Mineral Clay Loam,Rolling 8-12%,Somewhat Imperfect,2007,Deli x Yangambi,2.983633,112.495025,81.1,12.3
+EST007-D08-B03,Block 08-03,EST007-D08,Division 08,EST007,23.26,23.23,Mineral Clay Loam,Gentle 2-4%,Well Drained,2006,Deli x Yangambi,2.959126,112.495895,75.9,3.0
+EST007-D08-B04,Block 08-04,EST007-D08,Division 08,EST007,30.78,30.44,Mineral Sandy Clay Loam,Steep 18-25%,Moderately Well Drained,2000,Deli x Ghana,2.97775,112.522579,52.0,16.8
+EST007-D08-B05,Block 08-05,EST007-D08,Division 08,EST007,26.58,26.39,Alluvial Clay,Undulating 4-8%,Moderately Well Drained,2008,Deli x Ekona,2.958673,112.513971,66.9,6.6
+EST007-D08-B06,Block 08-06,EST007-D08,Division 08,EST007,31.65,31.36,Mineral Clay Loam,Flat 0-2%,Moderately Well Drained,1998,Deli x NIFOR,2.984268,112.506565,34.6,1.8
+EST007-D08-B07,Block 08-07,EST007-D08,Division 08,EST007,34.59,34.37,Mineral Loam,Undulating 4-8%,Well Drained,2022,Deli x AVROS,2.992134,112.496631,34.7,4.7
+EST007-D08-B08,Block 08-08,EST007-D08,Division 08,EST007,23.15,22.96,Peat - Moderate,Gentle 2-4%,Poor,2010,Deli x Ekona,2.978584,112.523503,74.2,1.9
+EST008-D01-B01,Block 01-01,EST008-D01,Division 01,EST008,35.29,34.89,Peat - Shallow,Rolling 8-12%,Very Poor,2012,Deli x Nigeria,2.97596,112.556942,16.2,9.9
+EST008-D01-B02,Block 01-02,EST008-D01,Division 01,EST008,24.25,23.9,Peat - Shallow,Gentle 2-4%,Waterlogged-prone,2007,Deli x Yangambi,2.968622,112.534826,52.5,1.9
+EST008-D01-B03,Block 01-03,EST008-D01,Division 01,EST008,24.98,24.88,Peat - Deep,Riparian / Flood-prone,Imperfect,2015,Deli x Calabar,3.001372,112.539982,88.7,1.1
+EST008-D01-B04,Block 01-04,EST008-D01,Division 01,EST008,24.5,24.19,Mineral Clay Loam,Gentle 2-4%,Very Poor,2016,Deli x NIFOR,3.004808,112.532565,101.4,3.1
+EST008-D01-B05,Block 01-05,EST008-D01,Division 01,EST008,28.28,28.08,Peat - Shallow,Low-lying Basin,Very Poor,2008,Deli x La Me,2.996565,112.545036,9.6,2.8
+EST008-D01-B06,Block 01-06,EST008-D01,Division 01,EST008,31.78,31.47,Peat - Moderate,Gentle 2-4%,Imperfect,2012,Deli x Calabar,2.995802,112.562209,32.1,2.1
+EST008-D01-B07,Block 01-07,EST008-D01,Division 01,EST008,24.37,24.34,Peat - Shallow,Low-lying Basin,Very Poor,2010,Deli x La Me,3.010575,112.540151,69.4,2.4
+EST008-D01-B08,Block 01-08,EST008-D01,Division 01,EST008,35.16,34.84,Mineral Loam,Undulating 4-8%,Excessive,2008,Deli x NIFOR,2.987477,112.554563,46.1,3.9
+EST008-D02-B01,Block 02-01,EST008-D02,Division 02,EST008,34.68,34.64,Mineral Clay Loam,Undulating 4-8%,Well Drained,2006,Deli x Ghana,2.991594,112.530946,72.9,7.0
+EST008-D02-B02,Block 02-02,EST008-D02,Division 02,EST008,27.28,27.08,Mineral Loam,Undulating 4-8%,Somewhat Imperfect,2009,Deli x Ekona,2.992737,112.561859,45.0,7.0
+EST008-D02-B03,Block 02-03,EST008-D02,Division 02,EST008,27.9,27.79,Mineral Loam,Flat 0-2%,Well Drained,2011,Deli x Ekona,3.000803,112.545674,106.9,1.8
+EST008-D02-B04,Block 02-04,EST008-D02,Division 02,EST008,29.07,28.69,Mineral Sandy Clay Loam,Gentle 2-4%,Somewhat Imperfect,2008,Deli x Yangambi,2.993623,112.561939,128.4,2.7
+EST008-D02-B05,Block 02-05,EST008-D02,Division 02,EST008,37.47,37.22,Alluvial Loam,Flat 0-2%,Well Drained,2007,Deli x Ghana,2.978808,112.565857,56.6,1.3
+EST008-D02-B06,Block 02-06,EST008-D02,Division 02,EST008,30.13,30.05,Alluvial Clay,Flat 0-2%,Excessive,2014,Deli x DAMI,2.969222,112.545403,59.0,0.4
+EST008-D02-B07,Block 02-07,EST008-D02,Division 02,EST008,28.47,28.15,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Moderately Well Drained,2018,Deli x Tanzania,2.987342,112.559376,5.0,11.1
+EST008-D02-B08,Block 02-08,EST008-D02,Division 02,EST008,22.38,22.14,Mineral Loam,Flat 0-2%,Very Poor,2012,Deli x La Me,2.972744,112.540922,54.8,2.5
+EST008-D03-B01,Block 03-01,EST008-D03,Division 03,EST008,31.92,31.77,Mineral Sandy Clay Loam,Gentle 2-4%,Imperfect,2007,Deli x Nigeria,2.984036,112.548439,60.7,3.7
+EST008-D03-B02,Block 03-02,EST008-D03,Division 03,EST008,32.03,31.86,Mineral Sandy Clay Loam,Undulating 4-8%,Excessive,2008,Deli x Ghana,2.997493,112.56439,23.4,6.2
+EST008-D03-B03,Block 03-03,EST008-D03,Division 03,EST008,42.59,42.54,Peat - Moderate,Gentle 2-4%,Waterlogged-prone,2008,Deli x DAMI,3.005609,112.530011,39.3,3.1
+EST008-D03-B04,Block 03-04,EST008-D03,Division 03,EST008,38.81,38.4,Peat - Moderate,Flat 0-2%,Imperfect,2010,Deli x La Me,2.966335,112.538678,59.7,2.2
+EST008-D03-B05,Block 03-05,EST008-D03,Division 03,EST008,33.65,33.61,Peat - Shallow,Moderate Slope 12-18%,Imperfect,2013,Deli x NIFOR,3.009633,112.542385,5.0,16.0
+EST008-D03-B06,Block 03-06,EST008-D03,Division 03,EST008,28.22,27.84,Peat - Shallow,Rolling 8-12%,Somewhat Imperfect,2008,Deli x Ekona,2.99286,112.564268,51.8,11.7
+EST008-D03-B07,Block 03-07,EST008-D03,Division 03,EST008,21.74,21.59,Peat - Shallow,Moderate Slope 12-18%,Imperfect,2015,Deli x Calabar,2.971972,112.534165,5.0,13.6
+EST008-D03-B08,Block 03-08,EST008-D03,Division 03,EST008,25.7,25.51,Mineral Clay Loam,Gentle 2-4%,Moderately Well Drained,2013,Deli x DAMI,2.994476,112.562439,97.0,2.0
+EST008-D04-B01,Block 04-01,EST008-D04,Division 04,EST008,39.46,39.16,Peat - Shallow,Low-lying Basin,Poor,2013,Deli x Ekona,2.975675,112.533986,5.0,2.0
+EST008-D04-B02,Block 04-02,EST008-D04,Division 04,EST008,25.18,25.05,Alluvial Loam,Gentle 2-4%,Very Poor,2015,Deli x AVROS,2.996954,112.543947,24.0,1.5
+EST008-D04-B03,Block 04-03,EST008-D04,Division 04,EST008,29.32,29.15,Peat - Deep,Flat 0-2%,Waterlogged-prone,2018,Deli x AVROS,2.974961,112.543076,25.3,0.4
+EST008-D04-B04,Block 04-04,EST008-D04,Division 04,EST008,36.02,35.6,Alluvial Loam,Flat 0-2%,Well Drained,2017,Deli x La Me,2.986026,112.548538,79.5,2.2
+EST008-D04-B05,Block 04-05,EST008-D04,Division 04,EST008,23.05,22.78,Alluvial Loam,Rolling 8-12%,Somewhat Imperfect,2006,Deli x Ekona,2.987591,112.555862,112.9,10.5
+EST008-D04-B06,Block 04-06,EST008-D04,Division 04,EST008,29.16,28.96,Alluvial Clay,Gentle 2-4%,Moderately Well Drained,2003,Deli x DAMI,2.991998,112.539973,57.6,1.3
+EST008-D04-B07,Block 04-07,EST008-D04,Division 04,EST008,31.1,31.03,Mineral Loam,Moderate Slope 12-18%,Somewhat Imperfect,2006,Deli x DAMI,2.984249,112.55386,102.1,14.5
+EST008-D04-B08,Block 04-08,EST008-D04,Division 04,EST008,43.78,43.51,Mineral Clay Loam,Low-lying Basin,Waterlogged-prone,2011,Deli x DAMI,2.974464,112.561571,53.9,1.2
+EST008-D05-B01,Block 05-01,EST008-D05,Division 05,EST008,34.14,33.98,Mineral Loam,Undulating 4-8%,Poor,2014,Deli x AVROS,2.994083,112.544928,50.8,8.2
+EST008-D05-B02,Block 05-02,EST008-D05,Division 05,EST008,34.21,33.67,Alluvial Clay,Undulating 4-8%,Somewhat Imperfect,2006,Deli x Ekona,2.986913,112.528605,39.2,7.9
+EST008-D05-B03,Block 05-03,EST008-D05,Division 05,EST008,29.12,28.81,Alluvial Loam,Rolling 8-12%,Excessive,2010,Deli x La Me,2.974004,112.537591,111.1,12.5
+EST008-D05-B04,Block 05-04,EST008-D05,Division 05,EST008,32.14,32.07,Mineral Clay Loam,Moderate Slope 12-18%,Well Drained,2014,Deli x Ekona,2.974216,112.545718,79.9,16.5
+EST008-D05-B05,Block 05-05,EST008-D05,Division 05,EST008,33.91,33.6,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Well Drained,2014,Deli x NIFOR,2.991483,112.55581,53.3,13.7
+EST008-D05-B06,Block 05-06,EST008-D05,Division 05,EST008,33.8,33.59,Alluvial Loam,Gentle 2-4%,Moderately Well Drained,2012,Deli x AVROS,2.986915,112.521041,67.0,3.6
+EST008-D05-B07,Block 05-07,EST008-D05,Division 05,EST008,31.68,31.39,Alluvial Loam,Flat 0-2%,Well Drained,2010,Deli x Yangambi,2.988685,112.543851,124.3,1.4
+EST008-D05-B08,Block 05-08,EST008-D05,Division 05,EST008,35.19,34.8,Peat - Shallow,Gentle 2-4%,Waterlogged-prone,2013,Deli x DAMI,2.978749,112.534083,15.6,4.4
+EST008-D06-B01,Block 06-01,EST008-D06,Division 06,EST008,26.8,26.62,Alluvial Loam,Undulating 4-8%,Somewhat Imperfect,2009,Deli x Nigeria,3.004827,112.546027,56.1,5.6
+EST008-D06-B02,Block 06-02,EST008-D06,Division 06,EST008,30.6,30.45,Peat - Moderate,Gentle 2-4%,Imperfect,2011,Deli x La Me,2.982374,112.550283,79.6,2.3
+EST008-D06-B03,Block 06-03,EST008-D06,Division 06,EST008,27.05,27.02,Peat - Shallow,Flat 0-2%,Waterlogged-prone,2012,Deli x Nigeria,2.978264,112.528943,59.1,1.4
+EST008-D06-B04,Block 06-04,EST008-D06,Division 06,EST008,35.06,34.7,Mineral Clay Loam,Moderate Slope 12-18%,Poor,1998,Deli x AVROS,2.985143,112.525312,126.5,15.5
+EST008-D06-B05,Block 06-05,EST008-D06,Division 06,EST008,32.18,31.87,Peat - Shallow,Undulating 4-8%,Poor,2004,Deli x Yangambi,3.007498,112.543881,6.2,5.3
+EST008-D06-B06,Block 06-06,EST008-D06,Division 06,EST008,32.68,32.24,Mineral Sandy Clay Loam,Gentle 2-4%,Excessive,2011,Deli x Nigeria,2.996488,112.545741,61.6,2.1
+EST008-D06-B07,Block 06-07,EST008-D06,Division 06,EST008,27.84,27.69,Peat - Shallow,Rolling 8-12%,Poor,2013,Deli x La Me,2.984006,112.550062,20.6,5.9
+EST008-D06-B08,Block 06-08,EST008-D06,Division 06,EST008,45.7,45.5,Mineral Loam,Moderate Slope 12-18%,Moderately Well Drained,2006,Deli x Yangambi,2.97727,112.548465,5.0,15.4
+EST008-D07-B01,Block 07-01,EST008-D07,Division 07,EST008,24.82,24.53,Peat - Deep,Flat 0-2%,Somewhat Imperfect,2021,Deli x AVROS,2.986508,112.547359,131.2,1.6
+EST008-D07-B02,Block 07-02,EST008-D07,Division 07,EST008,25.3,24.95,Peat - Deep,Rolling 8-12%,Poor,2009,Deli x Tanzania,3.005941,112.53488,5.0,11.3
+EST008-D07-B03,Block 07-03,EST008-D07,Division 07,EST008,30.75,30.68,Alluvial Clay,Gentle 2-4%,Moderately Well Drained,2012,Deli x Nigeria,2.965643,112.541698,94.5,3.4
+EST008-D07-B04,Block 07-04,EST008-D07,Division 07,EST008,27.21,26.96,Mineral Loam,Undulating 4-8%,Imperfect,2012,Deli x Ghana,2.971887,112.543718,5.0,5.8
+EST008-D07-B05,Block 07-05,EST008-D07,Division 07,EST008,24.35,24.26,Alluvial Clay,Rolling 8-12%,Well Drained,2020,Deli x Yangambi,2.971908,112.539262,47.1,9.7
+EST008-D07-B06,Block 07-06,EST008-D07,Division 07,EST008,31.55,31.32,Mineral Clay Loam,Gentle 2-4%,Well Drained,2011,Deli x Ghana,3.003989,112.54268,12.9,3.6
+EST008-D07-B07,Block 07-07,EST008-D07,Division 07,EST008,27.79,27.59,Mineral Loam,Gentle 2-4%,Well Drained,2017,Deli x Ghana,2.975206,112.542818,67.5,2.4
+EST008-D07-B08,Block 07-08,EST008-D07,Division 07,EST008,33.15,32.97,Mineral Loam,Steep 18-25%,Very Poor,2006,Deli x Yangambi,2.979702,112.552945,70.6,26.9
+EST008-D08-B01,Block 08-01,EST008-D08,Division 08,EST008,19.61,19.5,Alluvial Loam,Undulating 4-8%,Moderately Well Drained,2015,Deli x La Me,2.986344,112.537779,48.3,6.3
+EST008-D08-B02,Block 08-02,EST008-D08,Division 08,EST008,29.08,28.79,Peat - Shallow,Riparian / Flood-prone,Moderately Well Drained,2002,Deli x DAMI,2.977575,112.560654,63.0,1.6
+EST008-D08-B03,Block 08-03,EST008-D08,Division 08,EST008,25.58,25.31,Peat - Deep,Gentle 2-4%,Moderately Well Drained,2021,Deli x Yangambi,2.984533,112.564049,66.3,3.0
+EST008-D08-B04,Block 08-04,EST008-D08,Division 08,EST008,38.43,38.35,Alluvial Loam,Undulating 4-8%,Well Drained,2010,Deli x Yangambi,2.988823,112.547305,93.1,6.4
+EST008-D08-B05,Block 08-05,EST008-D08,Division 08,EST008,23.19,23.09,Mineral Clay Loam,Gentle 2-4%,Somewhat Imperfect,2001,Deli x Ekona,3.004723,112.533835,5.0,2.9
+EST008-D08-B06,Block 08-06,EST008-D08,Division 08,EST008,26.65,26.32,Alluvial Loam,Gentle 2-4%,Well Drained,2014,Deli x AVROS,2.992043,112.564252,63.5,3.5
+EST008-D08-B07,Block 08-07,EST008-D08,Division 08,EST008,29.57,29.28,Mineral Loam,Flat 0-2%,Moderately Well Drained,2013,Deli x La Me,2.999192,112.564023,49.3,1.1
+EST008-D08-B08,Block 08-08,EST008-D08,Division 08,EST008,28.21,28.06,Mineral Clay Loam,Gentle 2-4%,Poor,2008,Deli x Nigeria,3.007128,112.544608,29.6,3.0
+EST009-D01-B01,Block 01-01,EST009-D01,Division 01,EST009,27.7,27.47,Peat - Shallow,Rolling 8-12%,Waterlogged-prone,2013,Deli x NIFOR,3.003257,112.841412,66.7,12.7
+EST009-D01-B02,Block 01-02,EST009-D01,Division 01,EST009,33.69,33.52,Peat - Deep,Flat 0-2%,Somewhat Imperfect,2009,Deli x Nigeria,3.005923,112.852594,38.1,1.3
+EST009-D01-B03,Block 01-03,EST009-D01,Division 01,EST009,31.9,31.38,Peat - Moderate,Rolling 8-12%,Imperfect,2012,Deli x Ghana,3.019184,112.846345,78.3,9.6
+EST009-D01-B04,Block 01-04,EST009-D01,Division 01,EST009,25.38,25.09,Peat - Deep,Gentle 2-4%,Somewhat Imperfect,2007,Deli x La Me,3.004712,112.832156,31.5,2.2
+EST009-D01-B05,Block 01-05,EST009-D01,Division 01,EST009,33.88,33.63,Peat - Deep,Moderate Slope 12-18%,Very Poor,2012,Deli x AVROS,3.007743,112.844928,35.6,14.4
+EST009-D01-B06,Block 01-06,EST009-D01,Division 01,EST009,36.57,36.46,Alluvial Clay,Undulating 4-8%,Moderately Well Drained,2012,Deli x AVROS,3.015814,112.84512,83.2,5.6
+EST009-D01-B07,Block 01-07,EST009-D01,Division 01,EST009,28.71,28.43,Peat - Shallow,Riparian / Flood-prone,Imperfect,2003,Deli x Calabar,3.024048,112.85231,29.0,0.8
+EST009-D01-B08,Block 01-08,EST009-D01,Division 01,EST009,32.91,32.49,Peat - Moderate,Gentle 2-4%,Somewhat Imperfect,2009,Deli x AVROS,3.021351,112.869629,54.4,1.7
+EST009-D02-B01,Block 02-01,EST009-D02,Division 02,EST009,24.15,23.71,Alluvial Clay,Undulating 4-8%,Somewhat Imperfect,2022,Deli x Tanzania,3.007857,112.86693,48.6,6.1
+EST009-D02-B02,Block 02-02,EST009-D02,Division 02,EST009,43.75,43.12,Peat - Shallow,Moderate Slope 12-18%,Somewhat Imperfect,2015,Deli x La Me,3.041079,112.843493,62.0,15.5
+EST009-D02-B03,Block 02-03,EST009-D02,Division 02,EST009,28.5,28.46,Peat - Shallow,Flat 0-2%,Imperfect,2014,Deli x Ekona,2.996854,112.844436,56.3,0.2
+EST009-D02-B04,Block 02-04,EST009-D02,Division 02,EST009,22.25,22.18,Alluvial Clay,Rolling 8-12%,Poor,2015,Deli x Nigeria,3.006766,112.839017,23.6,10.6
+EST009-D02-B05,Block 02-05,EST009-D02,Division 02,EST009,25.59,25.37,Peat - Shallow,Gentle 2-4%,Somewhat Imperfect,2015,Deli x Ekona,3.031406,112.850118,17.9,3.5
+EST009-D02-B06,Block 02-06,EST009-D02,Division 02,EST009,30.24,30.06,Peat - Shallow,Gentle 2-4%,Moderately Well Drained,2008,Deli x Yangambi,3.022,112.836904,21.6,1.2
+EST009-D02-B07,Block 02-07,EST009-D02,Division 02,EST009,31.1,31.02,Peat - Deep,Low-lying Basin,Very Poor,2007,Deli x Calabar,3.018394,112.849391,80.0,1.5
+EST009-D02-B08,Block 02-08,EST009-D02,Division 02,EST009,23.05,22.86,Peat - Moderate,Rolling 8-12%,Poor,2009,Deli x Nigeria,3.026557,112.865152,12.1,8.3
+EST009-D03-B01,Block 03-01,EST009-D03,Division 03,EST009,26.93,26.9,Alluvial Clay,Gentle 2-4%,Well Drained,2008,Deli x Calabar,3.029007,112.849718,55.8,3.1
+EST009-D03-B02,Block 03-02,EST009-D03,Division 03,EST009,28.97,28.79,Alluvial Clay,Gentle 2-4%,Well Drained,2008,Deli x NIFOR,3.022402,112.841089,69.9,3.2
+EST009-D03-B03,Block 03-03,EST009-D03,Division 03,EST009,27.08,26.76,Mineral Loam,Gentle 2-4%,Moderately Well Drained,2008,Deli x Tanzania,3.020654,112.84893,37.9,1.7
+EST009-D03-B04,Block 03-04,EST009-D03,Division 03,EST009,32.69,32.48,Peat - Shallow,Gentle 2-4%,Somewhat Imperfect,2011,Deli x Tanzania,3.014765,112.831064,67.5,2.0
+EST009-D03-B05,Block 03-05,EST009-D03,Division 03,EST009,27.32,27.07,Alluvial Clay,Riparian / Flood-prone,Poor,2007,Deli x DAMI,3.025715,112.837007,5.0,2.0
+EST009-D03-B06,Block 03-06,EST009-D03,Division 03,EST009,47.84,47.63,Peat - Deep,Moderate Slope 12-18%,Poor,2012,Deli x AVROS,3.038464,112.847217,34.4,13.7
+EST009-D03-B07,Block 03-07,EST009-D03,Division 03,EST009,30.67,30.54,Mineral Clay Loam,Moderate Slope 12-18%,Poor,2014,Deli x Calabar,3.018685,112.865493,61.7,15.3
+EST009-D03-B08,Block 03-08,EST009-D03,Division 03,EST009,24.89,24.46,Alluvial Loam,Gentle 2-4%,Somewhat Imperfect,2013,Deli x Yangambi,2.997891,112.858162,14.6,2.5
+EST009-D04-B01,Block 04-01,EST009-D04,Division 04,EST009,35.26,34.61,Alluvial Loam,Rolling 8-12%,Moderately Well Drained,1998,Deli x NIFOR,3.00981,112.836442,80.8,6.5
+EST009-D04-B02,Block 04-02,EST009-D04,Division 04,EST009,34.06,33.98,Mineral Sandy Clay Loam,Flat 0-2%,Well Drained,2015,Deli x Calabar,3.030242,112.849257,32.1,0.7
+EST009-D04-B03,Block 04-03,EST009-D04,Division 04,EST009,36.15,35.81,Alluvial Loam,Rolling 8-12%,Somewhat Imperfect,2016,Deli x Ghana,3.0235,112.862988,46.3,9.7
+EST009-D04-B04,Block 04-04,EST009-D04,Division 04,EST009,23.9,23.87,Mineral Sandy Clay Loam,Rolling 8-12%,Imperfect,2015,Deli x Calabar,3.01974,112.847226,95.2,10.3
+EST009-D04-B05,Block 04-05,EST009-D04,Division 04,EST009,35.17,34.98,Mineral Clay Loam,Gentle 2-4%,Poor,2018,Deli x Yangambi,3.025202,112.863145,153.1,3.1
+EST009-D04-B06,Block 04-06,EST009-D04,Division 04,EST009,27.33,27.08,Peat - Deep,Moderate Slope 12-18%,Somewhat Imperfect,2018,Deli x NIFOR,3.033167,112.857341,5.0,12.1
+EST009-D04-B07,Block 04-07,EST009-D04,Division 04,EST009,43.49,42.84,Mineral Sandy Clay Loam,Low-lying Basin,Imperfect,2010,Deli x NIFOR,3.016651,112.855968,48.4,0.6
+EST009-D04-B08,Block 04-08,EST009-D04,Division 04,EST009,28.57,28.28,Mineral Sandy Clay Loam,Low-lying Basin,Poor,2010,Deli x NIFOR,3.03109,112.830354,91.0,1.3
+EST009-D05-B01,Block 05-01,EST009-D05,Division 05,EST009,31.7,31.66,Peat - Shallow,Riparian / Flood-prone,Poor,2009,Deli x Calabar,3.033382,112.856053,25.1,1.7
+EST009-D05-B02,Block 05-02,EST009-D05,Division 05,EST009,23.96,23.93,Peat - Shallow,Rolling 8-12%,Poor,2019,Deli x Ghana,3.017753,112.865672,61.4,12.7
+EST009-D05-B03,Block 05-03,EST009-D05,Division 05,EST009,23.18,22.84,Peat - Shallow,Rolling 8-12%,Poor,2017,Deli x Nigeria,3.023655,112.826842,45.9,10.7
+EST009-D05-B04,Block 05-04,EST009-D05,Division 05,EST009,27.66,27.46,Alluvial Clay,Low-lying Basin,Poor,2011,Deli x La Me,3.036986,112.854499,6.1,1.3
+EST009-D05-B05,Block 05-05,EST009-D05,Division 05,EST009,24.1,24.07,Alluvial Loam,Flat 0-2%,Well Drained,2010,Deli x Ghana,3.038529,112.846283,24.9,0.0
+EST009-D05-B06,Block 05-06,EST009-D05,Division 05,EST009,34.28,33.99,Alluvial Clay,Flat 0-2%,Imperfect,2006,Deli x Calabar,3.019383,112.855912,23.0,2.0
+EST009-D05-B07,Block 05-07,EST009-D05,Division 05,EST009,33.8,33.51,Mineral Clay Loam,Gentle 2-4%,Somewhat Imperfect,2015,Deli x Tanzania,3.015405,112.824287,42.0,3.2
+EST009-D05-B08,Block 05-08,EST009-D05,Division 05,EST009,23.21,23.02,Alluvial Clay,Flat 0-2%,Moderately Well Drained,2009,Deli x DAMI,3.039275,112.837453,59.6,0.6
+EST009-D06-B01,Block 06-01,EST009-D06,Division 06,EST009,24.36,24.21,Mineral Sandy Clay Loam,Flat 0-2%,Somewhat Imperfect,2008,Deli x Tanzania,3.01002,112.847005,66.0,0.1
+EST009-D06-B02,Block 06-02,EST009-D06,Division 06,EST009,28.8,28.64,Mineral Clay Loam,Undulating 4-8%,Imperfect,2016,Deli x Yangambi,3.011393,112.858045,108.5,4.0
+EST009-D06-B03,Block 06-03,EST009-D06,Division 06,EST009,40.45,40.36,Alluvial Loam,Riparian / Flood-prone,Poor,2014,Deli x Calabar,3.031373,112.860485,60.2,1.9
+EST009-D06-B04,Block 06-04,EST009-D06,Division 06,EST009,24.19,24.16,Alluvial Loam,Gentle 2-4%,Well Drained,2020,Deli x Tanzania,3.037863,112.853653,62.2,4.1
+EST009-D06-B05,Block 06-05,EST009-D06,Division 06,EST009,31.58,31.54,Alluvial Loam,Undulating 4-8%,Excessive,2008,Deli x La Me,3.024663,112.829229,52.3,6.1
+EST009-D06-B06,Block 06-06,EST009-D06,Division 06,EST009,28.56,28.52,Peat - Shallow,Gentle 2-4%,Poor,2013,Deli x AVROS,3.011147,112.829905,85.8,2.9
+EST009-D06-B07,Block 06-07,EST009-D06,Division 06,EST009,30.8,30.59,Mineral Sandy Clay Loam,Gentle 2-4%,Imperfect,2005,Deli x DAMI,3.020876,112.845552,41.0,0.9
+EST009-D06-B08,Block 06-08,EST009-D06,Division 06,EST009,21.9,21.81,Mineral Clay Loam,Moderate Slope 12-18%,Somewhat Imperfect,2009,Deli x Calabar,3.014054,112.839829,28.4,16.8
+EST009-D07-B01,Block 07-01,EST009-D07,Division 07,EST009,39.14,39.04,Mineral Loam,Moderate Slope 12-18%,Well Drained,2009,Deli x Tanzania,3.002223,112.854243,24.4,15.9
+EST009-D07-B02,Block 07-02,EST009-D07,Division 07,EST009,28.43,28.16,Peat - Deep,Undulating 4-8%,Very Poor,2012,Deli x Calabar,3.0192,112.86096,15.6,7.6
+EST009-D07-B03,Block 07-03,EST009-D07,Division 07,EST009,28.91,28.61,Alluvial Clay,Gentle 2-4%,Moderately Well Drained,2007,Deli x Calabar,3.034127,112.859867,45.6,3.3
+EST009-D07-B04,Block 07-04,EST009-D07,Division 07,EST009,38.82,38.64,Peat - Moderate,Undulating 4-8%,Waterlogged-prone,2011,Deli x AVROS,3.019336,112.869865,63.2,6.0
+EST009-D07-B05,Block 07-05,EST009-D07,Division 07,EST009,35.61,35.55,Mineral Loam,Rolling 8-12%,Well Drained,2012,Deli x Tanzania,3.020992,112.844191,51.1,9.3
+EST009-D07-B06,Block 07-06,EST009-D07,Division 07,EST009,29.48,29.26,Mineral Loam,Gentle 2-4%,Poor,2008,Deli x DAMI,3.028601,112.849862,72.8,2.8
+EST009-D07-B07,Block 07-07,EST009-D07,Division 07,EST009,25.89,25.58,Mineral Loam,Moderate Slope 12-18%,Well Drained,2012,Deli x DAMI,3.009993,112.825975,65.8,15.0
+EST009-D07-B08,Block 07-08,EST009-D07,Division 07,EST009,21.48,21.3,Mineral Clay Loam,Gentle 2-4%,Poor,2007,Deli x Ekona,3.002473,112.847882,13.6,2.2
+EST009-D08-B01,Block 08-01,EST009-D08,Division 08,EST009,26.23,26.15,Mineral Loam,Low-lying Basin,Very Poor,2009,Deli x La Me,3.02913,112.830558,36.0,1.0
+EST009-D08-B02,Block 08-02,EST009-D08,Division 08,EST009,23.64,23.6,Peat - Moderate,Rolling 8-12%,Imperfect,2007,Deli x Ekona,3.004529,112.858317,67.9,9.3
+EST009-D08-B03,Block 08-03,EST009-D08,Division 08,EST009,30.17,29.95,Peat - Shallow,Flat 0-2%,Imperfect,1998,Deli x Yangambi,3.039864,112.846196,5.0,1.2
+EST009-D08-B04,Block 08-04,EST009-D08,Division 08,EST009,28.36,28.2,Peat - Moderate,Rolling 8-12%,Imperfect,2007,Deli x DAMI,3.000418,112.856095,5.0,8.4
+EST009-D08-B05,Block 08-05,EST009-D08,Division 08,EST009,27.01,26.74,Peat - Shallow,Undulating 4-8%,Imperfect,2014,Deli x Yangambi,3.032576,112.839692,32.4,6.8
+EST009-D08-B06,Block 08-06,EST009-D08,Division 08,EST009,29.3,29.03,Alluvial Clay,Low-lying Basin,Waterlogged-prone,2014,Deli x Tanzania,3.001068,112.832353,87.5,1.6
+EST009-D08-B07,Block 08-07,EST009-D08,Division 08,EST009,26.03,25.83,Mineral Loam,Gentle 2-4%,Well Drained,2008,Deli x NIFOR,3.005913,112.829907,12.0,1.5
+EST009-D08-B08,Block 08-08,EST009-D08,Division 08,EST009,26.33,26.04,Alluvial Loam,Undulating 4-8%,Very Poor,2015,Deli x La Me,3.039388,112.844782,59.5,6.5
+EST010-D01-B01,Block 01-01,EST010-D01,Division 01,EST010,22.22,21.88,Mineral Clay Loam,Low-lying Basin,Imperfect,2011,Deli x La Me,3.215871,113.504326,19.4,1.2
+EST010-D01-B02,Block 01-02,EST010-D01,Division 01,EST010,31.12,30.65,Peat - Shallow,Riparian / Flood-prone,Imperfect,2011,Deli x Tanzania,3.215,113.533916,31.2,2.5
+EST010-D01-B03,Block 01-03,EST010-D01,Division 01,EST010,44.99,44.59,Peat - Shallow,Gentle 2-4%,Very Poor,2003,Deli x La Me,3.192862,113.518016,64.5,2.8
+EST010-D01-B04,Block 01-04,EST010-D01,Division 01,EST010,37.34,36.95,Mineral Loam,Moderate Slope 12-18%,Somewhat Imperfect,2010,Deli x Ghana,3.210458,113.502373,43.1,16.5
+EST010-D01-B05,Block 01-05,EST010-D01,Division 01,EST010,25.84,25.64,Peat - Moderate,Rolling 8-12%,Imperfect,2019,Deli x Tanzania,3.194216,113.492719,35.8,8.5
+EST010-D01-B06,Block 01-06,EST010-D01,Division 01,EST010,42.19,42.03,Mineral Loam,Flat 0-2%,Excessive,2010,Deli x Ekona,3.215858,113.499773,80.8,1.0
+EST010-D01-B07,Block 01-07,EST010-D01,Division 01,EST010,46.73,46.27,Alluvial Clay,Rolling 8-12%,Imperfect,2015,Deli x Tanzania,3.190352,113.519164,41.7,10.2
+EST010-D01-B08,Block 01-08,EST010-D01,Division 01,EST010,28.43,28.3,Peat - Deep,Flat 0-2%,Imperfect,2011,Deli x Nigeria,3.20757,113.488122,79.6,2.0
+EST010-D02-B01,Block 02-01,EST010-D02,Division 02,EST010,37.51,37.23,Mineral Clay Loam,Gentle 2-4%,Well Drained,2014,Deli x Tanzania,3.229561,113.519053,111.1,4.1
+EST010-D02-B02,Block 02-02,EST010-D02,Division 02,EST010,40.32,39.82,Mineral Loam,Gentle 2-4%,Very Poor,2010,Deli x AVROS,3.201214,113.518744,56.3,2.1
+EST010-D02-B03,Block 02-03,EST010-D02,Division 02,EST010,21.09,21.05,Alluvial Loam,Undulating 4-8%,Very Poor,2022,Deli x La Me,3.186397,113.510531,49.7,7.1
+EST010-D02-B04,Block 02-04,EST010-D02,Division 02,EST010,33.33,33.17,Peat - Deep,Rolling 8-12%,Waterlogged-prone,2016,Deli x DAMI,3.214519,113.489502,93.5,9.2
+EST010-D02-B05,Block 02-05,EST010-D02,Division 02,EST010,44.45,43.69,Alluvial Loam,Gentle 2-4%,Very Poor,2005,Deli x DAMI,3.216237,113.519709,24.0,3.0
+EST010-D02-B06,Block 02-06,EST010-D02,Division 02,EST010,40.33,40.07,Peat - Moderate,Gentle 2-4%,Somewhat Imperfect,2009,Deli x Nigeria,3.197707,113.515903,47.4,2.2
+EST010-D02-B07,Block 02-07,EST010-D02,Division 02,EST010,37.7,37.07,Mineral Sandy Clay Loam,Gentle 2-4%,Excessive,2010,Deli x Tanzania,3.1967,113.493245,49.0,2.5
+EST010-D02-B08,Block 02-08,EST010-D02,Division 02,EST010,42.48,42.09,Alluvial Clay,Gentle 2-4%,Excessive,1999,Deli x La Me,3.229714,113.50467,5.0,3.5
+EST010-D03-B01,Block 03-01,EST010-D03,Division 03,EST010,29.29,28.98,Mineral Sandy Clay Loam,Flat 0-2%,Moderately Well Drained,1999,Deli x Tanzania,3.197646,113.515873,110.4,2.4
+EST010-D03-B02,Block 03-02,EST010-D03,Division 03,EST010,28.31,27.99,Mineral Clay Loam,Riparian / Flood-prone,Waterlogged-prone,2007,Deli x Ekona,3.199039,113.514013,23.1,2.7
+EST010-D03-B03,Block 03-03,EST010-D03,Division 03,EST010,31.43,31.14,Mineral Clay Loam,Riparian / Flood-prone,Somewhat Imperfect,2003,Deli x DAMI,3.199988,113.533599,32.2,3.4
+EST010-D03-B04,Block 03-04,EST010-D03,Division 03,EST010,40.09,39.89,Alluvial Clay,Gentle 2-4%,Imperfect,2006,Deli x Ekona,3.209054,113.495385,125.7,3.0
+EST010-D03-B05,Block 03-05,EST010-D03,Division 03,EST010,35.9,35.83,Alluvial Loam,Undulating 4-8%,Well Drained,2009,Deli x Calabar,3.220002,113.496532,5.0,4.9
+EST010-D03-B06,Block 03-06,EST010-D03,Division 03,EST010,50.26,50.2,Mineral Loam,Moderate Slope 12-18%,Very Poor,2010,Deli x NIFOR,3.184184,113.514746,102.6,15.1
+EST010-D03-B07,Block 03-07,EST010-D03,Division 03,EST010,25.28,25.22,Mineral Loam,Gentle 2-4%,Well Drained,2012,Deli x Tanzania,3.206405,113.511318,6.5,4.2
+EST010-D03-B08,Block 03-08,EST010-D03,Division 03,EST010,29.4,29.11,Mineral Sandy Clay Loam,Riparian / Flood-prone,Poor,2005,Deli x DAMI,3.183576,113.511113,11.5,0.8
+EST010-D04-B01,Block 04-01,EST010-D04,Division 04,EST010,32.88,32.77,Peat - Shallow,Moderate Slope 12-18%,Moderately Well Drained,2007,Deli x La Me,3.225628,113.513376,40.1,11.0
+EST010-D04-B02,Block 04-02,EST010-D04,Division 04,EST010,30.79,30.58,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2008,Deli x DAMI,3.216126,113.531458,47.4,5.1
+EST010-D04-B03,Block 04-03,EST010-D04,Division 04,EST010,23.29,23.03,Mineral Loam,Undulating 4-8%,Poor,2000,Deli x DAMI,3.197428,113.503139,47.7,5.5
+EST010-D04-B04,Block 04-04,EST010-D04,Division 04,EST010,29.24,29.07,Mineral Loam,Flat 0-2%,Well Drained,2012,Deli x Ekona,3.223355,113.511734,97.0,2.0
+EST010-D04-B05,Block 04-05,EST010-D04,Division 04,EST010,41.09,40.41,Mineral Sandy Clay Loam,Low-lying Basin,Waterlogged-prone,2008,Deli x Yangambi,3.20916,113.499105,37.9,0.7
+EST010-D04-B06,Block 04-06,EST010-D04,Division 04,EST010,36.83,36.48,Peat - Deep,Flat 0-2%,Poor,2015,Deli x La Me,3.184647,113.509396,61.0,0.8
+EST010-D04-B07,Block 04-07,EST010-D04,Division 04,EST010,35.82,35.78,Mineral Loam,Moderate Slope 12-18%,Well Drained,2010,Deli x AVROS,3.211039,113.52499,7.3,13.9
+EST010-D04-B08,Block 04-08,EST010-D04,Division 04,EST010,41.08,40.82,Mineral Clay Loam,Riparian / Flood-prone,Poor,2006,Deli x Tanzania,3.193871,113.522108,101.8,0.9
+EST010-D05-B01,Block 05-01,EST010-D05,Division 05,EST010,40.21,39.69,Mineral Clay Loam,Riparian / Flood-prone,Moderately Well Drained,2002,Deli x Yangambi,3.22401,113.524065,22.5,2.3
+EST010-D05-B02,Block 05-02,EST010-D05,Division 05,EST010,36.7,36.36,Alluvial Clay,Riparian / Flood-prone,Moderately Well Drained,2009,Deli x Calabar,3.210741,113.491523,48.8,2.1
+EST010-D05-B03,Block 05-03,EST010-D05,Division 05,EST010,31.86,31.79,Mineral Sandy Clay Loam,Moderate Slope 12-18%,Well Drained,2002,Deli x Ghana,3.185395,113.519232,34.3,17.0
+EST010-D05-B04,Block 05-04,EST010-D05,Division 05,EST010,32.84,32.56,Mineral Loam,Moderate Slope 12-18%,Somewhat Imperfect,2006,Deli x Ekona,3.233986,113.513975,47.7,15.8
+EST010-D05-B05,Block 05-05,EST010-D05,Division 05,EST010,48.12,48.01,Mineral Clay Loam,Undulating 4-8%,Somewhat Imperfect,2013,Deli x Calabar,3.215657,113.498294,65.6,8.0
+EST010-D05-B06,Block 05-06,EST010-D05,Division 05,EST010,33.13,32.68,Mineral Clay Loam,Gentle 2-4%,Poor,2009,Deli x Ekona,3.214684,113.519157,5.0,3.4
+EST010-D05-B07,Block 05-07,EST010-D05,Division 05,EST010,34.85,34.65,Mineral Loam,Undulating 4-8%,Moderately Well Drained,2008,Deli x La Me,3.18998,113.520773,96.0,6.1
+EST010-D05-B08,Block 05-08,EST010-D05,Division 05,EST010,34.78,34.74,Alluvial Loam,Undulating 4-8%,Moderately Well Drained,2012,Deli x Ghana,3.209191,113.485989,85.7,5.4
+EST010-D06-B01,Block 06-01,EST010-D06,Division 06,EST010,27.64,27.3,Mineral Clay Loam,Gentle 2-4%,Well Drained,2021,Deli x DAMI,3.190455,113.512452,79.0,3.0
+EST010-D06-B02,Block 06-02,EST010-D06,Division 06,EST010,27.61,27.34,Mineral Clay Loam,Moderate Slope 12-18%,Well Drained,2020,Deli x Yangambi,3.226109,113.511547,41.5,20.1
+EST010-D06-B03,Block 06-03,EST010-D06,Division 06,EST010,43.54,43.17,Mineral Loam,Moderate Slope 12-18%,Well Drained,2013,Deli x NIFOR,3.21349,113.485687,37.2,14.3
+EST010-D06-B04,Block 06-04,EST010-D06,Division 06,EST010,29.2,29.04,Mineral Loam,Low-lying Basin,Imperfect,2021,Deli x Calabar,3.192217,113.523547,6.2,1.1
+EST010-D06-B05,Block 06-05,EST010-D06,Division 06,EST010,29.53,29.16,Mineral Loam,Gentle 2-4%,Poor,2021,Deli x La Me,3.207111,113.495366,5.0,3.3
+EST010-D06-B06,Block 06-06,EST010-D06,Division 06,EST010,35.88,35.84,Mineral Sandy Clay Loam,Flat 0-2%,Well Drained,2006,Deli x Ghana,3.198843,113.513842,6.6,0.0
+EST010-D06-B07,Block 06-07,EST010-D06,Division 06,EST010,34.47,34.13,Mineral Sandy Clay Loam,Flat 0-2%,Imperfect,2002,Deli x DAMI,3.218051,113.504715,36.2,1.2
+EST010-D06-B08,Block 06-08,EST010-D06,Division 06,EST010,47.03,46.9,Mineral Sandy Clay Loam,Flat 0-2%,Very Poor,2005,Deli x DAMI,3.217144,113.503731,45.0,1.8
+EST010-D07-B01,Block 07-01,EST010-D07,Division 07,EST010,30.09,30.03,Mineral Loam,Riparian / Flood-prone,Somewhat Imperfect,2013,Deli x Ekona,3.205837,113.526539,40.7,3.1
+EST010-D07-B02,Block 07-02,EST010-D07,Division 07,EST010,48.58,48.47,Peat - Deep,Undulating 4-8%,Poor,2012,Deli x NIFOR,3.197562,113.512403,51.2,6.0
+EST010-D07-B03,Block 07-03,EST010-D07,Division 07,EST010,36.28,36.1,Mineral Sandy Clay Loam,Gentle 2-4%,Somewhat Imperfect,2004,Deli x La Me,3.195643,113.49354,86.1,4.0
+EST010-D07-B04,Block 07-04,EST010-D07,Division 07,EST010,37.34,36.97,Alluvial Loam,Gentle 2-4%,Well Drained,2013,Deli x La Me,3.203659,113.51017,65.5,1.9
+EST010-D07-B05,Block 07-05,EST010-D07,Division 07,EST010,35.19,34.86,Peat - Shallow,Moderate Slope 12-18%,Poor,2004,Deli x DAMI,3.193899,113.49353,100.5,18.4
+EST010-D07-B06,Block 07-06,EST010-D07,Division 07,EST010,25.87,25.7,Peat - Moderate,Low-lying Basin,Excessive,2012,Deli x Ekona,3.212541,113.496817,87.3,2.9
+EST010-D07-B07,Block 07-07,EST010-D07,Division 07,EST010,33.18,32.6,Mineral Loam,Moderate Slope 12-18%,Well Drained,1999,Deli x Ekona,3.220253,113.532611,81.0,15.8
+EST010-D07-B08,Block 07-08,EST010-D07,Division 07,EST010,45.65,45.37,Mineral Clay Loam,Flat 0-2%,Somewhat Imperfect,2013,Deli x NIFOR,3.220311,113.509142,51.8,1.1
+EST010-D08-B01,Block 08-01,EST010-D08,Division 08,EST010,37.78,37.6,Mineral Sandy Clay Loam,Rolling 8-12%,Well Drained,2014,Deli x Yangambi,3.198237,113.51866,109.3,13.1
+EST010-D08-B02,Block 08-02,EST010-D08,Division 08,EST010,22.81,22.51,Alluvial Clay,Rolling 8-12%,Imperfect,2021,Deli x Calabar,3.230464,113.515542,78.0,9.8
+EST010-D08-B03,Block 08-03,EST010-D08,Division 08,EST010,41.31,40.41,Peat - Deep,Low-lying Basin,Very Poor,2000,Deli x Ghana,3.208603,113.518579,36.3,1.3
+EST010-D08-B04,Block 08-04,EST010-D08,Division 08,EST010,41.04,40.6,Mineral Sandy Clay Loam,Undulating 4-8%,Well Drained,2003,Deli x Tanzania,3.193664,113.524951,5.0,6.7
+EST010-D08-B05,Block 08-05,EST010-D08,Division 08,EST010,61.8,60.87,Mineral Loam,Steep 18-25%,Poor,2010,Deli x NIFOR,3.228606,113.521174,93.4,22.3
+EST010-D08-B06,Block 08-06,EST010-D08,Division 08,EST010,32.06,32.0,Peat - Shallow,Gentle 2-4%,Very Poor,2008,Deli x Ekona,3.217489,113.515839,9.5,2.4
+EST010-D08-B07,Block 08-07,EST010-D08,Division 08,EST010,39.05,38.27,Alluvial Clay,Flat 0-2%,Somewhat Imperfect,1999,Deli x Yangambi,3.228388,113.514688,18.1,0.6
+EST010-D08-B08,Block 08-08,EST010-D08,Division 08,EST010,29.19,29.08,Mineral Loam,Flat 0-2%,Somewhat Imperfect,2014,Deli x NIFOR,3.230173,113.517196,24.6,0.6

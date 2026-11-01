@@ -1,0 +1,5 @@
+cluster,blocks,yield_vs_age_peers,yield_t_ha_yr,prime_share,traits,soil_moisture_pct,water_deficit_prior_90d_mm,flooding_days,road_accessibility_score_1_5,harvest_interval_days,bagworm_incidence_pct,ganoderma_incidence_pct,leaf_k_pct,leaf_mg_pct,missing_palm_pct,weed_cover_pct,rank,name
+3,211,1.205,25.177,0.787,"low harvest interval, high road access, low flooding days",46.28,2.54,0.67,2.75,13.86,1.5,0.83,1.14,0.33,2.99,22.99,1,Group A
+0,203,0.539,24.554,0.773,"low road access, high harvest interval, low soil moisture",46.09,2.79,1.06,2.13,15.09,1.64,0.77,1.16,0.34,3.18,26.23,2,Group B
+2,58,-0.814,22.264,0.672,"high prior 90-day water deficit, high road access, low soil moisture",46.76,24.75,0.84,2.6,14.22,1.3,0.82,1.14,0.33,3.25,24.78,3,Group C
+1,168,-1.775,22.329,0.762,"high soil moisture, high flooding days, high harvest interval",71.42,2.78,2.01,2.16,15.12,1.57,0.89,1.09,0.31,3.18,24.7,4,Group D

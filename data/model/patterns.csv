@@ -1,0 +1,9 @@
+no,pattern,test,evidence,verdict
+1,Palm age curve,Yield rises to prime age then falls,"Peak 26.7 t/ha/yr at Prime (14-16y); youngest 14.5, oldest 16.8",Confirmed
+2,Waterlogging vs drainage,"Poor drainage in wet cycles vs good drainage in dry cycles, vs age peers",-0.87 vs +0.68 t/ha/yr; flood days 1.8 vs 0.6,Confirmed
+3,Lagged water deficit,"Prior 90-day deficit of 25 mm or more vs none, vs age peers",-1.85 vs +0.23 t/ha/yr,Confirmed
+4,Leaf K and Mg status,"Lowest vs highest quarter of leaf K and Mg, vs age peers",K -0.31 vs +0.41; Mg -0.31 vs +0.36 t/ha/yr (hidden until age is removed),Confirmed
+5,Harvest discipline,Poor vs good road access: harvest interval and field loss,16.0 vs 13.0 days; field loss 4.4% vs 1.5%,Confirmed
+6,Pest treatment response,"Bagworm incidence in bagworm-treated blocks, first vs last cycle",5.01% to 3.70% (-26%),Confirmed
+7,Genetic line differences,Yield vs age peers by genetic line (one-way ANOVA),Deli x Yangambi +1.09 vs Deli x Tanzania -1.25 t/ha/yr; p = 2e-46,Confirmed
+8,Top-performing combination,Clustering blocks by conditions; best group vs the rest,"Group A (211 blocks, low harvest interval, high road access, low flooding days): +1.20 vs -0.55 t/ha/yr",Confirmed

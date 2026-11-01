@@ -1,0 +1,9 @@
+nutrient,situation,block_cycles,share_pct,yield_vs_age_peers
+K,Low leaf despite fertilizer,270,8.4,-0.48
+K,"Under-fed: low leaf, none applied",280,8.8,-0.52
+K,Adequate and fertilized,1455,45.5,0.19
+K,"Adequate, none applied",1195,37.3,0.08
+Mg,Low leaf despite fertilizer,55,1.7,-0.64
+Mg,"Under-fed: low leaf, none applied",44,1.4,-0.77
+Mg,Adequate and fertilized,1670,52.2,0.11
+Mg,"Adequate, none applied",1431,44.7,-0.01

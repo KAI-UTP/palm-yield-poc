@@ -1,0 +1,5 @@
+nutrient,critical_level_pct,share_below_pct,yield_vs_peers_below,yield_vs_peers_adequate
+Nitrogen (N),2.5,21.6,0.73,-0.16
+Phosphorus (P),0.15,45.3,-0.29,0.29
+Potassium (K),1.0,17.2,-0.5,0.14
+Magnesium (Mg),0.24,3.1,-0.7,0.05

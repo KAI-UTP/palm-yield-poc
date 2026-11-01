@@ -1,0 +1,6 @@
+model,mae,rmse,r2,train_seconds,chosen
+Gradient boosting,1.632,2.057,0.77,15.6,True
+Histogram gradient boosting,1.649,2.075,0.766,7.4,False
+Extra trees,1.659,2.083,0.764,4.5,False
+Random forest,1.699,2.146,0.749,5.4,False
+Linear regression (ridge),1.775,2.227,0.73,0.1,False

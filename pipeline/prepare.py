@@ -5,6 +5,7 @@ Reads the raw sample CSV (or a file given as the first argument) and writes:
   data/processed/quality_checks.csv      every check run and its result
   data/powerbi/*.csv                     a star schema ready to load into Power BI
 """
+import os
 from pathlib import Path
 
 import numpy as np
@@ -14,8 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw" / "SOPB_Palm_Yield_Optimization_POC_SAC.csv"
 if not RAW.exists():  # fall back to the copy next to the project folder
     RAW = ROOT.parent / RAW.name
-OUT = ROOT / "data" / "processed"
-PBI = ROOT / "data" / "powerbi"
+# Outputs go under data/ unless PALM_DATA_DIR points elsewhere (the app uses this to keep each visitor's upload private)
+BASE = Path(os.environ.get("PALM_DATA_DIR") or ROOT / "data")
+OUT = BASE / "processed"
+PBI = BASE / "powerbi"
 
 PCT_COLS = [
     "missing_palm_pct", "soil_moisture_pct", "soil_organic_carbon_pct", "biocontrol_area_pct",

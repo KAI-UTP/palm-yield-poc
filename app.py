@@ -17,13 +17,14 @@ import plotly.io as pio
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
-PROC, MODEL = ROOT / "data" / "processed", ROOT / "data" / "model"
+DEFAULT_DATA = ROOT / "data"
+PROC, MODEL = DEFAULT_DATA / "processed", DEFAULT_DATA / "model"  # the bundled sample; a visitor's upload uses its own folder
 sys.path.insert(0, str(ROOT / "pipeline"))
 from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
 
-SOURCE_FILE = PROC / "source.json"
-UPLOADS = ROOT / "data" / "uploads"
+SESSIONS = DEFAULT_DATA / "sessions"   # one private folder per visitor who runs their own file
+SESSION_TTL_HOURS = 24
 
 # ---------- Design tokens (validated default data-viz palette, dark mode) ----------
 INK, INK2, MUTED = "#f0efec", "#c3c2b7", "#898781"
@@ -92,18 +93,39 @@ st.markdown(f"""<style>
 
 
 # ---------- Data ----------
-@st.cache_data
-def load():
-    df = pd.read_parquet(PROC / "harvest_cycle.parquet")
-    m = {p.stem: pd.read_csv(p) for p in MODEL.glob("*.csv")}
-    j = {p.stem: json.loads(p.read_text()) for p in MODEL.glob("*.json")}
-    return df, m, j, pd.read_csv(PROC / "quality_checks.csv")
+@st.cache_data(max_entries=20)
+def load(base):
+    proc, model = Path(base) / "processed", Path(base) / "model"
+    df = pd.read_parquet(proc / "harvest_cycle.parquet")
+    m = {p.stem: pd.read_csv(p) for p in model.glob("*.csv")}
+    j = {p.stem: json.loads(p.read_text()) for p in model.glob("*.json")}
+    return df, m, j, pd.read_csv(proc / "quality_checks.csv")
 
 
-@st.cache_resource
-def driver_model():
+@st.cache_resource(max_entries=20)
+def driver_model(base):
     # Refits the what-if model if the host has a different scikit-learn than the one that saved it
-    return load_driver_model(pd.read_parquet(PROC / "harvest_cycle.parquet"))
+    return load_driver_model(pd.read_parquet(Path(base) / "processed" / "harvest_cycle.parquet"), Path(base) / "model")
+
+
+def clean_old_sessions():
+    """Remove private folders nobody has used for a day, so the server does not fill up."""
+    import shutil
+    import time
+    if SESSIONS.exists():
+        for d in SESSIONS.iterdir():
+            if d.is_dir() and time.time() - d.stat().st_mtime > SESSION_TTL_HOURS * 3600:
+                shutil.rmtree(d, ignore_errors=True)
+
+
+def data_base():
+    """This visitor's data folder: their private upload if they ran one, else the shared sample."""
+    base = st.session_state.get("data_dir")
+    if base and (Path(base) / "model" / "actions.csv").exists():
+        return Path(base)
+    st.session_state.pop("data_dir", None)
+    st.session_state.pop("source", None)
+    return DEFAULT_DATA
 
 
 needed = [PROC / "harvest_cycle.parquet", MODEL / "actions.csv", MODEL / "driver_model.joblib", MODEL / "lever_gains.csv", MODEL / "model_comparison.csv"]
@@ -120,7 +142,9 @@ if not all(p.exists() for p in needed):
                 st.stop()
         boot.update(label="Ready.", state="complete")
     st.rerun()
-df, M, J, QC = load()
+clean_old_sessions()
+BASE = data_base()
+df, M, J, QC = load(str(BASE))
 fm, dm = J["forecast_metrics"], J["driver_metrics"]
 
 
@@ -177,7 +201,7 @@ def kpis(items):
 
 
 # ---------- Sidebar: data source, filters, assumptions ----------
-source = json.loads(SOURCE_FILE.read_text()) if SOURCE_FILE.exists() else {"source": "sample"}
+source = st.session_state.get("source", {"source": "sample"})
 st.logo(str(ROOT / "assets" / "logo.svg"), size="large", icon_image=str(ROOT / "assets" / "icon.svg"))
 
 
@@ -188,7 +212,7 @@ def reset_filters():
 
 with st.sidebar:
     if source.get("source") == "upload":
-        st.markdown(f'<div class="synthetic">Using uploaded data: <b>{source.get("name", "file")}</b></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="synthetic">Using your data: <b>{source.get("name", "file")}</b>. Only you see it; other visitors see the sample.</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="synthetic">Synthetic sample data, not real SOPB results.</div>', unsafe_allow_html=True)
     st.markdown("#### Filters")
@@ -568,7 +592,7 @@ def page_simulator():
             st.session_state.sim_block = options[0]
         bid = st.selectbox("Block, ranked by priority", options, key="sim_block")
         row = last[last.block_id == bid]
-        dmod = driver_model()
+        dmod = driver_model(str(BASE))
         base_x = design_matrix(row, CONDITIONS).reindex(columns=dmod["columns"], fill_value=0)
         sim_x = base_x.copy()
         st.caption("Each slider starts at this block's latest value. Hover the ⓘ beside a condition to see what it means.")
@@ -668,7 +692,8 @@ The method works end to end and every criterion can be measured again on real da
 def page_data():
     header("POC", "Run on your data",
            "Upload a file in the same format as the sample: one row per block per harvest cycle. The app checks it, then re-runs data preparation "
-           "and every model, and all pages update. This is how the POC moves from sample data to real data.")
+           "and every model, and all pages update. This is how the POC moves from sample data to real data. "
+           "<b>Your file and results are private to your browser session</b>; other visitors keep seeing the sample.")
     req = required_columns()
     using = "Uploaded file: " + source.get("name", "") if source.get("source") == "upload" else "Synthetic sample (SOPB_Palm_Yield_Optimization_POC_SAC.csv)"
     kpis([("Data in use", "Uploaded" if source.get("source") == "upload" else "Sample", using),
@@ -678,8 +703,10 @@ def page_data():
         st.download_button("Download CSV template", (",".join(req) + "\n").encode(), "palm_yield_template.csv", "text/csv", use_container_width=True)
         with st.expander("See required columns"):
             st.dataframe(pd.DataFrame({"column": req}), hide_index=True, use_container_width=True, height=260)
-        if source.get("source") == "upload" and st.button("Restore sample data", use_container_width=True):
-            run_pipeline(None)
+        if source.get("source") == "upload" and st.button("Back to the sample data", use_container_width=True):
+            st.session_state.pop("data_dir", None)
+            st.session_state.pop("source", None)
+            st.rerun()
     path, ready, why = None, False, "Upload a file in step 2, or use the sample file, to turn on this button."
     with r, card("2. Upload and check", "Drag a CSV file here or browse for one. The file is checked straight away; nothing changes until you press Run in step 3."):
         up = st.file_uploader("CSV file", type="csv", label_visibility="collapsed", key="upload_file")
@@ -687,15 +714,16 @@ def page_data():
             st.session_state.use_sample = True
         if up is not None:
             st.session_state.use_sample = False
-            UPLOADS.mkdir(parents=True, exist_ok=True)
-            path = UPLOADS / Path(up.name).name
+            upload_dir = SESSIONS / session_id() / "upload"
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            path = upload_dir / Path(up.name).name
             path.write_bytes(up.getvalue())
         elif st.session_state.get("use_sample"):
             path = RAW_SAMPLE
             st.caption(f"Using the sample file: {RAW_SAMPLE.name}")
         if path is not None:
             ready, why = check_upload(path, req)
-    with card("3. Run the pipeline", "Re-runs data preparation and every model on the checked file, then updates every page. Takes one to two minutes."):
+    with card("3. Run the pipeline", "Re-runs data preparation and every model on the checked file, then updates every page for you only. Takes one to two minutes."):
         if ready:
             st.success("The file passed every check. Press Run to use it.", icon="✅")
         elif path is not None:
@@ -703,7 +731,7 @@ def page_data():
         else:
             st.info(why, icon="ℹ️")
         if st.button("Run the pipeline on this file", type="primary", use_container_width=True, disabled=not ready, key="run_pipeline"):
-            run_pipeline(None if path == RAW_SAMPLE else path)
+            run_pipeline(path)
 
 
 def check_upload(path, req):
@@ -734,25 +762,33 @@ def check_upload(path, req):
     return False, "Fix the items marked ❌ in step 2, then upload the file again."
 
 
+def session_id():
+    """A random id for this browser session; names its private folder."""
+    import uuid
+    if "sid" not in st.session_state:
+        st.session_state.sid = uuid.uuid4().hex
+    return st.session_state.sid
+
+
 def run_pipeline(path):
-    """Re-run preparation and models on a file (None = the sample), then reload every page."""
+    """Run preparation and models on a file into this session's private folder, then switch this session to it."""
     import subprocess
-    from datetime import datetime
-    args = [str(path)] if path else []
+    run_dir = SESSIONS / session_id() / "results"
+    env = {**os.environ, "PALM_DATA_DIR": str(run_dir)}
     with st.status("Running the pipeline. This takes one to two minutes.", expanded=True) as status:
         for step, script in [("Preparing data and running quality checks", "prepare.py"), ("Training models and building the action plan", "model.py")]:
             st.write(step)
-            res = subprocess.run([sys.executable, str(ROOT / "pipeline" / script), *(args if script == "prepare.py" else [])],
-                                 capture_output=True, text=True, cwd=ROOT, timeout=1200)
+            res = subprocess.run([sys.executable, str(ROOT / "pipeline" / script), *([str(path)] if script == "prepare.py" else [])],
+                                 capture_output=True, text=True, cwd=ROOT, env=env, timeout=1200)
             if res.returncode != 0:
                 status.update(label="The pipeline stopped with an error.", state="error")
                 st.code(res.stderr[-2000:])
                 return
-        SOURCE_FILE.write_text(json.dumps({"source": "upload" if path else "sample", "name": Path(path).name if path else "sample",
-                                           "at": datetime.now().isoformat(timespec="seconds")}))
-        status.update(label="Done. Every page now uses this data.", state="complete")
-    st.cache_data.clear()
-    st.cache_resource.clear()
+        status.update(label="Done. Every page now uses this data, for you only.", state="complete")
+    load.clear()
+    driver_model.clear()
+    st.session_state.data_dir = str(run_dir)
+    st.session_state.source = {"source": "upload", "name": "sample file (your own run)" if path == RAW_SAMPLE else Path(path).name}
     st.rerun()
 
 

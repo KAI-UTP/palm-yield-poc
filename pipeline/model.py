@@ -29,8 +29,10 @@ from sklearn.model_selection import GroupKFold
 from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data" / "processed" / "harvest_cycle.parquet"
-OUT = ROOT / "data" / "model"
+# Reads and writes under data/ unless PALM_DATA_DIR points elsewhere (a visitor's private upload folder)
+BASE = Path(os.environ.get("PALM_DATA_DIR") or ROOT / "data")
+DATA = BASE / "processed" / "harvest_cycle.parquet"
+OUT = BASE / "model"
 SEED = 42
 
 LABELS = {
@@ -93,28 +95,28 @@ CANDIDATES = {
 }
 
 
-def save_driver_model(final, X):
+def save_driver_model(final, X, out_dir=None):
     bundle = {"model": final, "columns": list(X.columns), "medians": X.median().to_dict(), "sklearn": sklearn.__version__}
-    joblib.dump(bundle, OUT / "driver_model.joblib")
+    joblib.dump(bundle, Path(out_dir or OUT) / "driver_model.joblib")
     return bundle
 
 
-def fit_driver_model(df):
+def fit_driver_model(df, out_dir=None):
     """Refit only the what-if model (a few seconds). Used when the saved one came from another scikit-learn version."""
     X = design_matrix(df, CONDITIONS)
-    return save_driver_model(gbm().fit(X, df.yield_ann_t_ha_yr), X)
+    return save_driver_model(gbm().fit(X, df.yield_ann_t_ha_yr), X, out_dir)
 
 
-def load_driver_model(df):
+def load_driver_model(df, out_dir=None):
     """Load the saved what-if model; refit it if it is missing or was saved by a different scikit-learn."""
-    path = OUT / "driver_model.joblib"
+    path = Path(out_dir or OUT) / "driver_model.joblib"
     try:
         bundle = joblib.load(path)
         if bundle.get("sklearn") == sklearn.__version__:
             return bundle
     except Exception:  # noqa: BLE001 - a model pickled by another version may not load at all
         pass
-    return fit_driver_model(df)
+    return fit_driver_model(df, out_dir)
 
 
 def drivers(df):

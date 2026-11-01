@@ -19,7 +19,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parent
 PROC, MODEL = ROOT / "data" / "processed", ROOT / "data" / "model"
 sys.path.insert(0, str(ROOT / "pipeline"))
-from model import CONDITIONS, LABELS, LEVERS, design_matrix  # noqa: E402
+from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
 
 SOURCE_FILE = PROC / "source.json"
@@ -102,7 +102,8 @@ def load():
 
 @st.cache_resource
 def driver_model():
-    return joblib.load(MODEL / "driver_model.joblib")
+    # Refits the what-if model if the host has a different scikit-learn than the one that saved it
+    return load_driver_model(pd.read_parquet(PROC / "harvest_cycle.parquet"))
 
 
 needed = [PROC / "harvest_cycle.parquet", MODEL / "actions.csv", MODEL / "driver_model.joblib", MODEL / "lever_gains.csv", MODEL / "model_comparison.csv"]

@@ -17,6 +17,7 @@ os.environ.setdefault("LOKY_MAX_CPU_COUNT", str(os.cpu_count() or 4))
 import joblib
 import numpy as np
 import pandas as pd
+import sklearn
 from scipy import stats
 from sklearn.cluster import KMeans
 from sklearn.ensemble import ExtraTreesRegressor, GradientBoostingRegressor, HistGradientBoostingRegressor, RandomForestRegressor
@@ -74,7 +75,8 @@ FLAG_ACTIONS = {
 
 
 def design_matrix(df, numeric):
-    X = pd.concat([df[numeric], pd.get_dummies(df[CATEGORIES], prefix_sep="=", dtype=float)], axis=1)
+    # All inputs as floats: newer scikit-learn refuses partial dependence on integer columns
+    X = pd.concat([df[numeric].astype(float), pd.get_dummies(df[CATEGORIES], prefix_sep="=", dtype=float)], axis=1)
     return X.fillna(X.median(numeric_only=True))
 
 
@@ -89,6 +91,30 @@ CANDIDATES = {
     "Gradient boosting": lambda: gbm(),
     "Histogram gradient boosting": lambda: HistGradientBoostingRegressor(max_iter=300, learning_rate=0.05, random_state=SEED),
 }
+
+
+def save_driver_model(final, X):
+    bundle = {"model": final, "columns": list(X.columns), "medians": X.median().to_dict(), "sklearn": sklearn.__version__}
+    joblib.dump(bundle, OUT / "driver_model.joblib")
+    return bundle
+
+
+def fit_driver_model(df):
+    """Refit only the what-if model (a few seconds). Used when the saved one came from another scikit-learn version."""
+    X = design_matrix(df, CONDITIONS)
+    return save_driver_model(gbm().fit(X, df.yield_ann_t_ha_yr), X)
+
+
+def load_driver_model(df):
+    """Load the saved what-if model; refit it if it is missing or was saved by a different scikit-learn."""
+    path = OUT / "driver_model.joblib"
+    try:
+        bundle = joblib.load(path)
+        if bundle.get("sklearn") == sklearn.__version__:
+            return bundle
+    except Exception:  # noqa: BLE001 - a model pickled by another version may not load at all
+        pass
+    return fit_driver_model(df)
 
 
 def drivers(df):
@@ -114,7 +140,7 @@ def drivers(df):
     (OUT / "driver_metrics.json").write_text(json.dumps(metrics, indent=2))
     # How yield responds to each top numeric driver, holding the rest as they are
     final = gbm().fit(X, y)
-    joblib.dump({"model": final, "columns": list(X.columns), "medians": X.median().to_dict()}, OUT / "driver_model.joblib")
+    save_driver_model(final, X)
     curves = []
     for f in [f for f in out.feature if f in CONDITIONS][:8]:
         pd_ = partial_dependence(final, X, [f], grid_resolution=25, method="brute")

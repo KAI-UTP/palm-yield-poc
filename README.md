@@ -25,7 +25,7 @@ To run the whole POC on another file in the same format, use the **Run on your d
 ## Share it online (free)
 
 1. Put this folder in a GitHub repository (public, or private with access granted).
-2. Go to [share.streamlit.io](https://share.streamlit.io), choose **Create app**, pick the repository and set the main file to `app.py`. Under **Advanced settings**, choose Python 3.12 or newer.
+2. Go to [share.streamlit.io](https://share.streamlit.io), choose **Create app**, pick the repository and set the main file to `app.py`. Any Python from 3.11 to 3.14 works (3.14 is the default).
 3. Share the app link in the submission.
 
 ## What is inside

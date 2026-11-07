@@ -889,7 +889,7 @@ def page_home():
                 "an agronomist": [("agronomy", "Fertilizer, harvesting, treatments"), ("patterns", "The 8 tested patterns"), ("drivers", "What drives yield")],
                 "an analyst or IT": [("about", "Architecture and data flow"), ("quality", "Data quality checks"), ("data", "Run on your own data")]}[role]
         for key, label in path:
-            go_to(key, label, "•")
+            go_to(key, label, ":material/arrow_right:")
 
 
 def page_assistant():

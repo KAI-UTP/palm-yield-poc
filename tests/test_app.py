@@ -15,6 +15,16 @@ def app():
     mp.undo()
 
 
+def test_home_page_with_real_navigation(monkeypatch):
+    """The real start page, with page links (the render-all hook skips links), for every role."""
+    monkeypatch.delenv("PALM_RENDER_ALL", raising=False)
+    at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=240).run()
+    assert not at.exception, [e.value for e in at.exception]
+    for role in at.radio(key="role").options:
+        at.radio(key="role").set_value(role).run()
+        assert not at.exception, (role, [e.value for e in at.exception])
+
+
 def test_all_pages_render(app):
     assert not app.exception, [e.value for e in app.exception]
 

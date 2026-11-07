@@ -876,7 +876,7 @@ def page_home():
     for col, (n, q, a, key) in zip(st.columns(4), steps):
         with col:
             st.markdown(f'<div class="step"><div class="n">{n}</div><div class="q">{q}</div><div class="a">{a}</div></div>', unsafe_allow_html=True)
-            go_to(key, f"Open {PG_TITLES[key]}", "➡️")
+            go_to(key, "Open", "➡️")
 
     l, r = st.columns([3, 2])
     with l, card("Ask the AI assistant", "Answers use only this app's results, so it does not invent numbers."):

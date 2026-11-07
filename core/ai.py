@@ -42,6 +42,16 @@ def _cfg(secrets, name, default=None):
     return os.environ.get(name, default)
 
 
+def _reason(res):
+    """Google's short error reason (e.g. API_KEY_INVALID), never the key itself."""
+    try:
+        err = res.json().get("error", {})
+        details = [d.get("reason") for d in err.get("details", []) if d.get("reason")]
+        return f" ({details[0] if details else err.get('status', '')})" if (details or err.get("status")) else ""
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 class GeminiProvider:
     name = "Google Gemini"
     URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -68,10 +78,9 @@ class GeminiProvider:
                 continue
             if res.status_code == 429:
                 raise AIError("The free Gemini limit is reached for now. Try again in a minute.")
-            if res.status_code in (400, 401, 403):
-                raise AIError("Gemini rejected the request. Check that the API key is valid.")
             if res.status_code >= 300:
-                raise AIError(f"Gemini returned an error ({res.status_code}).")
+                raise AIError(f"Gemini returned error {res.status_code}{_reason(res)}. "
+                              + ("Check that the API key is valid and has access to the Gemini API." if res.status_code in (400, 401, 403) else ""))
             data = res.json()
             cands = data.get("candidates") or []
             text = "".join(p.get("text", "") for c in cands[:1] for p in c.get("content", {}).get("parts", []))

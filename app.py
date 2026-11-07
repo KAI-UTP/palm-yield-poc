@@ -22,7 +22,7 @@ PROC, MODEL = DEFAULT_DATA / "processed", DEFAULT_DATA / "model"  # the bundled 
 sys.path.insert(0, str(ROOT / "pipeline"))
 from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
-from core import ai, insights as I  # noqa: E402
+from core import ai, charts, insights as I  # noqa: E402
 from core.store import Results, View  # noqa: E402
 
 SESSIONS = DEFAULT_DATA / "sessions"   # one private folder per visitor who runs their own file
@@ -855,6 +855,26 @@ def ai_provider():
     return ai.get_provider(secrets)
 
 
+def draw_spec(s, key):
+    """Draw a chart spec from core/charts.py in the house style."""
+    if not s:
+        return
+    d, x, y = s["data"], s["x"], s["y"]
+    if s["kind"] == "line":
+        fig = px.line(d, x=x, y=y, color=s.get("color"), markers=True, color_discrete_sequence=[BLUE, GREY])
+    else:
+        fig = px.bar(d, x=x, y=y, orientation="h" if s["kind"] == "barh" else "v", color=s.get("color"),
+                     barmode="group", hover_data=list(d.columns), color_discrete_sequence=[BLUE, ORANGE])
+        if not s.get("color"):
+            vals = d[x if s["kind"] == "barh" else y]
+            fig.update_traces(marker_color=[CRIT if s.get("signed") and val < 0 else BLUE for val in vals])
+    fig.update_layout(yaxis_title=None if s["kind"] == "barh" else y, xaxis_title=x)
+    st.markdown(f"**{s['title']}**")
+    chart(fig, key, h=max(260, 28 * len(d)) if s["kind"] == "barh" else 280, data=d)
+    if s.get("note"):
+        st.caption(s["note"])
+
+
 def ask_and_open(question):
     """Queue a question for the assistant and open its page."""
     st.session_state.pending_q = question
@@ -919,9 +939,11 @@ def page_assistant():
                 st.session_state.pending_q = q
                 st.rerun()
 
-    for m in st.session_state.chat:
+    for i, m in enumerate(st.session_state.chat):
         with st.chat_message(m["role"], avatar="🧑‍🌾" if m["role"] == "user" else "✨"):
             st.markdown(m["content"])
+            if m.get("chart"):
+                draw_spec(charts.spec(V, m["chart"], m.get("question", "")), f"chat_chart_{i}")
             if m.get("note"):
                 st.caption(m["note"])
 
@@ -933,11 +955,14 @@ def page_assistant():
     st.session_state.chat.append({"role": "user", "content": q})
     with st.chat_message("user", avatar="🧑‍🌾"):  # show the question straight away, before the answer arrives
         st.markdown(q)
-    note = None
+    note, chart = None, charts.pick(q)  # offline: chart chosen from the question's words
     if prov and st.session_state.ai_used < CHAT_LIMIT:
         try:
             with st.chat_message("assistant", avatar="✨"), st.spinner(f"Asking {prov.name}… usually a few seconds."):
-                answer = prov.ask(q, I.ai_context(V, q), history)
+                answer = prov.ask(q, I.ai_context(V, q) + charts.ai_instruction(), history)
+            answer, tag = charts.split_tag(answer)  # the AI picks a chart by name; data comes from the results
+            if tag:
+                chart = None if tag == "none" else tag
             st.session_state.ai_used += 1
             note = f"Answered by {prov.name} from this app's results."
         except ai.AIError as e:
@@ -945,7 +970,7 @@ def page_assistant():
     else:
         answer = I.offline_answer(V, q)
         note = "Built-in answer from the insight engine." if not prov else f"AI limit of {CHAT_LIMIT} questions reached; built-in answer."
-    st.session_state.chat.append({"role": "assistant", "content": answer, "note": note})
+    st.session_state.chat.append({"role": "assistant", "content": answer, "note": note, "chart": chart, "question": q})
     st.rerun()
 
 

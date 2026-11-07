@@ -50,8 +50,27 @@ def test_gemini_tries_next_model_when_one_is_retired():
 
 @pytest.mark.parametrize("code", [400, 403, 429, 500])
 def test_gemini_errors_raise_aierror(code):
-    with pytest.raises(ai.AIError):
-        ai.GeminiProvider("k", session=FakeHTTP(Resp(code))).ask("Q?", "")
+    with pytest.raises(ai.AIError):  # a 400 is retried once without the thinking setting
+        ai.GeminiProvider("k", session=FakeHTTP(Resp(code), Resp(code))).ask("Q?", "")
+
+
+def test_asks_for_brief_thinking_and_retries_without_it():
+    http = FakeHTTP(Resp(400), ok())
+    assert ai.GeminiProvider("k", session=http).ask("Q?", "") == "Answer."
+    first, second = (kw["json"]["generationConfig"] for _, kw in http.calls)
+    assert first["thinkingConfig"] == {"thinkingLevel": "low"} and "thinkingConfig" not in second
+
+
+def test_slow_model_falls_through_to_next():
+    class SlowThenOK(FakeHTTP):
+        def post(self, url, **kw):
+            if not self.calls:
+                self.calls.append((url, kw))
+                raise ai.requests.Timeout()
+            return super().post(url, **kw)
+
+    p = ai.GeminiProvider("k", session=SlowThenOK(ok()))
+    assert p.ask("Q?", "") == "Answer." and p.model == ai.GEMINI_FALLBACK_MODELS[1]
 
 
 def test_empty_answer_raises():

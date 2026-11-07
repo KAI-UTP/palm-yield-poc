@@ -5,7 +5,7 @@ service fails or hits its free limit, the app falls back to the offline answers 
 
 Keys are read from Streamlit secrets or environment variables, never from code:
     GEMINI_API_KEY       Google AI Studio key (free tier)
-    GEMINI_MODEL         optional, default "gemini-flash-latest" (Google's alias for the current Flash model)
+    GEMINI_MODEL         optional; by default Google's current Flash-Lite, then Flash, aliases are tried
     ANTHROPIC_API_KEY    optional, to use Claude instead
     CLAUDE_MODEL         optional, default "claude-opus-5-5"
     AI_PROVIDER          optional, "gemini", "claude" or "none" to force a choice
@@ -26,7 +26,8 @@ Answer the user's question using ONLY the facts in the RESULTS brief below. Rule
 RESULTS brief:
 """
 
-GEMINI_FALLBACK_MODELS = ["gemini-flash-latest", "gemini-3.6-flash", "gemini-2.5-flash"]
+# Google's aliases for the current fast models first (Flash-Lite is quickest and has the highest free limits)
+GEMINI_FALLBACK_MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-2.5-flash"]
 
 
 class AIError(Exception):
@@ -61,18 +62,33 @@ class GeminiProvider:
         self.models = [model] if model else list(GEMINI_FALLBACK_MODELS)
         self.model = self.models[0]
 
+    def _post(self, model, body):
+        return self.http.post(self.URL.format(model=model), json=body, timeout=(10, 45),
+                              headers={"x-goog-api-key": self.key, "Content-Type": "application/json"})
+
     def ask(self, question, context, history=()):
         contents = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]} for m in history]
         contents.append({"role": "user", "parts": [{"text": question}]})
-        body = {"system_instruction": {"parts": [{"text": SYSTEM + context}]}, "contents": contents,
-                "generationConfig": {"temperature": 0.2, "maxOutputTokens": 1024}}
+        # Room for the model's own reasoning plus the answer
+        plain = {"system_instruction": {"parts": [{"text": SYSTEM + context}]}, "contents": contents,
+                 "generationConfig": {"temperature": 0.2, "maxOutputTokens": 4096}}
+        # Explaining computed results needs little reasoning; brief thinking keeps answers fast
+        fast = {**plain, "generationConfig": {**plain["generationConfig"], "thinkingConfig": {"thinkingLevel": "low"}}}
         last = None
-        for model in self.models:  # try the next model name if Google has retired one
-            try:
-                res = self.http.post(self.URL.format(model=model), json=body, timeout=40,
-                                     headers={"x-goog-api-key": self.key, "Content-Type": "application/json"})
-            except requests.RequestException as e:
-                raise AIError(f"Could not reach Gemini: {e.__class__.__name__}") from e
+        for model in self.models:  # next model if one is retired (404) or too slow
+            res = None
+            for body in (fast, plain):  # some models reject the thinking setting (400): retry without it
+                try:
+                    res = self._post(model, body)
+                except requests.Timeout:
+                    res, last = None, f"{model} took too long"
+                    break
+                except requests.RequestException as e:
+                    raise AIError(f"Could not reach Gemini: {e.__class__.__name__}") from e
+                if not (res.status_code == 400 and body is fast):
+                    break
+            if res is None:
+                continue
             if res.status_code == 404:
                 last = f"model {model} not found"
                 continue
@@ -88,7 +104,7 @@ class GeminiProvider:
                 raise AIError("Gemini returned no answer (it may have been blocked by its safety filter).")
             self.model = model
             return text.strip()
-        raise AIError(f"No Gemini model available ({last}). Set GEMINI_MODEL to a current model name.")
+        raise AIError(f"Gemini did not answer ({last}). Try again, or set GEMINI_MODEL to a current model name.")
 
 
 class ClaudeProvider:

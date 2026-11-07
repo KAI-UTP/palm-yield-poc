@@ -931,10 +931,12 @@ def page_assistant():
         return
     history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.chat[-6:]]
     st.session_state.chat.append({"role": "user", "content": q})
+    with st.chat_message("user", avatar="🧑‍🌾"):  # show the question straight away, before the answer arrives
+        st.markdown(q)
     note = None
     if prov and st.session_state.ai_used < CHAT_LIMIT:
         try:
-            with st.spinner("Thinking…"):
+            with st.chat_message("assistant", avatar="✨"), st.spinner(f"Asking {prov.name}… usually a few seconds."):
                 answer = prov.ask(q, I.ai_context(V, q), history)
             st.session_state.ai_used += 1
             note = f"Answered by {prov.name} from this app's results."

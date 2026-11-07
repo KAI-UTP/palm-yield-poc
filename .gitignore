@@ -4,3 +4,5 @@ __pycache__/
 data/uploads/
 data/sessions/
 data/processed/source.json
+.streamlit/secrets.toml
+.pytest_cache/

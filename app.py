@@ -22,6 +22,8 @@ PROC, MODEL = DEFAULT_DATA / "processed", DEFAULT_DATA / "model"  # the bundled 
 sys.path.insert(0, str(ROOT / "pipeline"))
 from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
+from core import ai, insights as I  # noqa: E402
+from core.store import Results, View  # noqa: E402
 
 SESSIONS = DEFAULT_DATA / "sessions"   # one private folder per visitor who runs their own file
 SESSION_TTL_HOURS = 24
@@ -80,6 +82,13 @@ st.markdown(f"""<style>
   .pill.ok {{background: rgba(12,163,12,.16); color: #6fd66f;}} .pill.no {{background: {GRID}; color: {INK2};}}
   .synthetic {{background: #2a2416; border: 1px solid #5c4a1a; color: #f3d58a; border-radius: 8px; padding: 8px 10px; font-size: .82rem;}}
   [data-testid="stSidebarNav"] {{padding-top: .3rem;}}
+  .ins {{background: {SURFACE}; border: 1px solid {AXIS}; border-left: 3px solid var(--c); border-radius: 10px; padding: 12px 14px; height: 100%;}}
+  .ins .h {{color: {INK}; font-weight: 600; font-size: .95rem; line-height: 1.35; margin-bottom: 4px;}}
+  .ins .d {{color: {INK2}; font-size: .86rem; line-height: 1.45;}}
+  .ins .k {{font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; color: var(--c); margin-bottom: 4px;}}
+  .step {{background: {SURFACE}; border: 1px solid {AXIS}; border-radius: 10px; padding: 12px 14px;}}
+  .step .n {{color: {BLUE}; font-weight: 700; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase;}}
+  .step .q {{color: {INK}; font-weight: 600; margin: 2px 0 4px;}} .step .a {{color: {INK2}; font-size: .86rem;}}
   /* Map controls: keep the attribution inside the map's bottom-right corner (the map library's own CSS does not load here) */
   .maplibregl-control-container > div {{position: absolute; z-index: 2; pointer-events: none;}}
   .maplibregl-ctrl-top-left {{top: 0; left: 0;}} .maplibregl-ctrl-top-right {{top: 0; right: 0;}}
@@ -194,6 +203,38 @@ def card(title, note=None):
     return c
 
 
+INSIGHT_STYLE = {"gap": ("Where", BLUE), "risk": ("Watch", CRIT), "action": ("Act", WARN), "good": ("Good news", GOOD), "info": ("Note", MUTED)}
+
+
+def insight_cards(items, title="AI insights for the selected blocks"):
+    """Automated findings, written from the results for the current filters."""
+    if not items:
+        return
+    st.markdown(f'<div class="eyebrow">✨ {title}</div>', unsafe_allow_html=True)
+    cols = st.columns(len(items))
+    for col, (kind, head, detail) in zip(cols, items):
+        tag, color = INSIGHT_STYLE.get(kind, INSIGHT_STYLE["info"])
+        col.markdown(f'<div class="ins" style="--c:{color}"><div class="k">{tag}</div><div class="h">{head}</div><div class="d">{detail}</div></div>',
+                     unsafe_allow_html=True)
+    st.write("")
+
+
+def go_to(key, label=None, icon=None):
+    """A link to another page (plain text when pages are rendered for tests)."""
+    if os.environ.get("PALM_RENDER_ALL"):
+        st.caption(f"→ {label or key}")
+    else:
+        st.page_link(PG[key], label=label, icon=icon)
+
+
+def next_step(key, why):
+    st.divider()
+    l, r = st.columns([3, 2])
+    l.caption(f"**Next step:** {why}")
+    with r:
+        go_to(key, f"Continue to {PG_TITLES[key]} →")
+
+
 def kpis(items):
     cols = st.columns(len(items))
     for col, (label, value, help_) in zip(cols, items):
@@ -250,6 +291,7 @@ act = M["actions"][M["actions"].block_id.isin(blocks_in)]
 lev = M["lever_gains"][M["lever_gains"].block_id.isin(blocks_in)]
 total_gain_t = float((lev.all_levers * lev.productive_area_ha).sum())
 blk_y = f.groupby("block_id").apply(wavg, include_groups=False)
+V = View(Results(df, M, J, QC), f, nxt, act, lev, price)  # the selected blocks, for insights and the AI assistant
 est_y = f.groupby("estate_name").apply(wavg, include_groups=False)
 
 
@@ -264,6 +306,7 @@ def page_overview():
         lede = f"In {est_y.index[0]}, {spread_b}."
     header("Observe", "Yield overview", f"{lede} Fixing the controllable issues the model finds is worth about "
            f"<b>{total_gain_t:,.0f} t FFB a year ({rm(total_gain_t * price)})</b>.")
+    insight_cards(I.overview(V))
     first = f.drop_duplicates("block_id")
     oil = float((f.yield_ann_t_ha_yr * f.oil_to_bunch_pct / 100 * f.productive_area_ha).sum() / f.productive_area_ha.sum())
     kpis([("FFB yield, t/ha/yr", f"{wavg(f):.1f}", "Annualised: cycle yield × 365 ÷ days between rounds, weighted by productive area"),
@@ -303,6 +346,7 @@ def page_overview():
         fig.update_traces(marker=dict(size=8))
         fig.update_layout(coloraxis_colorbar=dict(title="", thickness=10, len=0.6))
         chart(fig, "ov_map", h=460, data=bm.rename(columns={"vs_peers": "vs age peers", "y": "t/ha/yr"}).round(2))
+    next_step("drivers", "see what drives these differences.")
 
 
 def page_quality():
@@ -355,6 +399,7 @@ def page_drivers():
         fig = px.line(d, x=pick, y="t/ha/yr")
         fig.update_traces(line=dict(color=BLUE, width=2))
         chart(fig, "dr_pdp", h=330, data=d[[pick, "t/ha/yr"]].round(2))
+    next_step("forecast", "see which blocks are likely to under-perform next cycle.")
 
 
 def page_patterns():
@@ -433,6 +478,7 @@ def page_agronomy():
     header("Understand", "Agronomy: fertilizer, harvesting, treatments",
            f"<b>{(f.harvest_interval_days > 10).mean():.1%}</b> of harvest rounds run past the 10-day good-practice limit. "
            f"<b>{under_k:.0f}%</b> of block cycles are low in leaf potassium with none applied. {treat_summary(te)}")
+    insight_cards(I.agronomy(V))
     l, r = st.columns(2)
     with l, card("Leaf 17 nutrients vs critical levels",
                  "Critical levels for mature palms as commonly cited from Ochs and Olvin (1977) in Fairhurst and Mutert (1999). Calibrate locally. "
@@ -513,6 +559,7 @@ def page_forecast():
            f"Tested on whole blocks held out from training, the model's average error is <b>{fm['model']['mae']:.2f} t/ha/yr</b>, "
            f"<b>{fm['mae_improvement_vs_last_cycle_pct']:.0f}% lower</b> than assuming next cycle equals this one. "
            f"Its 80% range (±{fm['range_80_half_width']:.1f} t/ha/yr) held the actual result {fm['range_80_coverage_pct']:.0f}% of the time.")
+    insight_cards(I.forecast(V))
     rc = nxt.risk.value_counts().reindex(["High", "Medium", "Low"]).fillna(0).astype(int)
     kpis([("🔴 High risk", f"{rc['High']}", "Forecast 2+ t/ha/yr below its age-band median"), ("🟠 Medium risk", f"{rc['Medium']}", "1 to 2 below"),
           ("🟢 Low risk", f"{rc['Low']}", None), ("Forecast error vs baseline", f"−{fm['mae_improvement_vs_last_cycle_pct']:.0f}%", "Lower average error than 'same as last cycle'")])
@@ -546,12 +593,14 @@ def page_forecast():
                                     "forecast_low": st.column_config.NumberColumn("Low (80%)", format="%.1f"),
                                     "forecast_high": st.column_config.NumberColumn("High (80%)", format="%.1f"),
                                     "forecast_vs_age_peers": st.column_config.NumberColumn("vs age peers", format="%+.1f"), "risk": "Risk"})
+    next_step("actions", "turn the risk list into a ranked, valued action plan.")
 
 
 def page_actions():
     header("Recommend", "Action plan: where to act first",
            f"The what-if model sets each controllable condition to a good level and predicts the yield change, so overlapping issues are not double counted. "
            f"Across the selected blocks that is <b>{total_gain_t:,.0f} t FFB a year</b>, worth <b>{rm(total_gain_t * price)}</b> at RM {price:,.0f}/t.")
+    insight_cards(I.actions(V))
     by_lever = pd.DataFrame({"Issue": [v[2] for v in LEVERS.values()], "First action": [v[3] for v in LEVERS.values()],
                              "t FFB/yr": [float((lev[k] * lev.productive_area_ha).sum()) for k in LEVERS]}).sort_values("t FFB/yr")
     by_lever = by_lever[by_lever["t FFB/yr"] >= 1]
@@ -577,6 +626,7 @@ def page_actions():
                                     "value_rm": st.column_config.NumberColumn("Value, RM/yr", format="localized")})
         st.download_button("Download full action plan (CSV)", act.assign(value_rm=act.est_gain_t_yr * price).to_csv(index=False).encode(), "palm_action_plan.csv", "text/csv")
     st.caption("Indicative: a model-based what-if on synthetic data, before costs. To be validated with agronomists and trial blocks on real data.")
+    next_step("block", "open any block to see why it is on the list.")
 
 
 def page_simulator():
@@ -792,22 +842,231 @@ def run_pipeline(path):
     st.rerun()
 
 
+# ---------- Start here, AI assistant, Block profile, How it's built ----------
+CHAT_LIMIT = 20  # AI questions per visitor session, so a public link cannot run up the free quota
+
+
+def ai_provider():
+    """Read the key on every run, so adding a key in secrets takes effect at once."""
+    try:
+        secrets = st.secrets
+    except Exception:  # noqa: BLE001
+        secrets = None
+    return ai.get_provider(secrets)
+
+
+def ask_and_open(question):
+    """Queue a question for the assistant and open its page."""
+    st.session_state.pending_q = question
+    st.switch_page(PG["assistant"])
+
+
+def page_home():
+    header("Palm Yield Optimization POC", "Find where yield is lost, and what to do first",
+           f"An AI-assisted analytics tool for oil palm plantations: it explains why yield differs, forecasts the next harvest cycle, and ranks "
+           f"every block by the action worth the most. {'Your uploaded data' if source.get('source') == 'upload' else 'Synthetic sample data'}: "
+           f"{df.block_id.nunique():,} blocks in {df.estate_name.nunique()} estates. Use the sidebar filters to focus on a region or estate.")
+    insight_cards(I.home(V), "AI insights: what stands out")
+
+    st.markdown("#### Follow the journey")
+    steps = [("1 · Observe", "Where is yield lost?", "Yield by estate, age and block, on a map.", "overview"),
+             ("2 · Understand", "Why does it differ?", "Drivers, 8 tested patterns and agronomy.", "drivers"),
+             ("3 · Predict", "What happens next?", "Next-cycle forecast with a risk list.", "forecast"),
+             ("4 · Recommend", "What should we do?", "A ranked, valued action for every block.", "actions")]
+    for col, (n, q, a, key) in zip(st.columns(4), steps):
+        with col:
+            st.markdown(f'<div class="step"><div class="n">{n}</div><div class="q">{q}</div><div class="a">{a}</div></div>', unsafe_allow_html=True)
+            go_to(key, f"Open {PG_TITLES[key]}", "➡️")
+
+    l, r = st.columns([3, 2])
+    with l, card("Ask the AI assistant", "Answers use only this app's results, so it does not invent numbers."):
+        for i, q in enumerate(I.SUGGESTED[:4]):
+            if st.button(q, key=f"home_q{i}", use_container_width=True):
+                ask_and_open(q)
+    with r, card("Start from your role"):
+        role = st.radio("I am", ["a plantation manager", "an agronomist", "an analyst or IT"], key="role", label_visibility="collapsed")
+        path = {"a plantation manager": [("actions", "Which blocks to fix first"), ("block", "Why a block is on the list"), ("simulator", "Test a change")],
+                "an agronomist": [("agronomy", "Fertilizer, harvesting, treatments"), ("patterns", "The 8 tested patterns"), ("drivers", "What drives yield")],
+                "an analyst or IT": [("about", "Architecture and data flow"), ("quality", "Data quality checks"), ("data", "Run on your own data")]}[role]
+        for key, label in path:
+            go_to(key, label, "•")
+
+
+def page_assistant():
+    prov = ai_provider()
+    header("Ask", "AI assistant",
+           "Ask about blocks, estates, risk, fertilizer or value, in plain words. Answers use only the results computed in this app "
+           "for the blocks in your sidebar filters, so they do not invent numbers.")
+    st.session_state.setdefault("chat", [])
+    st.session_state.setdefault("ai_used", 0)
+    if prov:
+        st.caption(f"✨ AI mode: {prov.name}. {CHAT_LIMIT - st.session_state.ai_used} AI questions left in this session. "
+                   "Synthetic data; findings are associations, gains before costs.")
+    else:
+        st.caption("📘 Offline mode: answers come from the built-in insight engine. Add a GEMINI_API_KEY (free from Google AI Studio) "
+                   "to Streamlit secrets to switch on the AI model.")
+
+    l, r = st.columns([4, 1])
+    with r:
+        if st.button("Clear chat", use_container_width=True, disabled=not st.session_state.chat):
+            st.session_state.chat = []
+            st.rerun()
+    if not st.session_state.chat:
+        st.markdown("**Try one of these:**")
+        cols = st.columns(3)
+        for i, q in enumerate(I.SUGGESTED):
+            if cols[i % 3].button(q, key=f"sug{i}", use_container_width=True):
+                st.session_state.pending_q = q
+                st.rerun()
+
+    for m in st.session_state.chat:
+        with st.chat_message(m["role"], avatar="🧑‍🌾" if m["role"] == "user" else "✨"):
+            st.markdown(m["content"])
+            if m.get("note"):
+                st.caption(m["note"])
+
+    typed = st.chat_input("Ask a question, e.g. 'Why is EST005-D08-B01 high risk?'")
+    q = typed or st.session_state.pop("pending_q", None)
+    if not q:
+        return
+    history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.chat[-6:]]
+    st.session_state.chat.append({"role": "user", "content": q})
+    note = None
+    if prov and st.session_state.ai_used < CHAT_LIMIT:
+        try:
+            with st.spinner("Thinking…"):
+                answer = prov.ask(q, I.ai_context(V, q), history)
+            st.session_state.ai_used += 1
+            note = f"Answered by {prov.name} from this app's results."
+        except ai.AIError as e:
+            answer, note = I.offline_answer(V, q), f"{e} Showing the built-in answer instead."
+    else:
+        answer = I.offline_answer(V, q)
+        note = "Built-in answer from the insight engine." if not prov else f"AI limit of {CHAT_LIMIT} questions reached; built-in answer."
+    st.session_state.chat.append({"role": "assistant", "content": answer, "note": note})
+    st.rerun()
+
+
+def page_block():
+    header("Recommend", "Block profile", "Everything about one block in one place: how it is doing, why, what the model expects next, and what to do first.")
+    options = list(act.block_id)
+    if not options:
+        st.info("No blocks match the filters.")
+        return
+    if st.session_state.get("profile_block") not in options:
+        st.session_state.profile_block = options[0]
+    bid = st.selectbox("Block, ranked by priority (type to search)", options, key="profile_block")
+    story = I.block_story(V.r, bid, price)
+    a = act[act.block_id == bid].iloc[0]
+    hist = df[df.block_id == bid].sort_values("harvest_cycle_no")
+    last = hist.iloc[-1]
+    kpis([("Yield now, t/ha/yr", f"{last.yield_ann_t_ha_yr:.1f}", "Latest cycle, annualised"),
+          ("vs age peers", f"{last.yield_vs_age_peers:+.1f}", "Against the median of palms of the same age"),
+          ("Next cycle forecast", f"{a.forecast_t_ha_yr:.1f}", None), ("Risk", RISK_ICON[a.risk], None),
+          ("Value of fixing it", rm(a.est_gain_t_yr * price), f"{a.est_gain_t_yr:,.0f} t FFB a year, before costs")])
+    insight_cards([("action", f"First action: {a.top_action.split(';')[0]}", story)], "AI summary of this block")
+    l, r = st.columns([3, 2])
+    h = hist.assign(peers=hist.yield_ann_t_ha_yr - hist.yield_vs_age_peers)
+    with l, card("Yield history", "Annualised yield each harvest cycle, against the median of palms of the same age."):
+        fig = go.Figure([go.Scatter(x=h.harvest_cycle_no, y=h.peers, name="Age peers (median)", mode="lines", line=dict(color=GREY, width=2, dash="dot")),
+                         go.Scatter(x=h.harvest_cycle_no, y=h.yield_ann_t_ha_yr, name="This block", mode="lines+markers", line=dict(color=BLUE, width=2), marker_size=8)])
+        fig.update_layout(xaxis_title="Harvest cycle", yaxis_title="t/ha/yr")
+        chart(fig, "bp_hist", h=280, data=h[["harvest_cycle_no", "yield_ann_t_ha_yr", "peers", "harvest_interval_days"]].round(2))
+    with r, card("Issues and conditions", "Latest cycle."):
+        issues = a.issues if isinstance(a.issues, str) and a.issues else "None flagged"
+        st.markdown(f"**Issues:** {issues}")
+        cond = pd.DataFrame([(LABELS.get(feat, feat), f"{last[feat]:.2f}".rstrip("0").rstrip("."), LEVER_HELP[feat][0])
+                             for feat, *_ in LEVERS.values()], columns=["Condition", "Value", "Unit"])
+        st.dataframe(cond, hide_index=True, use_container_width=True, height=250)
+    b1, b2 = st.columns(2)
+    if b1.button("Test changes in the What-if simulator", use_container_width=True, disabled=bid not in set(df[df.harvest_cycle_no == df.harvest_cycle_no.max()].block_id)):
+        st.session_state.sim_block = bid
+        st.switch_page(PG["simulator"])
+    if b2.button("Ask the AI about this block", use_container_width=True):
+        ask_and_open(f"Why is {bid} on the action list, and what should we do first?")
+
+
+def page_about():
+    header("About this POC", "How it's built",
+           "A complete, working system, not only a dashboard: one repeatable pipeline feeds a shared data layer, which serves the web app, "
+           "an AI assistant and a REST API for other systems.")
+    with card("Architecture", "Every component reads the same results, so the app, the API and the AI always agree."):
+        st.graphviz_chart(f"""digraph {{
+  rankdir=TB; bgcolor="transparent"; nodesep=0.5; ranksep=0.35;
+  node [shape=box style="rounded,filled" fillcolor="{SURFACE}" color="{AXIS}" fontname="Segoe UI" fontsize=10 fontcolor="{INK}" margin="0.15,0.08"];
+  edge [color="{MUTED}" arrowsize=0.6 fontname="Segoe UI" fontsize=9 fontcolor="{MUTED}"];
+  src [label="Source data\\nCSV export or\\nSAP / BI extract"];
+  prep [label="1. Prepare\\nschema + 22 quality checks\\n20 engineered features"];
+  ml [label="2. Model\\n5 algorithms compared\\ndrivers · forecast · groups\\nwhat-if levers" fillcolor="#14304f" color="{BLUE}"];
+  store [label="3. Data layer\\nParquet + CSV/JSON results\\ncore/store.py"];
+  ins [label="Insight engine\\ncomputed findings"];
+  llm [label="AI assistant\\nGemini (free) or Claude\\ngrounded on results"];
+  app [label="Streamlit web app\\n15 pages"];
+  api [label="REST API (FastAPI)\\n/summary /actions\\n/forecast /blocks"];
+  ext [label="SAP Analytics Cloud\\nPower BI · other apps"];
+  {{rank=same; src; prep; ml;}} {{rank=same; ins; llm;}} {{rank=same; app; api; ext;}}
+  src -> prep -> ml -> store; store -> ins; store -> app; store -> api; ins -> llm; ins -> app; llm -> app [label="answers"]; api -> ext;
+}}""", use_container_width=True)
+    l, r = st.columns(2)
+    with l, card("Tech stack"):
+        st.markdown("""
+| Layer | Technology |
+|---|---|
+| Data preparation | Python, pandas, PyArrow (Parquet) |
+| Machine learning | scikit-learn (gradient boosting, random forest, extra trees, ridge, k-means), SciPy |
+| Insights and AI | Rule-based insight engine; Google Gemini API (free tier), pluggable to Claude |
+| Web app | Streamlit, Plotly |
+| Integration | FastAPI REST API with OpenAPI docs |
+| Quality | pytest, GitHub Actions CI, Docker |""")
+    with r, card("Data flow, step by step"):
+        st.markdown(f"""
+1. **Ingest:** a CSV (one row per block per harvest cycle) is checked against the {len(required_columns())}-column schema.
+2. **Prepare:** {len(QC)} quality checks, cleaning, and 20 features such as annualised yield and yield vs age peers.
+3. **Model:** 5 algorithms compared on unseen blocks; the best forecasts the next cycle with an 80% range.
+4. **Store:** results saved as Parquet, CSV and JSON; each visitor's upload gets its own private folder.
+5. **Serve:** the app, the insight engine, the AI assistant and the API all read through one data layer.""")
+    l, r = st.columns(2)
+    with l, card("Integration API", "Run `uvicorn api:app` and open /docs for the interactive OpenAPI page."):
+        st.dataframe(pd.DataFrame([("GET /health", "Service status"), ("GET /summary", "Headline numbers, by estate and price"),
+                                   ("GET /insights", "Automated findings"), ("GET /actions", "Ranked action plan, by estate or risk"),
+                                   ("GET /forecast", "Next-cycle forecast with 80% range"), ("GET /blocks/{id}", "One block: summary, history, action")],
+                                  columns=["Endpoint", "Returns"]), hide_index=True, use_container_width=True)
+    with r, card("Engineering quality"):
+        st.markdown("""
+- **Automated tests** for the pipeline outputs, insight engine, AI layer (with a mocked service), API and every app page.
+- **Continuous integration:** GitHub Actions runs the tests on every push.
+- **Docker image** runs the app the same way on any server, including the customer's own.
+- **Security:** API keys live in secrets, never in code; uploads are private per session; the AI has a per-session question limit.
+- **Graceful fallback:** if the AI service is down or over its free limit, the built-in insight engine answers instead.""")
+
+
+PG = {"home": st.Page(page_home, title="Start here", icon="🏠", url_path="home", default=True),
+      "assistant": st.Page(page_assistant, title="AI assistant", icon="✨", url_path="assistant"),
+      "poc": st.Page(page_poc, title="POC summary", icon="🧪", url_path="poc"),
+      "data": st.Page(page_data, title="Run on your data", icon="📤", url_path="run-on-your-data"),
+      "about": st.Page(page_about, title="How it's built", icon="🏗️", url_path="architecture"),
+      "overview": st.Page(page_overview, title="Overview", icon="📊", url_path="overview"),
+      "quality": st.Page(page_quality, title="Data quality", icon="🧹", url_path="data-quality"),
+      "drivers": st.Page(page_drivers, title="Yield drivers", icon="🔍", url_path="drivers"),
+      "patterns": st.Page(page_patterns, title="Pattern check", icon="✅", url_path="patterns"),
+      "agronomy": st.Page(page_agronomy, title="Agronomy", icon="🌱", url_path="agronomy"),
+      "groups": st.Page(page_groups, title="Block groups", icon="🧩", url_path="groups"),
+      "forecast": st.Page(page_forecast, title="Forecast and risk", icon="📈", url_path="forecast"),
+      "actions": st.Page(page_actions, title="Action plan", icon="🎯", url_path="actions"),
+      "block": st.Page(page_block, title="Block profile", icon="🔎", url_path="block"),
+      "simulator": st.Page(page_simulator, title="What-if simulator", icon="🎛️", url_path="simulator")}
+PG_TITLES = {k: v.title for k, v in PG.items()}
 pages = {
-    "POC": [st.Page(page_poc, title="POC summary", icon="🧪", url_path="poc", default=True),
-            st.Page(page_data, title="Run on your data", icon="📤", url_path="run-on-your-data")],
-    "Observe": [st.Page(page_overview, title="Overview", icon="📊", url_path="overview"),
-                st.Page(page_quality, title="Data quality", icon="🧹", url_path="data-quality")],
-    "Understand": [st.Page(page_drivers, title="Yield drivers", icon="🔍", url_path="drivers"),
-                   st.Page(page_patterns, title="Pattern check", icon="✅", url_path="patterns"),
-                   st.Page(page_agronomy, title="Agronomy", icon="🌱", url_path="agronomy"),
-                   st.Page(page_groups, title="Block groups", icon="🧩", url_path="groups")],
-    "Predict": [st.Page(page_forecast, title="Forecast and risk", icon="📈", url_path="forecast")],
-    "Recommend": [st.Page(page_actions, title="Action plan", icon="🎯", url_path="actions"),
-                  st.Page(page_simulator, title="What-if simulator", icon="🎛️", url_path="simulator")],
+    "Start": [PG["home"], PG["assistant"]],
+    "Observe": [PG["overview"], PG["quality"]],
+    "Understand": [PG["drivers"], PG["patterns"], PG["agronomy"], PG["groups"]],
+    "Predict": [PG["forecast"]],
+    "Recommend": [PG["actions"], PG["block"], PG["simulator"]],
+    "About this POC": [PG["poc"], PG["data"], PG["about"]],
 }
 
 if os.environ.get("PALM_RENDER_ALL"):  # test hook: render every page in one run
-    for fn in [page_poc, page_data, page_overview, page_quality, page_drivers, page_patterns, page_agronomy, page_groups, page_forecast, page_actions, page_simulator]:
+    for fn in [page_home, page_assistant, page_block, page_about, page_poc, page_data, page_overview, page_quality, page_drivers, page_patterns, page_agronomy, page_groups, page_forecast, page_actions, page_simulator]:
         fn()
 else:
-    st.navigation(pages).run()
+    st.navigation(pages, expanded=True).run()

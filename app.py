@@ -992,7 +992,7 @@ def ask_and_open(question):
 def page_home():
     header("PalmYield Analytics Workbench", "Find where yield is lost, and what to do first",
            f"The analyst's view behind PalmYield: check the data, test the patterns and validate the models before results reach managers and field teams. "
-           f"every block by the action worth the most. {'Your uploaded data' if source.get('source') == 'upload' else 'Synthetic sample data'}: "
+           f"{'Your uploaded data' if source.get('source') == 'upload' else 'Synthetic sample data'}: "
            f"{df.block_id.nunique():,} blocks in {df.estate_name.nunique()} estates. Use the sidebar filters to focus on a region or estate.")
     st.info("Managers, agronomists and field teams use the **PalmYield web app**; analysts use this workbench to add data and check every number. "
             "[Open PalmYield ↗](https://kai-utp.github.io/palm-yield-poc/)", icon="🧭")

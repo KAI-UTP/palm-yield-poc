@@ -120,6 +120,10 @@
   const has = (q, ...words) => words.some((w) => new RegExp("\\b" + w, "i").test(q));
 
   function answer(D, S, q) {
+    if (has(q, "brief", "summar", "overview", "this cycle", "needs me", "what needs", "headline", "good morning")) {
+      const c = briefing(D, S);
+      return { text: c.map((x) => `**${x.title}:** ${x.head}. ${x.body}`).join("\n\n"), chart: "levers" };
+    }
     const id = (q.match(/EST\d{3}-D\d{2}-B\d{2}/i) || [])[0];
     if (id) {
       const b = D.blocks.find((x) => x.id === id.toUpperCase());
@@ -238,10 +242,65 @@
     throw new Error(last || "no answer");
   }
 
+  /* Streaming version: calls onText(wholeTextSoFar) as the answer arrives, like a chat app. */
+  async function askGeminiStream(key, D, S, q, history, onText) {
+    const contents = [...history.slice(-6).map((m) => ({ role: m.role === "user" ? "user" : "model", parts: [{ text: m.text }] })),
+      { role: "user", parts: [{ text: q }] }];
+    const body = JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM + "\n\nRESULTS:\n" + context(D, S, q) }] }, contents,
+      generationConfig: { temperature: 0.2, maxOutputTokens: 900 } });
+    let last = "";
+    for (const m of MODELS) {
+      let text = "";
+      try {
+        const ctrl = new AbortController(); let timer = setTimeout(() => ctrl.abort(), 30000);
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:streamGenerateContent?alt=sse`, {
+          method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body, signal: ctrl.signal });
+        if (!r.ok) { clearTimeout(timer); const j = await r.json().catch(() => ({})); last = (j.error && j.error.message) || r.statusText; if (r.status === 400 || r.status === 403) break; continue; }
+        const reader = r.body.getReader(); const dec = new TextDecoder(); let buf = "";
+        for (;;) {
+          const { value, done } = await reader.read(); if (done) break;
+          clearTimeout(timer); timer = setTimeout(() => ctrl.abort(), 30000);
+          buf += dec.decode(value, { stream: true });
+          let i;
+          while ((i = buf.indexOf("\n")) >= 0) {
+            const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+            if (!line.startsWith("data:")) continue;
+            try { const j = JSON.parse(line.slice(5)); text += (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join(""); onText(text); } catch { /* partial line */ }
+          }
+        }
+        clearTimeout(timer);
+        if (text.trim()) return { text: text.trim(), model: m };
+        last = "empty answer";
+      } catch (e) {
+        if (text.trim()) return { text: text.trim(), model: m };
+        last = e.name === "AbortError" ? "timed out" : e.message;
+      }
+    }
+    throw new Error(last || "no answer");
+  }
+
+  /* Follow-up questions to offer after an answer, by topic. */
+  function followUps(q, chart, D, S) {
+    const top = S.ranked[0] ? S.ranked[0].id : "EST005-D08-B01";
+    const w = S.warnings[0] ? S.warnings[0].id : top;
+    const worst = S.estates[0] ? S.estates[0].estate.replace(" Estate", "") : "Sepakau 2";
+    const by = {
+      estates: [`What should ${worst} fix first?`, "Which blocks will under-perform next cycle?"],
+      risk: [`Tell me about ${w}`, "What should we fix first, and what is it worth?"],
+      levers: [`Tell me about ${top}`, "Which estate needs the most attention?"],
+      block: ["What should we fix first, and what is it worth?", "How accurate is the forecast?"],
+      drivers: ["Is fertilizer working?", "Which estate needs the most attention?"],
+      accuracy: ["Which blocks will under-perform next cycle?", "Brief me on this cycle"],
+      age_curve: ["What should we fix first, and what is it worth?", "Which blocks will under-perform next cycle?"],
+      top_blocks: [`Tell me about ${top}`, "Which blocks will under-perform next cycle?"],
+    };
+    return (by[chart] || ["Brief me on this cycle", "What should we fix first, and what is it worth?"]).filter((x) => x.toLowerCase() !== q.toLowerCase());
+  }
+
   function splitChart(text) {
     const m = text.match(/\n?\s*CHART:\s*([a-z_]+)\s*$/i);
     return m ? { text: text.slice(0, m.index).trim(), chart: m[1].toLowerCase() } : { text, chart: null };
   }
 
-  window.PY = { LEVERS, fmt, scope, briefing, simulate, answer, SUGGESTED, askGemini, splitChart, blockStory, nextCycleLabel, wavg };
+  window.PY = { LEVERS, fmt, scope, briefing, simulate, answer, SUGGESTED, askGemini, askGeminiStream, followUps, splitChart, blockStory, nextCycleLabel, wavg };
 })();

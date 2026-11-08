@@ -102,6 +102,8 @@
     return bare ? body : html`<div class="card">${body}</div>`;
   }
 
+  window.PYUI = { Md, ChartCard, CHARTS };
+
   const Kpi = ({ label, value, note, cls }) => html`<div class="card kpi"><div class="label">${label}</div><div class=${"value " + (cls || "")}>${value}</div>${note && html`<div class="note">${note}</div>`}</div>`;
   const Head = ({ eyebrow, title, sub, children }) => html`<div class="page-head"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1>${sub && html`<p class="sub">${sub}</p>`}</div><div class="row">${children}</div></div>`;
   const Risk = ({ r }) => html`<span class=${"risk " + r}>${r}</span>`;
@@ -132,7 +134,7 @@
       setBusy(false);
     }
     return html`<div>
-      <${Head} eyebrow="Command centre" title=${ctx.option === "B" ? `Good day, ${ctx.user.name.split(" ")[0]}. Here is what needs you this cycle.` : "Good day. Here is what needs you this cycle."} sub=${`${S.blocks.length} blocks in ${S.estates.length} estates · last harvest cycle ended ${new Date(D.meta.cycle_dates.at(-1)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`} />
+      <${Head} eyebrow="Dashboard" title="What needs you this cycle" sub=${`${S.blocks.length} blocks in ${S.estates.length} estates · last harvest cycle ended ${new Date(D.meta.cycle_dates.at(-1)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`} />
       <div class="brief">
         <div class="brief-top"><div><div class="ai-tag">✦ AUTOMATED ANALYSIS · UPDATED EVERY HARVEST CYCLE</div><h2>Management briefing</h2></div>
           <div class="row">${ctx.option === "B" && html`<button class="btn sm" onClick=${aiOn ? aiBrief : () => go("settings")} disabled=${busy}>${busy ? "Writing…" : aiOn ? "✦ Write it with AI" : "✦ Switch on AI in Settings"}</button>`}
@@ -157,9 +159,7 @@
           <div class="list">${S.ranked.slice(0, 5).map((b) => html`<div class="li" key=${b.id}><div class="main-t"><b>#${b.rank} <a href=${"#/block/" + b.id}>${b.id}</a></b><span>${b.action}</span></div><div class="amt">${fmt.rm(b.gain_t * S.price)}<div class="small muted">a year</div></div></div>`)}</div></div>
         <${ChartCard} D=${D} S=${S} name="estates" height=${300} />
       </div>
-      <div class="card" style=${{ marginTop: 16 }}><div class="card-head"><div><h2>${ctx.option === "B" ? "✦ Ask the AI assistant" : "Ask the data"}</h2><p>Plain-language answers from these results, with a chart</p></div></div>
-        <div class="sugg">${PY.SUGGESTED.map((q) => html`<button key=${q} onClick=${() => ctx.ask(q)}>${q}</button>`)}</div></div>
-    </div>`;
+          </div>`;
   }
 
   function WoButton({ b, ctx, label }) {
@@ -376,46 +376,6 @@
     </div>`;
   }
 
-  function Assistant({ D, S, ctx }) {
-    const [msgs, setMsgs] = useState(() => { try { return JSON.parse(sessionStorage.getItem("py.chat") || "[]"); } catch { return []; } });
-    const [input, setInput] = useState(""); const [busy, setBusy] = useState(false);
-    const end = useRef(null);
-    useEffect(() => { try { sessionStorage.setItem("py.chat", JSON.stringify(msgs.slice(-30))); } catch { /* ignore */ } end.current && end.current.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, busy]);
-    const ai = ctx.option === "B";
-    const send = useCallback(async (q) => {
-      q = (q || "").trim(); if (!q || busy) return;
-      setInput(""); const hist = msgs; setMsgs((m) => [...m, { role: "user", text: q }]); setBusy(true);
-      const local = PY.answer(D, S, q);
-      let reply = { role: "bot", text: local.text, chart: local.chart, block: local.block, src: ai ? "Built-in answer engine (add a Gemini key in Settings to switch on AI)" : "Built-in answer engine · no AI cost" };
-      if (ai && ctx.key) {
-        try {
-          const r = await PY.askGemini(ctx.key, D, S, q, hist);
-          const s = PY.splitChart(r.text);
-          const id = (q.match(/EST\d{3}-D\d{2}-B\d{2}/i) || [])[0];
-          reply = { role: "bot", text: s.text, chart: s.chart || local.chart, block: id ? id.toUpperCase() : local.block, src: `✦ Google Gemini (${r.model}), answering only from PalmYield's results` };
-          ctx.log(q, true);
-        } catch (e) { reply.src = `AI unavailable (${e.message}); built-in answer shown instead`; ctx.log(q, false); }
-      }
-      setMsgs((m) => [...m, reply]); setBusy(false);
-    }, [msgs, busy, ai, ctx.key, S]);
-    useEffect(() => { if (ctx.pending) { const q = ctx.pending; ctx.clearPending(); send(q); } }, [ctx.pending]);
-    return html`<div>
-      <${Head} eyebrow=${ai ? "AI assistant" : "Ask the data"} title=${ai ? "✦ Ask PalmYield AI" : "Ask the data"} sub=${ai ? "Ask in plain words. The AI answers only from this system's computed results and draws a chart when it helps." : "Option A answers common questions from the built-in engine, with a chart. Option B adds an AI assistant for any question."}>
-        ${msgs.length > 0 && html`<button class="btn sm" onClick=${() => setMsgs([])}>New chat</button>`}
-      </${Head}>
-      ${ai && !ctx.key && html`<div class="notice" style=${{ marginBottom: 12 }}>AI is off on this device: add a Google Gemini API key in <a href="#/settings">Settings</a>. Until then, the built-in engine answers.</div>`}
-      <div class="card chat">
-        <div class="msgs">
-          ${!msgs.length && html`<div style=${{ margin: "auto 0", textAlign: "center" }}><h2 style=${{ marginBottom: 6 }}>What would you like to know?</h2><p class="muted" style=${{ marginBottom: 14 }}>Try one of these:</p><div class="sugg" style=${{ justifyContent: "center" }}>${PY.SUGGESTED.map((q) => html`<button key=${q} onClick=${() => send(q)}>${q}</button>`)}</div></div>`}
-          ${msgs.map((m, i) => m.role === "user" ? html`<div class="msg user" key=${i}>${m.text}</div>`
-            : html`<div class="msg bot" key=${i}><${Md} text=${m.text} />${m.chart && CHARTS[m.chart] && html`<div style=${{ marginTop: 10 }}><${ChartCard} D=${D} S=${S} name=${m.chart} block=${m.block ? D.blocks.find((b) => b.id === m.block) : null} height=${260} bare=${true} /></div>`}<div class="src">${m.src}</div></div>`)}
-          ${busy && html`<div class="msg bot typing">${ai && ctx.key ? "✦ Thinking…" : "Working it out…"}</div>`}
-          <div ref=${end}></div>
-        </div>
-        <form class="composer" onSubmit=${(e) => { e.preventDefault(); send(input); }}><input placeholder=${ai ? "Ask anything about yield, blocks, risk or actions…" : "Ask about an estate, a block ID, risk, what to fix first…"} value=${input} onInput=${(e) => setInput(e.target.value)} maxLength="400" /><button class="btn primary" disabled=${busy || !input.trim()}>Send</button></form>
-      </div></div>`;
-  }
-
   function System({ D, ctx }) {
     const [check, setCheck] = useState(null);
     const fm = D.forecast_metrics;
@@ -512,6 +472,8 @@
     const [orders, setOrders] = usePersist("orders", {});
     const [aiLog, setAiLog] = usePersist("ailog", []);
     const [pending, setPending] = useState(null);
+    const [chats, setChats] = usePersist("chats", []);
+    const [chatKey, setChatKey] = useState(0);
     const [toastMsg, setToast] = useState(null);
     const [menu, setMenu] = useState(false);
     useEffect(() => { setMenu(false); }, [route.join("/")]);
@@ -520,11 +482,13 @@
     const user = option === "A" ? { name: "Estate team", role: "Option A · no sign-in", initials: "ET" } : ROLES[role] || null;
     const due = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); };
     const ctx = {
-      D, S, option, role, user, estate, price, key, orders, aiLog, pending,
+      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats,
       setOption: (o) => { setOptionRaw(o); toast(o === "A" ? "Option A · Lean: no AI, no sign-in" : "Option B · Enterprise: AI, sign-in, SAP link"); },
       setEstate, setPrice, setKey,
       signIn: (k) => { setRole(k); go("home"); },
-      ask: (q) => { setPending(q); go("assistant"); },
+      ask: (q) => { setPending(q); setChatKey((k) => k + 1); go("home"); },
+      newChat: () => { setChatKey((k) => k + 1); go("home"); },
+      saveChat: (c) => setChats((cs) => [c, ...cs.filter((x) => x.id !== c.id)].slice(0, 20)),
       clearPending: () => setPending(null),
       log: (q, ok) => setAiLog((l) => [...l.slice(-199), { at: new Date().toLocaleString("en-GB"), user: user ? user.name : "?", q, ok }]),
       createOrders: (bs) => {
@@ -535,48 +499,52 @@
       },
       updateOrder: (id, patch) => setOrders((o) => ({ ...o, [id]: { ...o[id], ...patch } })),
       removeOrder: (id) => setOrders((o) => { const n = { ...o }; delete n[id]; return n; }),
-      resetDemo: () => { setOrders({}); setAiLog([]); toast("Demo data reset"); },
+      resetDemo: () => { setOrders({}); setAiLog([]); setChats([]); toast("Demo data reset"); },
       toast,
     };
 
     if (option === "B" && !user) return html`<${SignIn} ctx=${ctx} />`;
     const [page, sub] = route;
     const NAV = [
-      ["Overview", [["home", "◉", "Command centre"], ["warnings", "⚠", "Early warnings", S.high], ["actions", "✓", "Action plan"]]],
-      ["Analyse", [["map", "⌖", "Block map"], ["insights", "◈", "Why yield differs"], ["simulator", "⇅", "What-if simulator"]]],
-      ["Ask", [["assistant", "✦", option === "B" ? "AI assistant" : "Ask the data"]]],
+      ["", [["home", "✦", "Ask PalmYield"], ["dashboard", "◉", "Dashboard"]]],
+      ["Act", [["warnings", "⚠", "Early warnings", S.high], ["actions", "✓", "Action plan"]]],
+      ["Explore", [["map", "⌖", "Block map"], ["simulator", "⇅", "What-if simulator"], ["insights", "◈", "Why yield differs"]]],
       ["System", [["system", "⛁", "Data and system"], ["settings", "⚙", "Settings"]]],
     ];
     const pages = {
-      home: () => html`<${Home} D=${D} S=${S} ctx=${ctx} />`,
+      home: () => html`<${window.PYAsk} key=${"new" + chatKey} D=${D} S=${S} ctx=${ctx} />`,
+      chat: () => html`<${window.PYAsk} key=${"chat" + sub + chatKey} D=${D} S=${S} ctx=${ctx} chatId=${sub} />`,
+      assistant: () => html`<${window.PYAsk} key=${"new" + chatKey} D=${D} S=${S} ctx=${ctx} />`,
+      dashboard: () => html`<${Home} D=${D} S=${S} ctx=${ctx} />`,
       warnings: () => html`<${Warnings} D=${D} S=${S} ctx=${ctx} />`,
       actions: () => html`<${Actions} D=${D} S=${S} ctx=${ctx} sub=${sub} />`,
       map: () => html`<${Explorer} D=${D} S=${S} ctx=${ctx} />`,
       block: () => html`<${Block} key=${sub} D=${D} S=${S} ctx=${ctx} id=${sub} />`,
       simulator: () => html`<${Simulator} key=${(sub || "") + estate} D=${D} S=${S} ctx=${ctx} id=${sub} />`,
       insights: () => html`<${Insights} D=${D} S=${S} />`,
-      assistant: () => html`<${Assistant} D=${D} S=${S} ctx=${ctx} />`,
       system: () => html`<${System} D=${D} ctx=${ctx} />`,
       settings: () => html`<${Settings} ctx=${ctx} />`,
     };
     return html`<div class="shell">
       <aside class=${"side" + (menu ? " open" : "")}>
-        <a class="brand" href="#/home"><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>Yield command centre</small></div></a>
-        ${NAV.map(([sec, items]) => html`<div key=${sec}><div class="nav-sec">${sec}</div><nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
+        <a class="brand" href="#/home"><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>AI yield assistant</small></div></a>
+        <button class="newchat" onClick=${ctx.newChat}><span>＋</span> New chat</button>
+        ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
+        ${chats.length > 0 && html`<div class="nav-sec">Recent chats</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
         <div class="side-foot">${option === "A" ? "Option A · Lean" : "Option B · Enterprise"}<br />Synthetic sample data<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics prototype ↗</a></div>
       </aside>
       <div class="main">
         <header class="top">
           <button class="menu" onClick=${() => setMenu(!menu)} aria-label="Menu">☰</button>
-          <select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">All estates (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
+          <span class="small muted hide-sm">Estate</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">All estates (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
           <span class="chip syn hide-sm">Synthetic sample data</span>
           <span class="grow"></span>
           <button class=${"chip " + (option === "A" ? "a" : "b")} style=${{ border: 0 }} onClick=${() => go("settings")} title="Change option">${option === "A" ? "Option A · Lean" : "Option B · Enterprise"}</button>
-          <button class="btn sm dark hide-sm" onClick=${() => go("assistant")}>${option === "B" ? "✦ Ask AI" : "Ask the data"}</button>
+          <button class="btn sm hide-sm" onClick=${() => go("dashboard")}>◉ Dashboard</button>
           <div class="user"><span class="avatar">${user.initials}</span><span class="hide-sm"><b>${user.name}</b><br /><span class="small muted">${user.role}</span></span>
             ${option === "B" && html`<button class="btn sm" onClick=${() => { setRole(null); }}>Sign out</button>`}</div>
         </header>
-        <main class="content">${(pages[page] || pages.home)()}</main>
+        <main class=${"content" + (page === "home" || page === "chat" || page === "assistant" ? " wide" : "")}>${(pages[page] || pages.home)()}</main>
       </div>
       ${toastMsg && html`<div class="toast">${toastMsg}</div>`}
     </div>`;
@@ -586,7 +554,7 @@
     constructor(p) { super(p); this.state = { err: null }; }
     static getDerivedStateFromError(err) { return { err }; }
     render() {
-      return this.state.err ? html`<div class="boot"><div style=${{ textAlign: "center" }}><h2>Something went wrong on this page.</h2><p class="muted" style=${{ margin: "8px 0 14px" }}>${String(this.state.err.message || this.state.err)}</p><button class="btn primary" onClick=${() => { location.hash = "#/home"; location.reload(); }}>Back to the command centre</button></div></div>` : this.props.children;
+      return this.state.err ? html`<div class="boot"><div style=${{ textAlign: "center" }}><h2>Something went wrong on this page.</h2><p class="muted" style=${{ margin: "8px 0 14px" }}>${String(this.state.err.message || this.state.err)}</p><button class="btn primary" onClick=${() => { location.hash = "#/home"; location.reload(); }}>Back to the start</button></div></div>` : this.props.children;
     }
   }
 

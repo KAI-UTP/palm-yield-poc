@@ -6,7 +6,7 @@ The data is synthetic, not real SOPB results.
 
 ## Two front ends
 
-- **PalmYield web app (`web/`)** is the product: a management command centre (briefing, early warnings, action plan with
+- **PalmYield web app (`web/`)** is the product: it opens on an AI assistant (Ask PalmYield), with a dashboard (briefing, early warnings, action plan with
   work orders, block map, what-if simulator, AI assistant), built with React and ECharts. It is published on GitHub Pages
   at <https://kai-utp.github.io/palm-yield-poc/> by `.github/workflows/pages.yml` on every push.
   Run it locally: `python -m http.server 8600 --directory web`, then open <http://localhost:8600>.

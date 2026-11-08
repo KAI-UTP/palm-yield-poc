@@ -43,7 +43,7 @@
     const totalT = sum(blocks, (b) => (b.all_levers || 0) * b.area);
     const leverT = Object.keys(LEVERS).map((k) => ({
       lever: k, ...LEVERS[k], action: leverAction(D, k),
-      blocks: blocks.filter((b) => b.levers[k]).length,
+      blocks: blocks.filter((b) => (b.levers[k] || 0) >= 0.1).length,  // same rule as the pipeline's lever summary
       t: sum(blocks, (b) => (b.levers[k] || 0) * b.area),
     })).filter((x) => x.t > 0.5).sort((a, b) => b.t - a.t);
     const estates = [...new Set(blocks.map((b) => b.estate))].map((e) => {
@@ -117,6 +117,20 @@
     "How accurate is the forecast?",
   ];
 
+  /* Practical steps for each controllable issue (general good practice; confirm locally). */
+  const HOW = {
+    road_access: { words: ["road", "path"], steps: ["Grade and resurface field roads and harvesting paths; repair culverts", "Start with paths serving blocks that also have long harvest rounds", "Check access again after the wet season"] },
+    flooding: { words: ["flood", "water gate", "waterlog"], steps: ["Install or repair water gates and outlets", "Clear blocked outlets before the wet season", "On peat, keep the water table at about 50–75 cm"] },
+    ganoderma: { words: ["ganoderma", "basal stem rot"], steps: ["Census the block and mark infected palms", "Remove and destroy infected palms and boles; isolate with trenches", "Replant carefully and re-check every cycle"] },
+    missing_palms: { words: ["missing", "supply"], steps: ["Supply-plant vacant points with good seedlings of the same genetic line", "Protect young palms from rats and weeds", "Record survival at the next census"] },
+    harvest_round: { words: ["harvest round", "round", "interval"], steps: ["Bring the round to 10 days or less (good practice is 7 to 10)", "Rebalance harvest teams across divisions", "Check that ripe bunches reach the road the same day"] },
+    bagworm: { words: ["bagworm"], steps: ["Census bagworm to find hotspots", "Use biological control first; targeted treatment only where heavy", "Re-census after treatment"] },
+    weeds: { words: ["weed"], steps: ["Circle-weed and path-weed", "Bring weed cover under 15%"] },
+    drain_upkeep: { words: ["drain"], steps: ["Clear and deepen drains", "Check outlets before the wet season"] },
+    leaf_k: { words: ["potassium", "leaf k", "mop"], steps: ["Raise potassium (MOP) in the next fertilizer round", "Check timing and drainage first if leaf K stays low despite fertilizer", "Re-sample leaf 17"] },
+    leaf_mg: { words: ["magnesium", "leaf mg", "kieserite"], steps: ["Apply kieserite for magnesium", "Re-sample leaf 17"] },
+  };
+
   const has = (q, ...words) => words.some((w) => new RegExp("\\b" + w, "i").test(q));
 
   function answer(D, S, q) {
@@ -125,6 +139,14 @@
       return { text: c.map((x) => `**${x.title}:** ${x.head}. ${x.body}`).join("\n\n"), chart: "levers" };
     }
     const id = (q.match(/EST\d{3}-D\d{2}-B\d{2}/i) || [])[0];
+    const lv = !id && has(q, "how", "fix", "steps", "do we", "deal with") && Object.keys(HOW).find((k) => HOW[k].words.some((w) => has(q, w)));
+    if (lv) {
+      const l = S.leverT.find((x) => x.lever === lv);
+      const top = S.ranked.filter((b) => b.levers[lv]).sort((a, b) => b.levers[lv] * b.area - a.levers[lv] * a.area).slice(0, 3);
+      return { text: `**${LEVERS[lv].issue}**${l ? ` holds back ${l.blocks} blocks; fixing it is worth about ${fmt.n(l.t)} t FFB (${fmt.rm(l.t * S.price)}) a year` : " is not a problem in the blocks in view"}.\n\n` +
+        `Typical steps (confirm with your agronomist):\n` + HOW[lv].steps.map((x) => `- ${x}`).join("\n") +
+        (top.length ? `\n\nStart with: ${top.map((b) => `**${b.id}**`).join(", ")}.` : ""), chart: "levers" };
+    }
     if (id) {
       const b = D.blocks.find((x) => x.id === id.toUpperCase());
       if (!b) return { text: `I could not find block ${id.toUpperCase()}. Block IDs look like EST005-D08-B01.` };

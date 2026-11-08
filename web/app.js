@@ -171,18 +171,20 @@
         <${Kpi} label="Action plan progress" value=${`${woDone.length} / ${wo.length}`} note=${wo.length ? `${fmt.rm(woOpen.reduce((s, w) => s + w.gain_t, 0) * S.price)} a year in open work orders` : "No work orders yet: create them on the action plan"} />
       </div>
       <div class="grid g-wide" style=${{ marginTop: 16 }}>
-        <div class="card"><div class="card-head"><div><h2>Early warnings: act before the harvest</h2><p>Blocks forecast furthest below their age peers next cycle</p></div><a class="btn sm" href="#/warnings">See all ${S.high}</a></div>
-          <div class="list">${S.warnings.slice(0, 5).map((b) => html`<div class="li" key=${b.id}><${Risk} r=${b.risk} /><div class="main-t"><b><a href=${"#/block/" + b.id}>${b.id}</a> · ${b.estate}</b><span>Forecast ${fmt.n(b.fc, 1)} t/ha/yr (${fmt.signed(b.fc_vs_peers)} vs peers). Cause: ${b.issues || "age and site"}.</span></div>
+        <div class="card"><div class="card-head"><div><h2>Early warnings: act before the harvest</h2><p>Blocks forecast furthest below their age peers next cycle</p></div>${ctx.allowed("warnings") && html`<a class="btn sm" href="#/warnings">See all ${S.high}</a>`}</div>
+          <div class="list">${S.warnings.slice(0, 5).map((b) => html`<div class="li" key=${b.id}><${Risk} r=${b.risk} /><div class="main-t"><b><${BlockLink} id=${b.id} ctx=${ctx} /> · ${b.estate}</b><span>Forecast ${fmt.n(b.fc, 1)} t/ha/yr (${fmt.signed(b.fc_vs_peers)} vs peers). Cause: ${b.issues || "age and site"}.</span></div>
             <${WoButton} b=${b} ctx=${ctx} /></div>`)}</div></div>
         <${ChartCard} D=${D} S=${S} name="levers" height=${280} />
       </div>
       <div class="grid g2" style=${{ marginTop: 16 }}>
-        <div class="card"><div class="card-head"><div><h2>Top actions by value</h2><p>The first action for the highest-value blocks</p></div><a class="btn sm" href="#/actions">Action plan</a></div>
-          <div class="list">${S.ranked.slice(0, 5).map((b) => html`<div class="li" key=${b.id}><div class="main-t"><b>#${b.rank} <a href=${"#/block/" + b.id}>${b.id}</a></b><span>${b.action}</span></div><div class="amt">${fmt.rm(b.gain_t * S.price)}<div class="small muted">a year</div></div></div>`)}</div></div>
+        <div class="card"><div class="card-head"><div><h2>Top actions by value</h2><p>The first action for the highest-value blocks</p></div>${ctx.allowed("actions") && html`<a class="btn sm" href="#/actions">Action plan</a>`}</div>
+          <div class="list">${S.ranked.slice(0, 5).map((b) => html`<div class="li" key=${b.id}><div class="main-t"><b>#${b.rank} <${BlockLink} id=${b.id} ctx=${ctx} /></b><span>${b.action}</span></div><div class="amt">${fmt.rm(b.gain_t * S.price)}<div class="small muted">a year</div></div></div>`)}</div></div>
         <${ChartCard} D=${D} S=${S} name="estates" height=${300} />
       </div>
           </div>`;
   }
+
+  const BlockLink = ({ id, ctx }) => ctx.allowed("block") ? html`<a href=${"#/block/" + id}>${id}</a>` : id;
 
   function WoButton({ b, ctx, label }) {
     const has = ctx.orders[b.id];
@@ -305,7 +307,7 @@
 
   function Block({ D, S, ctx, id }) {
     const b = D.blocks.find((x) => x.id === (id || "").toUpperCase());
-    if (!b) return html`<div class="card"><h2>Block not found</h2><p class="muted">Open one from the map or the action plan.</p><a class="btn" href="#/map" style=${{ marginTop: 10 }}>Block map</a></div>`;
+    if (!b) return html`<div class="card"><h2>Block not found</h2><p class="muted">Check the block ID, for example EST005-D08-B01.</p><a class="btn" href="#/home" style=${{ marginTop: 10 }}>Back to Ask PalmYield</a></div>`;
     const lev = Object.entries(b.levers).sort((x, y) => y[1] - x[1]);
     const nut = (sym) => D.nutrients.find((n) => n.nutrient.includes(`(${sym})`));
     const sig = b.signals;
@@ -400,27 +402,16 @@
   }
 
   function System({ D, ctx }) {
-    const [check, setCheck] = useState(null);
     const fm = D.forecast_metrics;
-    function onFile(e) {
-      const f = e.target.files[0]; if (!f) return;
-      if (f.size > 50e6) { setCheck({ ok: false, msg: "File is over 50 MB." }); return; }
-      f.text().then((t) => {
-        const lines = t.split(/\r?\n/).filter(Boolean); const head = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""));
-        const need = ["block_id", "harvest_cycle_no", "ffb_yield_t_ha", "productive_area_ha", "harvest_interval_days", "palm_age_years", "estate_name"];
-        const miss = need.filter((n) => !head.includes(n));
-        setCheck(miss.length ? { ok: false, msg: `Missing required columns: ${miss.join(", ")}.` } : { ok: true, msg: `${lines.length - 1} rows and ${head.length} columns read. Required columns present. In production the server now runs the 22 quality checks and re-trains the models, and every page updates.` });
-      });
-    }
     const log = ctx.aiLog;
     return html`<div>
       <${Head} eyebrow="Data and system" title="Data, models and integration" sub="How the data flows, how good it is, how accurate the models are, and how PalmYield connects to other systems." />
       <div class="card"><h2 style=${{ marginBottom: 12 }}>Data flow</h2>
-        <div class="flow"><div class="step"><b>Data in</b>${ctx.option === "B" ? "SAP extract, daily (SAP Datasphere)" : "CSV upload each harvest cycle"}</div><span class="arrow">→</span>
+        <div class="flow"><div class="step"><b>Data in</b>SAP daily, a database or a file, through the Analytics Workbench</div><span class="arrow">→</span>
         <div class="step"><b>Prepare</b>22 quality checks, 20 engineered features</div><span class="arrow">→</span>
         <div class="step core"><b>Models</b>5 algorithms compared; drivers, forecast, groups, what-if</div><span class="arrow">→</span>
         <div class="step"><b>Database + API</b>Results stored once; REST API serves every screen</div><span class="arrow">→</span>
-        <div class="step"><b>Act</b>Web app, ${ctx.option === "B" ? "AI assistant, SAP Analytics Cloud" : "built-in answers"}, work orders</div></div></div>
+        <div class="step"><b>Act</b>PalmYield: AI assistant, warnings, work orders; SAP Analytics Cloud</div></div></div>
       <div class="grid g2" style=${{ marginTop: 16 }}>
         <div class="card"><h2>Data quality</h2><p class="small muted" style=${{ marginBottom: 8 }}>${D.meta.rows.toLocaleString()} block-cycles · ${D.meta.blocks} blocks · ${D.meta.estates} estates · ${D.meta.cycles} cycles · synthetic sample</p>
           <div class="table-wrap scroll" style=${{ maxHeight: 330 }}><table class="t"><thead><tr><th>Check</th><th class="num">Pass rate</th><th>Status</th></tr></thead><tbody>
@@ -437,7 +428,7 @@
         <div class="card"><h2>SAP connection</h2>
           ${html`<div class="list" style=${{ marginTop: 8 }}>${[["Source", "SAP S/4HANA plantation data via SAP Datasphere"], ["Schedule", "Daily at 02:00"], ["Status", "Demo: sample extract in the SAP format"], ["Last extract", `${D.meta.rows.toLocaleString()} rows · ${D.meta.cycle_dates.at(-1)}`]].map(([k, v]) => html`<div class="li" key=${k}><div class="main-t"><b>${k}</b><span>${v}</span></div></div>`)}</div>`
 }
-          ${html`<div><p class="small" style=${{ margin: "12px 0 8px" }}><b>Manual upload (backup):</b> one row per block per harvest cycle, in the 117-column template. The file is checked here first.</p><input type="file" accept=".csv" onChange=${onFile} />${check && html`<div class=${"notice " + (check.ok ? "info" : "")} style=${{ marginTop: 10 }}>${check.msg}</div>`}</div>`}</div>
+</div>
         <div class="card"><h2>Integration API</h2><p class="small muted" style=${{ marginBottom: 8 }}>The same REST API (FastAPI) serves this app, the AI and other systems such as SAP Analytics Cloud or Power BI.</p>
           <div class="table-wrap"><table class="t"><tbody>${[["GET /summary", "Headline numbers by estate"], ["GET /insights", "Automated findings"], ["GET /actions", "Ranked action plan"], ["GET /forecast", "Next-cycle forecast and range"], ["GET /blocks/{id}", "One block: history, forecast, action"]].map(([e, d]) => html`<tr key=${e}><td><code>${e}</code></td><td class="small">${d}</td></tr>`)}</tbody></table></div></div>
       </div>
@@ -485,7 +476,7 @@
         <div class="card"><h2 style=${{ marginBottom: 8 }}>How people sign in</h2>
           <p class="small" style=${{ marginBottom: 8 }}>Company single sign-on (Microsoft Entra ID or SAP Identity Authentication). Roles come from the client's directory groups, so joiners and leavers are handled by IT as usual.</p>
           <p class="small" style=${{ marginBottom: 8 }}>Every AI question is logged for the administrator, and the AI only sees PalmYield's computed results.</p>
-          <p class="small muted">Demo: sign-in is simulated and no password is stored. Work orders, chats and the AI log are kept in this browser.</p></div>
+          <p class="small muted">Demo: sign-in is simulated and no password is stored. Work orders and the AI log are shared by the team; each person's chats are private to them. All of it is kept in this browser.</p></div>
       </div></div>`;
   }
 
@@ -517,7 +508,7 @@
       </div>
       <div class="card" style=${{ marginTop: 16 }}><h2 style=${{ marginBottom: 8 }}>Demo data</h2>
         <p class="small" style=${{ marginBottom: 10 }}>This hosted demo runs on a synthetic sample, not real SOPB results. Work orders and the AI log are kept in this browser only.</p>
-        <div class="row"><button class="btn" onClick=${() => { if (confirm("Delete all work orders and the AI log in this browser?")) ctx.resetDemo(); }}>Reset demo data</button><a class="btn" href=${STREAMLIT} target="_blank" rel="noopener">Open the Analytics Workbench ↗</a></div></div>
+        <div class="row"><button class="btn" onClick=${() => { if (confirm("Reset work orders, everyone's chats and the AI log in this browser?")) ctx.resetDemo(); }}>Reset demo data</button><a class="btn" href=${STREAMLIT} target="_blank" rel="noopener">Open the Analytics Workbench ↗</a></div></div>
     </div>`;
   }
 
@@ -547,7 +538,8 @@
     const [orders, setOrders] = usePersist("orders.v2", () => seedOrders(D));
     const [aiLog, setAiLog] = usePersist("ailog", []);
     const [pending, setPending] = useState(null);
-    const [chats, setChats] = usePersist("chats", []);
+    const [chatsBy, setChatsBy] = usePersist("chats.v2", {});  // { role: [chat, ...] }: each person sees only their own chats
+    const chats = (role && chatsBy[role]) || [];
     const [chatKey, setChatKey] = useState(0);
     const [toastMsg, setToast] = useState(null);
     const [menu, setMenu] = useState(false);
@@ -565,7 +557,7 @@
       signIn: (k) => { setRole(k); go("home"); },
       ask: (q) => { setPending(q); setChatKey((k) => k + 1); go("home"); },
       newChat: () => { setChatKey((k) => k + 1); go("home"); },
-      saveChat: (c) => setChats((cs) => [c, ...cs.filter((x) => x.id !== c.id)].slice(0, 20)),
+      saveChat: (c) => setChatsBy((all) => ({ ...all, [role]: [c, ...(all[role] || []).filter((x) => x.id !== c.id)].slice(0, 20) })),
       clearPending: () => setPending(null),
       log: (q, ok) => setAiLog((l) => [...l.slice(-199), { at: new Date().toLocaleString("en-GB"), user: user ? user.name : "?", q, ok }]),
       createOrders: (bs) => {
@@ -576,7 +568,7 @@
       },
       updateOrder: (id, patch) => setOrders((o) => ({ ...o, [id]: { ...o[id], ...patch } })),
       removeOrder: (id) => setOrders((o) => { const n = { ...o }; delete n[id]; return n; }),
-      resetDemo: () => { setOrders(seedOrders(D)); setAiLog([]); setChats([]); toast("Demo data reset"); },
+      resetDemo: () => { setOrders(seedOrders(D)); setAiLog([]); setChatsBy({}); toast("Demo data reset"); },
       toast,
     };
 
@@ -612,7 +604,7 @@
         <button class="newchat" onClick=${ctx.newChat}><span>＋</span> New chat</button>
         ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
         ${chats.length > 0 && html`<div class="nav-sec">Recent chats</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
-        <div class="side-foot">Synthetic sample data<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics Workbench ↗</a></div>
+        <div class="side-foot">Synthetic sample data${allowed("system") ? html`<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics Workbench ↗</a>` : ""}</div>
       </aside>
       <div class="main">
         <header class="top">
@@ -638,7 +630,7 @@
     }
   }
 
-  fetch("data/app.json?v=6").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=8").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

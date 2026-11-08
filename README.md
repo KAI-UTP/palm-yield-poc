@@ -22,6 +22,16 @@ python pipeline/model.py        # five-model comparison, drivers, forecast, clus
 To run the whole POC on another file in the same format, use the **Run on your data** page, or
 `python pipeline/prepare.py path/to/file.csv` and then `python pipeline/model.py`.
 
+## Two proposal options in one app
+
+A switch at the top of the sidebar shows either option live:
+
+- **Option A · Lean, low cost:** all analytics, forecast, action plan and simulator, with built-in answers. No AI assistant, no login, data by file upload.
+- **Option B · Enterprise:** everything in A, plus the AI assistant, company login, a SAP data link and an AI usage log for administrators.
+  In this prototype the login (pick a demo user, no password) and the SAP link (uses the sample file) are **simulated** and say so on screen.
+
+Set the default for a deployment with the environment variable `PALM_EDITION=A` or `B` (default B).
+
 ## Switch on the AI assistant (free)
 
 The app works without any key: insight cards and the assistant's built-in answers come from the insight engine.

@@ -51,7 +51,8 @@
     const out = [];
     const ids = [...new Set((m.text.match(/EST\d{3}-D\d{2}-B\d{2}/g) || []))].filter((id) => D.blocks.find((b) => b.id === id)).slice(0, 3);
     ids.forEach((id) => out.push({ label: "Open " + id, href: "#/block/" + id }));
-    if (ids.length && ctx.canAssign) out.push({ label: ids.length > 1 ? `+ Work orders for these ${ids.length}` : "+ Work order", orders: ids });
+    const fresh = ids.filter((id) => !ctx.orders[id]);  // blocks that already have a work order get no create button
+    if (fresh.length && ctx.canAssign) out.push({ label: fresh.length > 1 ? `+ Work orders for these ${fresh.length}` : "+ Work order", orders: fresh });
     if (m.chart === "tasks") out.push(ctx.allowed("tasks") ? { label: "Open My tasks", href: "#/tasks" } : { label: "Open work order board", href: "#/actions/board" });
     const page = { risk: ["See all early warnings", "#/warnings"], levers: ["Open action plan", "#/actions"], top_blocks: ["Open action plan", "#/actions"],
       estates: ["Open block map", "#/map"], drivers: ["Why yield differs", "#/insights"], age_curve: ["Why yield differs", "#/insights"],

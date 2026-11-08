@@ -459,7 +459,7 @@
           ${o.status === "inprog" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "done", doneAt: new Date().toISOString() }); ctx.toast("Marked done: " + o.id); }}>✓ Mark done</button>`}
           ${o.status === "done" && html`<button class="btn" onClick=${() => ctx.updateOrder(o.id, { status: "inprog" })}>↺ Reopen</button>`}
           <a class="btn" href=${"#/block/" + o.id}>Block details</a>
-          <button class="btn" onClick=${() => ctx.ask(`How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)} in ${o.id}?`)}>✦ Ask how</button>
+          <button class="btn" onClick=${() => ctx.ask(`How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)}?`)}>✦ Ask how</button>
         </div></div>`; })}</div>
     </div>`;
   }
@@ -630,7 +630,7 @@
     }
   }
 
-  fetch("data/app.json?v=8").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=9").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

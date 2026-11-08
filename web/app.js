@@ -11,16 +11,38 @@
     set(k, v) { try { localStorage.setItem("py." + k, JSON.stringify(v)); } catch { /* storage blocked */ } },
   };
   function usePersist(key, init) {
-    const [v, setV] = useState(() => store.get(key, init));
+    const [v, setV] = useState(() => { const got = store.get(key, undefined); return got !== undefined ? got : typeof init === "function" ? init() : init; });
     const set = useCallback((x) => setV((old) => { const n = typeof x === "function" ? x(old) : x; store.set(key, n); return n; }), [key]);
     return [v, set];
   }
 
   const ROLES = {
-    manager: { name: "Aina Rahman", role: "Estate manager", initials: "AR" },
-    agronomist: { name: "Daniel Wong", role: "Agronomist", initials: "DW" },
-    admin: { name: "Siti Hassan", role: "Administrator", initials: "SH" },
+    manager: { name: "Aina Rahman", role: "Estate manager", initials: "AR", teams: null,
+      does: "Decides and assigns: briefing, early warnings, action plan, simulator",
+      pages: ["home", "dashboard", "warnings", "actions", "map", "block", "simulator"] },
+    agronomist: { name: "Daniel Wong", role: "Agronomist", initials: "DW", teams: ["Agronomist"],
+      does: "Finds the causes: patterns, nutrients and pests; runs agronomy tasks",
+      pages: ["home", "tasks", "warnings", "map", "block", "insights", "simulator"] },
+    field: { name: "Hafiz Osman", role: "Field supervisor", initials: "HO", teams: ["Harvest team", "Field assistant", "Maintenance team"],
+      does: "Carries out work orders in the field, on a phone",
+      pages: ["home", "tasks", "block"] },
+    admin: { name: "Siti Hassan", role: "Administrator", initials: "SH", teams: null,
+      does: "Runs the system: data, models, access, AI key and usage",
+      pages: ["home", "dashboard", "system", "access", "settings"] },
   };
+  const PAGE_NAMES = [["home", "Ask PalmYield"], ["dashboard", "Dashboard"], ["warnings", "Early warnings"], ["actions", "Action plan"],
+    ["tasks", "My tasks"], ["map", "Block map"], ["block", "Block profile"], ["simulator", "What-if simulator"], ["insights", "Why yield differs"],
+    ["system", "Data and system"], ["access", "Access"], ["settings", "Settings"]];
+  const ownerFor = (action) => /ganoderma|bagworm|potassium|kieserite|leaf/i.test(action) ? "Agronomist"
+    : /harvest/i.test(action) ? "Harvest team" : /road|water gate|drain/i.test(action) ? "Maintenance team" : "Field assistant";
+  function seedOrders(D) {
+    const day = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    const top = [...D.blocks].sort((a, b) => a.rank - b.rank).slice(0, 9);
+    const st = ["inprog", "inprog", "done", "todo", "todo", "todo", "todo", "todo", "todo"];
+    const o = {};
+    top.forEach((b, i) => { o[b.id] = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner: ownerFor(b.action), status: st[i], due: day(i < 3 ? 2 + i : 7 + i), created: new Date().toISOString(), by: "Aina Rahman" }; });
+    return o;
+  }
 
   /* ---------- Router ---------- */
   function useRoute() {
@@ -137,8 +159,8 @@
       <${Head} eyebrow="Dashboard" title="What needs you this cycle" sub=${`${S.blocks.length} blocks in ${S.estates.length} estates · last harvest cycle ended ${new Date(D.meta.cycle_dates.at(-1)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`} />
       <div class="brief">
         <div class="brief-top"><div><div class="ai-tag">✦ AUTOMATED ANALYSIS · UPDATED EVERY HARVEST CYCLE</div><h2>Management briefing</h2></div>
-          <div class="row">${ctx.option === "B" && html`<button class="btn sm" onClick=${aiOn ? aiBrief : () => go("settings")} disabled=${busy}>${busy ? "Writing…" : aiOn ? "✦ Write it with AI" : "✦ Switch on AI in Settings"}</button>`}
-          <button class="btn sm primary" onClick=${() => go("actions")}>Open action plan →</button></div></div>
+          <div class="row">${ctx.option === "B" && (aiOn || ctx.allowed("settings")) && html`<button class="btn sm" onClick=${aiOn ? aiBrief : () => go("settings")} disabled=${busy}>${busy ? "Writing…" : aiOn ? "✦ Write it with AI" : "✦ Switch on AI in Settings"}</button>`}
+          ${ctx.allowed("actions") && html`<button class="btn sm primary" onClick=${() => go("actions")}>Open action plan →</button>`}</div></div>
         <div class="brief-grid">${brief.map((c) => html`<div key=${c.kind} class=${"brief-card " + c.kind}><div class="k">${c.title}</div><div class="h">${c.head}</div><div class="b">${c.body}</div></div>`)}</div>
         ${narr && html`<div class="ai-narr"><b>✦ AI briefing</b><${Md} text=${narr} /></div>`}
       </div>
@@ -164,8 +186,9 @@
 
   function WoButton({ b, ctx, label }) {
     const has = ctx.orders[b.id];
-    return has ? html`<a class="btn sm" href="#/actions/board"><span class=${"status " + has.status}>${STATUS[has.status]}</span></a>`
-      : html`<button class="btn sm primary" onClick=${() => ctx.createOrders([b])}>${label || "+ Work order"}</button>`;
+    const board = ctx.allowed("actions") ? "#/actions/board" : ctx.allowed("tasks") ? "#/tasks" : null;
+    if (has) return board ? html`<a class="btn sm" href=${board}><span class=${"status " + has.status}>${STATUS[has.status]}</span></a>` : html`<span class=${"status " + has.status}>${STATUS[has.status]}</span>`;
+    return ctx.canAssign ? html`<button class="btn sm primary" onClick=${() => ctx.createOrders([b])}>${label || "+ Work order"}</button>` : null;
   }
 
   function Warnings({ D, S, ctx }) {
@@ -299,7 +322,7 @@
     ];
     return html`<div>
       <${Head} eyebrow=${`Block profile · rank ${b.rank} of ${D.blocks.length}`} title=${b.id} sub=${`${b.name} · ${b.estate}, ${b.division} · ${b.age_band} (${b.age} years) · ${fmt.n(b.area, 1)} ha · ${b.soil} · ${b.genetic}`}>
-        <${WoButton} b=${b} ctx=${ctx} label="+ Create work order" /><button class="btn" onClick=${() => go("simulator/" + b.id)}>Simulate fixes</button><button class="btn dark" onClick=${() => ctx.ask(`Why is ${b.id} on the action list, and what should we do first?`)}>✦ Ask about this block</button>
+        <${WoButton} b=${b} ctx=${ctx} label="+ Create work order" />${ctx.allowed("simulator") && html`<button class="btn" onClick=${() => go("simulator/" + b.id)}>Simulate fixes</button>`}<button class="btn dark" onClick=${() => ctx.ask(`Why is ${b.id} on the action list, and what should we do first?`)}>✦ Ask about this block</button>
       </${Head}>
       <div class="grid g4" style=${{ marginBottom: 16 }}>
         <${Kpi} label="Yield now" value=${fmt.n(b.yield, 1) + " t/ha"} note=${html`<span class=${b.vs_peers < 0 ? "down" : "up"}>${fmt.signed(b.vs_peers)}</span> vs age peers (${fmt.n(b.peer, 1)})`} />
@@ -419,6 +442,55 @@
     </div>`;
   }
 
+  function Tasks({ D, S, ctx }) {
+    const [show, setShow] = useState("open");
+    const mine = Object.values(ctx.orders).filter((o) => !ctx.user.teams || ctx.user.teams.includes(o.owner));
+    const order = { inprog: 0, todo: 1, done: 2 };
+    const rows = mine.filter((o) => show === "all" || (show === "done" ? o.status === "done" : o.status !== "done"))
+      .sort((a, b) => order[a.status] - order[b.status] || a.due.localeCompare(b.due));
+    const open = mine.filter((o) => o.status !== "done");
+    const today = new Date().toISOString().slice(0, 10);
+    return html`<div>
+      <${Head} eyebrow=${ctx.user.role} title=${open.length ? `You have ${open.length} open task${open.length > 1 ? "s" : ""}` : "No open tasks"} sub=${`Work orders for ${ctx.user.teams.join(", ").toLowerCase()}. Update the status as you go; the estate manager sees it straight away.`}>
+        <div class="seg">${[["open", "Open"], ["done", "Done"], ["all", "All"]].map(([k, l]) => html`<button key=${k} class=${show === k ? "on" : ""} onClick=${() => setShow(k)}>${l}</button>`)}</div>
+      </${Head}>
+      ${!rows.length && html`<div class="card"><p class="muted">Nothing here. New work orders from the estate manager appear in this list.</p></div>`}
+      <div class="tasks">${rows.map((o) => { const b = D.blocks.find((x) => x.id === o.id) || {}; const late = o.status !== "done" && o.due < today; return html`<div class="task card" key=${o.id}>
+        <div class="row" style=${{ justifyContent: "space-between" }}><div><a href=${"#/block/" + o.id}><b>${o.id}</b></a> <span class="muted small">· ${o.estate.replace(" Estate", "")}</span></div><span class=${"status " + o.status}>${STATUS[o.status]}</span></div>
+        <h3 style=${{ margin: "8px 0 4px" }}>${o.action}</h3>
+        <p class="small muted">Why: ${b.issues || "–"} · ${o.owner} · <span class=${late ? "down" : ""}>Due ${o.due}${late ? " (late)" : ""}</span> · worth ${fmt.rm(o.gain_t * S.price)} a year</p>
+        <div class="row" style=${{ marginTop: 10 }}>
+          ${o.status === "todo" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "inprog" }); ctx.toast("Started: " + o.id); }}>▶ Start</button>`}
+          ${o.status === "inprog" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "done", doneAt: new Date().toISOString() }); ctx.toast("Marked done: " + o.id); }}>✓ Mark done</button>`}
+          ${o.status === "done" && html`<button class="btn" onClick=${() => ctx.updateOrder(o.id, { status: "inprog" })}>↺ Reopen</button>`}
+          <a class="btn" href=${"#/block/" + o.id}>Block details</a>
+          <button class="btn" onClick=${() => ctx.ask(`How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)} in ${o.id}?`)}>✦ Ask how</button>
+        </div></div>`; })}</div>
+    </div>`;
+  }
+
+  function Access({ ctx }) {
+    return html`<div>
+      <${Head} eyebrow="Administrator" title="Access" sub="Each role sees only the pages it needs. In production, roles come from the client's directory; in this demo, the four demo users show them." />
+      <div class="card"><div class="table-wrap"><table class="t"><thead><tr><th>Page</th>${Object.values(ROLES).map((r) => html`<th key=${r.role} style=${{ textAlign: "center" }}>${r.role}</th>`)}</tr></thead><tbody>
+        ${PAGE_NAMES.map(([k, n]) => html`<tr key=${k}><td>${n}</td>${Object.values(ROLES).map((r) => html`<td key=${r.role} style=${{ textAlign: "center" }}>${r.pages.includes(k) ? html`<span class="up">✓</span>` : html`<span class="muted">–</span>`}</td>`)}</tr>`)}
+        <tr><td>Create and assign work orders</td>${Object.entries(ROLES).map(([k, r]) => html`<td key=${k} style=${{ textAlign: "center" }}>${["manager", "agronomist"].includes(k) ? html`<span class="up">✓</span>` : html`<span class="muted">–</span>`}</td>`)}</tr>
+      </tbody></table></div></div>
+      <div class="grid g2" style=${{ marginTop: 16 }}>
+        <div class="card"><h2 style=${{ marginBottom: 8 }}>Users</h2><div class="list">${Object.entries(ROLES).map(([k, r]) => html`<div class="li" key=${k}><span class="avatar">${r.initials}</span><div class="main-t"><b>${r.name} · ${r.role}</b><span>${r.does}</span></div></div>`)}</div></div>
+        <div class="card"><h2 style=${{ marginBottom: 8 }}>How people sign in</h2>
+          <p class="small" style=${{ marginBottom: 8 }}><b>Option A · Lean:</b> email and password with a one-time code; the administrator invites users and sets their role.</p>
+          <p class="small" style=${{ marginBottom: 8 }}><b>Option B · Enterprise:</b> company single sign-on (Microsoft Entra ID or SAP Identity Authentication); roles come from the client's directory groups.</p>
+          <p class="small muted">Demo: sign-in is simulated and no password is stored. Work orders, chats and the AI log are kept in this browser.</p></div>
+      </div></div>`;
+  }
+
+  function NoAccess({ ctx }) {
+    return html`<div class="card" style=${{ maxWidth: 560 }}><h2 style=${{ marginBottom: 6 }}>Not part of your role</h2>
+      <p class="muted" style=${{ marginBottom: 12 }}>${ctx.user.role}s see only what they need for their work. Ask your administrator if you need this page.</p>
+      <a class="btn primary" href="#/home">Back to Ask PalmYield</a></div>`;
+  }
+
   function Settings({ ctx }) {
     const [k, setK] = useState(ctx.key || ""); const [test, setTest] = useState(null);
     async function save() {
@@ -448,15 +520,18 @@
   }
 
   function SignIn({ ctx }) {
+    const B = ctx.option === "B";
     return html`<div class="login">
-      <div class="hero"><div><div class="brand" style=${{ padding: 0 }}><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>Plantation yield command centre</small></div></div>
-        <h1>See where yield is lost, why, and what to do first.</h1>
-        <ul><li>Management briefing, updated every harvest cycle</li><li>Early warnings before the yield is lost</li><li>Ranked, valued actions turned into work orders</li><li>An AI assistant that answers from your own data</li></ul></div>
+      <div class="hero"><div><div class="brand" style=${{ padding: 0 }}><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>AI yield assistant</small></div></div>
+        <h1>Ask where yield is lost, why, and what to do first.</h1>
+        <ul><li>An assistant that answers from your own plantation data</li><li>Early warnings before the yield is lost</li><li>Ranked, valued actions turned into work orders</li><li>Each person sees only what their role needs</li></ul></div>
         <p class="small" style=${{ color: "#8EA698" }}>Demo on a synthetic sample · not real SOPB results</p></div>
-      <div class="panel"><h2 style=${{ fontSize: 24 }}>Sign in</h2>
-        <p class="muted">In production you sign in with your company account (single sign-on), and your role sets what you see. For this demo, pick a role:</p>
-        ${Object.entries(ROLES).map(([k, r]) => html`<button class="role" key=${k} onClick=${() => ctx.signIn(k)}><span class="avatar">${r.initials}</span><span><b>${r.name}</b><span class="small muted">${r.role}${k === "admin" ? " · sees the AI usage log" : ""}</span></span><span style=${{ marginLeft: "auto" }}>→</span></button>`)}
-        <p class="small muted">Option B · Enterprise. <a href="#" onClick=${(e) => { e.preventDefault(); ctx.setOption("A"); }}>Use Option A instead</a> (no sign-in).</p></div>
+      <div class="panel">
+        <div class="seg" style=${{ alignSelf: "flex-start" }}><button class=${!B ? "on" : ""} onClick=${() => ctx.setOption("A")}>Option A · Lean</button><button class=${B ? "on" : ""} onClick=${() => ctx.setOption("B")}>Option B · Enterprise</button></div>
+        <h2 style=${{ fontSize: 24 }}>Sign in</h2>
+        <p class="muted">${B ? "In production you sign in with your company account (single sign-on)." : "In production you sign in with your email, a password and a one-time code."} Your role sets what you see. For this demo, pick a person:</p>
+        ${Object.entries(ROLES).map(([k, r]) => html`<button class="role" key=${k} onClick=${() => ctx.signIn(k)}><span class="avatar">${r.initials}</span><span><b>${r.name} · ${r.role}</b><span class="small muted">${r.does}</span></span><span style=${{ marginLeft: "auto" }}>→</span></button>`)}
+        <p class="small muted">${B ? "Option B: AI assistant, company sign-in, SAP data link, AI usage log." : "Option A: built-in answers, no AI cost, CSV upload."}</p></div>
     </div>`;
   }
 
@@ -469,7 +544,7 @@
     const [estate, setEstate] = usePersist("estate", "");
     const [price, setPrice] = usePersist("price", D.meta.price);
     const [key, setKey] = usePersist("gemini", "");
-    const [orders, setOrders] = usePersist("orders", {});
+    const [orders, setOrders] = usePersist("orders.v2", () => seedOrders(D));
     const [aiLog, setAiLog] = usePersist("ailog", []);
     const [pending, setPending] = useState(null);
     const [chats, setChats] = usePersist("chats", []);
@@ -477,13 +552,16 @@
     const [toastMsg, setToast] = useState(null);
     const [menu, setMenu] = useState(false);
     useEffect(() => { setMenu(false); }, [route.join("/")]);
+    useEffect(() => { if (user) document.title = "PalmYield · " + user.role; }, [role]);
     const toast = (m) => { setToast(m); clearTimeout(window.__t); window.__t = setTimeout(() => setToast(null), 2600); };
     const S = useMemo(() => PY.scope(D, estate, price), [estate, price]);
-    const user = option === "A" ? { name: "Estate team", role: "Option A · no sign-in", initials: "ET" } : ROLES[role] || null;
+    const user = ROLES[role] || null;
+    const allowed = (pg) => !!user && user.pages.includes(pg === "chat" || pg === "assistant" ? "home" : pg);
     const due = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); };
     const ctx = {
-      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats,
-      setOption: (o) => { setOptionRaw(o); toast(o === "A" ? "Option A · Lean: no AI, no sign-in" : "Option B · Enterprise: AI, sign-in, SAP link"); },
+      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats, allowed,
+      canAssign: ["manager", "agronomist"].includes(role),
+      setOption: (o) => { setOptionRaw(o); toast(o === "A" ? "Option A · Lean: built-in answers, email sign-in" : "Option B · Enterprise: AI, company sign-in, SAP link"); },
       setEstate, setPrice, setKey,
       signIn: (k) => { setRole(k); go("home"); },
       ask: (q) => { setPending(q); setChatKey((k) => k + 1); go("home"); },
@@ -494,23 +572,24 @@
       createOrders: (bs) => {
         const add = bs.filter((b) => !orders[b.id]);
         if (!add.length) { toast("Already on the work order board"); return; }
-        setOrders((o) => { const n = { ...o }; add.forEach((b) => { n[b.id] = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner: b.issues.includes("harvest") || b.action.startsWith("Cut the harvest") ? "Harvest team" : "Estate manager", status: "todo", due: due(b.risk === "High" ? 7 : 21), created: new Date().toISOString() }; }); return n; });
+        setOrders((o) => { const n = { ...o }; add.forEach((b) => { n[b.id] = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner: ownerFor(b.action), status: "todo", due: due(b.risk === "High" ? 7 : 21), created: new Date().toISOString(), by: user ? user.name : "" }; }); return n; });
         toast(`${add.length} work order${add.length > 1 ? "s" : ""} created · ${fmt.rm(add.reduce((s, b) => s + b.gain_t, 0) * price)} a year`);
       },
       updateOrder: (id, patch) => setOrders((o) => ({ ...o, [id]: { ...o[id], ...patch } })),
       removeOrder: (id) => setOrders((o) => { const n = { ...o }; delete n[id]; return n; }),
-      resetDemo: () => { setOrders({}); setAiLog([]); setChats([]); toast("Demo data reset"); },
+      resetDemo: () => { setOrders(seedOrders(D)); setAiLog([]); setChats([]); toast("Demo data reset"); },
       toast,
     };
 
-    if (option === "B" && !user) return html`<${SignIn} ctx=${ctx} />`;
+    if (!user) return html`<${SignIn} ctx=${ctx} />`;
     const [page, sub] = route;
+    const myOpen = Object.values(orders).filter((o) => o.status !== "done" && (!user.teams || user.teams.includes(o.owner))).length;
     const NAV = [
-      ["", [["home", "✦", "Ask PalmYield"], ["dashboard", "◉", "Dashboard"]]],
+      ["", [["home", "✦", "Ask PalmYield"], ["dashboard", "◉", "Dashboard"], ["tasks", "☑", "My tasks", myOpen]]],
       ["Act", [["warnings", "⚠", "Early warnings", S.high], ["actions", "✓", "Action plan"]]],
       ["Explore", [["map", "⌖", "Block map"], ["simulator", "⇅", "What-if simulator"], ["insights", "◈", "Why yield differs"]]],
-      ["System", [["system", "⛁", "Data and system"], ["settings", "⚙", "Settings"]]],
-    ];
+      ["System", [["system", "⛁", "Data and system"], ["access", "⚿", "Access"], ["settings", "⚙", "Settings"]]],
+    ].map(([sec, items]) => [sec, items.filter(([k]) => allowed(k))]).filter(([, items]) => items.length);
     const pages = {
       home: () => html`<${window.PYAsk} key=${"new" + chatKey} D=${D} S=${S} ctx=${ctx} />`,
       chat: () => html`<${window.PYAsk} key=${"chat" + sub + chatKey} D=${D} S=${S} ctx=${ctx} chatId=${sub} />`,
@@ -524,7 +603,10 @@
       insights: () => html`<${Insights} D=${D} S=${S} />`,
       system: () => html`<${System} D=${D} ctx=${ctx} />`,
       settings: () => html`<${Settings} ctx=${ctx} />`,
+      tasks: () => html`<${Tasks} D=${D} S=${S} ctx=${ctx} />`,
+      access: () => html`<${Access} ctx=${ctx} />`,
     };
+    const view = pages[page] ? (allowed(page) ? pages[page]() : html`<${NoAccess} ctx=${ctx} />`) : pages.home();
     return html`<div class="shell">
       <aside class=${"side" + (menu ? " open" : "")}>
         <a class="brand" href="#/home"><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>AI yield assistant</small></div></a>
@@ -539,12 +621,12 @@
           <span class="small muted hide-sm">Estate</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">All estates (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
           <span class="chip syn hide-sm">Synthetic sample data</span>
           <span class="grow"></span>
-          <button class=${"chip " + (option === "A" ? "a" : "b")} style=${{ border: 0 }} onClick=${() => go("settings")} title="Change option">${option === "A" ? "Option A · Lean" : "Option B · Enterprise"}</button>
-          <button class="btn sm hide-sm" onClick=${() => go("dashboard")}>◉ Dashboard</button>
+          <button class=${"chip " + (option === "A" ? "a" : "b")} style=${{ border: 0 }} onClick=${() => allowed("settings") ? go("settings") : toast("Sign out to switch options")} title="Proposal option">${option === "A" ? "Option A · Lean" : "Option B · Enterprise"}</button>
+          ${allowed("dashboard") && html`<button class="btn sm hide-sm" onClick=${() => go("dashboard")}>◉ Dashboard</button>`}
           <div class="user"><span class="avatar">${user.initials}</span><span class="hide-sm"><b>${user.name}</b><br /><span class="small muted">${user.role}</span></span>
-            ${option === "B" && html`<button class="btn sm" onClick=${() => { setRole(null); }}>Sign out</button>`}</div>
+            <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>Sign out</button></div>
         </header>
-        <main class=${"content" + (page === "home" || page === "chat" || page === "assistant" ? " wide" : "")}>${(pages[page] || pages.home)()}</main>
+        <main class=${"content" + (!pages[page] || page === "home" || page === "chat" || page === "assistant" ? " wide" : "")}>${view}</main>
       </div>
       ${toastMsg && html`<div class="toast">${toastMsg}</div>`}
     </div>`;
@@ -558,7 +640,7 @@
     }
   }
 
-  fetch("data/app.json?v=3").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=4").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

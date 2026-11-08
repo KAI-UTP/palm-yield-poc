@@ -11,7 +11,8 @@ The data is synthetic, not real SOPB results.
   at <https://kai-utp.github.io/palm-yield-poc/> by `.github/workflows/pages.yml` on every push.
   Run it locally: `python -m http.server 8600 --directory web`, then open <http://localhost:8600>.
   After the pipeline re-runs, refresh its data with `python web/build_data.py`.
-  Option B's AI uses a Google Gemini key that each user enters in Settings; it stays in that browser.
+  Option B's AI uses a Google Gemini key that the administrator enters in Settings; it stays in that browser.
+  Access is by role: estate manager, agronomist, field supervisor (My tasks only) and administrator each see only their own pages.
 - **Streamlit analytics app (`app.py`)** is the analyst workbench and the backup for demos.
 
 ## Run it

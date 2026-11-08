@@ -4,18 +4,36 @@
   const html = htm.bind(React.createElement);
   const { fmt } = PY;
 
-  const STARTERS = [
-    ["☀", "Brief me on this cycle", "Problem, cause, action and value"],
-    ["⚠", "Which blocks will under-perform next cycle?", "Early warnings before the harvest"],
-    ["✓", "What should we fix first, and what is it worth?", "Ranked actions in RM"],
-    ["⌖", "Which estate needs the most attention?", "Estates against age peers"],
-    ["🔎", "Tell me about EST005-D08-B01", "One block's full story"],
-    ["🌱", "Is fertilizer working?", "Leaf nutrients and feeding"],
-  ];
+  const STARTERS = {
+    manager: [
+      ["☀", "Brief me on this cycle", "Problem, cause, action and value"],
+      ["⚠", "Which blocks will under-perform next cycle?", "Early warnings before the harvest"],
+      ["✓", "What should we fix first, and what is it worth?", "Ranked actions in RM"],
+      ["⌖", "Which estate needs the most attention?", "Estates against age peers"],
+      ["📋", "What work orders are open?", "Progress of the action plan"],
+      ["🔎", "Tell me about EST005-D08-B01", "One block's full story"]],
+    agronomist: [
+      ["🌱", "Is fertilizer working?", "Leaf nutrients and feeding"],
+      ["🐛", "Which pest treatments work best?", "Ganoderma and bagworm"],
+      ["◈", "Why does yield differ between blocks?", "The main drivers"],
+      ["⚠", "Which blocks will under-perform next cycle?", "Early warnings before the harvest"],
+      ["📋", "What are my tasks?", "Agronomy work orders"],
+      ["🔎", "Tell me about EST005-D08-B01", "One block's full story"]],
+    field: [
+      ["📋", "What are my tasks today?", "Your team's work orders"],
+      ["🔎", "Tell me about EST005-D08-B01", "Why this block needs work"],
+      ["🛠", "How do we fix poor road access?", "What the action involves"],
+      ["⏱", "Why does the harvest round matter?", "7 to 10 days, and why"]],
+    admin: [
+      ["◎", "How accurate is the forecast?", "Model checks on unseen blocks"],
+      ["☀", "Brief me on this cycle", "Problem, cause, action and value"],
+      ["📋", "What work orders are open?", "Usage of the action plan"],
+      ["⌖", "Which estate needs the most attention?", "Estates against age peers"]],
+  };
 
   const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; };
 
-  function Composer({ onSend, busy, big, ai, hasKey, autoFocus }) {
+  function Composer({ onSend, busy, big, ai, hasKey, autoFocus, canSet }) {
     const [v, setV] = useState("");
     const ta = useRef(null);
     useEffect(() => { if (autoFocus && ta.current && window.innerWidth > 820) ta.current.focus(); }, []);
@@ -24,21 +42,33 @@
     return html`<div class=${"ask-box" + (big ? " big" : "")}>
       <textarea ref=${ta} rows=${big ? 2 : 1} value=${v} maxLength="500" placeholder=${big ? "Ask anything about your yield, blocks, risks or actions…" : "Reply or ask something new…"}
         onInput=${(e) => { setV(e.target.value); grow(e.target); }} onKeyDown=${(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}></textarea>
-      <div class="bar"><span class="small muted">${ai ? (hasKey ? "✦ AI on · answers only from your data" : html`AI is off on this device · <a href="#/settings">add a key</a>`) : "Built-in answers · Option A"}</span>
+      <div class="bar"><span class="small muted">${ai ? (hasKey ? "✦ AI on · answers only from your data" : canSet ? html`AI is off on this device · <a href="#/settings">add a key</a>` : "AI is off on this device · built-in answers") : "Built-in answers · Option A"}</span>
         <button class="send" onClick=${submit} disabled=${busy || !v.trim()} aria-label="Send">↑</button></div>
     </div>`;
   }
 
-  function actionsFor(m, D, S) {
+  function actionsFor(m, D, S, ctx) {
     const out = [];
     const ids = [...new Set((m.text.match(/EST\d{3}-D\d{2}-B\d{2}/g) || []))].filter((id) => D.blocks.find((b) => b.id === id)).slice(0, 3);
     ids.forEach((id) => out.push({ label: "Open " + id, href: "#/block/" + id }));
-    if (ids.length) out.push({ label: ids.length > 1 ? `+ Work orders for these ${ids.length}` : "+ Work order", orders: ids });
+    if (ids.length && ctx.canAssign) out.push({ label: ids.length > 1 ? `+ Work orders for these ${ids.length}` : "+ Work order", orders: ids });
+    if (m.chart === "tasks") out.push(ctx.allowed("tasks") ? { label: "Open My tasks", href: "#/tasks" } : { label: "Open work order board", href: "#/actions/board" });
     const page = { risk: ["See all early warnings", "#/warnings"], levers: ["Open action plan", "#/actions"], top_blocks: ["Open action plan", "#/actions"],
       estates: ["Open block map", "#/map"], drivers: ["Why yield differs", "#/insights"], age_curve: ["Why yield differs", "#/insights"],
       accuracy: ["Model accuracy", "#/system"], block: m.block ? ["Simulate fixes", "#/simulator/" + m.block] : null }[m.chart];
     if (page) out.push({ label: page[0], href: page[1] });
-    return out;
+    return out.filter((a) => !a.href || ctx.allowed(a.href.replace("#/", "").split("/")[0]));
+  }
+
+  function tasksAnswer(ctx) {
+    const mine = Object.values(ctx.orders).filter((o) => o.status !== "done" && (!ctx.user.teams || ctx.user.teams.includes(o.owner)))
+      .sort((a, b) => (a.status === "inprog" ? 0 : 1) - (b.status === "inprog" ? 0 : 1) || a.due.localeCompare(b.due));
+    const who = ctx.user.teams ? "Your team has" : "There are";
+    if (!mine.length) return { text: `${who} no open work orders right now.`, chart: "tasks" };
+    const rm = mine.reduce((s, o) => s + o.gain_t, 0) * ctx.price;
+    return { text: `${who} **${mine.length} open work order${mine.length > 1 ? "s" : ""}**, worth ${fmt.rm(rm)} a year in total:\n` +
+      mine.slice(0, 6).map((o) => `- **${o.id}** (${o.estate.replace(" Estate", "")}): ${o.action}. ${o.status === "inprog" ? "In progress" : "To do"}, due ${o.due}, ${o.owner.toLowerCase()}`).join("\n") +
+      (mine.length > 6 ? `\n\n…and ${mine.length - 6} more.` : ""), chart: "tasks" };
   }
 
   function Ask({ D, S, ctx, chatId }) {
@@ -49,7 +79,6 @@
     const idRef = useRef(saved ? saved.id : null);
     const end = useRef(null);
     const ai = ctx.option === "B";
-    const first = ai && ctx.user ? ctx.user.name.split(" ")[0] : "";
 
     useEffect(() => { if (msgs.length) end.current && end.current.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs.length, busy]);
     useEffect(() => {
@@ -71,7 +100,7 @@
       const hist = msgs.filter((m) => m.text);
       setMsgs((m) => [...m, { role: "user", text: q }, { role: "bot", text: "", streaming: true }]);
       setBusy(true);
-      const local = PY.answer(D, S, q);
+      const local = /\b(tasks?|work orders?|to do today)\b/i.test(q) && !/\bEST\d{3}/i.test(q) ? tasksAnswer(ctx) : PY.answer(D, S, q);
       const finish = (text, chart, block, src) => {
         patchLast({ text, chart, block, src, streaming: false, follow: PY.followUps(q, chart, D, S) });
         setBusy(false);
@@ -97,19 +126,23 @@
 
     if (!msgs.length) {
       const openWO = Object.values(ctx.orders).filter((o) => o.status !== "done");
+      const myOpen = openWO.filter((o) => !ctx.user.teams || ctx.user.teams.includes(o.owner));
       return html`<div class="ask"><div class="ask-hero">
         <div class="hero-mark">✦</div>
-        <h1>${greeting()}${first ? ", " + first : ""}</h1>
+        <h1>${greeting()}, ${ctx.user.name.split(" ")[0]}</h1>
         <p class="hero-sub">${ai ? "What would you like to know about your plantation today?" : "Ask a question about your plantation's yield."} ${ctx.estate ? html`<b>${ctx.estate}</b>` : `${S.blocks.length} blocks, ${S.estates.length} estates`}.</p>
-        <${Composer} big=${true} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} autoFocus=${true} />
-        <div class="starters">${STARTERS.map(([i, q, d]) => html`<button class="starter" key=${q} onClick=${() => send(q)}><span class="i">${i}</span><b>${q}</b><span>${d}</span></button>`)}</div>
+        <${Composer} big=${true} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} autoFocus=${true} canSet=${ctx.allowed("settings")} />
+        <div class="starters">${(STARTERS[ctx.role] || STARTERS.manager).map(([i, q, d]) => html`<button class="starter" key=${q} onClick=${() => send(q)}><span class="i">${i}</span><b>${q}</b><span>${d}</span></button>`)}</div>
         <div class="glance-head small muted">This cycle at a glance</div>
-        <div class="glance">
-          <a href="#/dashboard"><div class="v">${fmt.rm(S.totalRM)}</div><div class="l">a year at stake</div></a>
-          <a href="#/warnings"><div class="v down">${S.high}</div><div class="l">blocks at high risk</div></a>
-          <a href="#/actions"><div class="v">${S.leverT[0] ? S.leverT[0].short : "–"}</div><div class="l">biggest fix</div></a>
-          <a href="#/actions/board"><div class="v">${openWO.length}</div><div class="l">open work orders</div></a>
-        </div>
+        <div class="glance">${[
+          ["dashboard", "#/dashboard", fmt.rm(S.totalRM), "a year at stake", ""],
+          ["warnings", "#/warnings", S.high, "blocks at high risk", "down"],
+          ["actions", "#/actions", S.leverT[0] ? S.leverT[0].short : "–", "biggest fix", ""],
+          ["actions", "#/actions/board", openWO.length, "open work orders", ""],
+          ["tasks", "#/tasks", myOpen.length, "my open tasks", ""],
+          ["insights", "#/insights", "8 of 8", "patterns confirmed", ""],
+          ["system", "#/system", "±" + fmt.n(D.forecast_metrics.model.mae, 2), "forecast error, t/ha/yr", ""],
+        ].filter(([pg]) => ctx.allowed(pg)).slice(0, 4).map(([pg, href, v, l, cls]) => html`<a key=${href} href=${href}><div class=${"v " + cls}>${v}</div><div class="l">${l}</div></a>`)}</div>
       </div></div>`;
     }
 
@@ -120,14 +153,14 @@
           <div class="body">
             ${m.text ? html`<div class=${m.streaming ? "cursor" : ""}><${Md} text=${m.text} /></div>` : html`<div class="thinking"><span></span><span></span><span></span> ${ai && ctx.key ? "Thinking" : "Working it out"}</div>`}
             ${!m.streaming && m.chart && CHARTS[m.chart] && html`<div class="chart-box"><${ChartCard} D=${D} S=${S} name=${m.chart} block=${m.block ? D.blocks.find((b) => b.id === m.block) : null} height=${250} bare=${true} /></div>`}
-            ${!m.streaming && html`<div class="acts">${actionsFor(m, D, S).map((a) => a.href ? html`<a key=${a.label} class="btn sm" href=${a.href}>${a.label}</a>`
+            ${!m.streaming && html`<div class="acts">${actionsFor(m, D, S, ctx).map((a) => a.href ? html`<a key=${a.label} class="btn sm" href=${a.href}>${a.label}</a>`
               : html`<button key=${a.label} class="btn sm primary" onClick=${() => ctx.createOrders(a.orders.map((id) => D.blocks.find((b) => b.id === id)))}>${a.label}</button>`)}</div>`}
             ${!m.streaming && m.follow && i === msgs.length - 1 && html`<div class="follow sugg">${m.follow.map((f) => html`<button key=${f} onClick=${() => send(f)}>${f} →</button>`)}</div>`}
             ${!m.streaming && m.src && html`<div class="src">${m.src}</div>`}
           </div></div>`)}
         <div ref=${end}></div>
       </div>
-      <div class="dock"><${Composer} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} />
+      <div class="dock"><${Composer} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} canSet=${ctx.allowed("settings")} />
         <div class="small muted" style=${{ textAlign: "center", marginTop: 6 }}>Answers use only PalmYield's computed results · synthetic sample data</div></div>
     </div>`;
   }

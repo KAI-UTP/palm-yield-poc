@@ -856,7 +856,7 @@ def run_pipeline(path, label=None):
     st.rerun()
 
 
-# ---------- Start here, AI assistant, Block profile, How it's built ----------
+# ---------- Start here, AI assistant, Block profile ----------
 CHAT_LIMIT = 20  # AI questions per visitor session, so a public link cannot run up the free quota
 
 
@@ -898,8 +898,8 @@ def ask_and_open(question):
 
 
 def page_home():
-    header("Palm Yield Optimization POC", "Find where yield is lost, and what to do first",
-           f"A working prototype of an AI-assisted analytics tool for oil palm plantations: it explains why yield differs, forecasts the next harvest cycle, and ranks "
+    header("Palm Yield Optimization", "Find where yield is lost, and what to do first",
+           f"An analytics tool for oil palm plantations: it explains why yield differs, forecasts the next harvest cycle, and ranks "
            f"every block by the action worth the most. {'Your uploaded data' if source.get('source') == 'upload' else 'Synthetic sample data'}: "
            f"{df.block_id.nunique():,} blocks in {df.estate_name.nunique()} estates. Use the sidebar filters to focus on a region or estate.")
     st.info(f"You are viewing **{EDITION['name']}**. "
@@ -928,7 +928,7 @@ def page_home():
         role = st.radio("I am", ["a plantation manager", "an agronomist", "an analyst or IT"], key="role", label_visibility="collapsed")
         path = {"a plantation manager": [("actions", "Which blocks to fix first"), ("block", "Why a block is on the list"), ("simulator", "Test a change")],
                 "an agronomist": [("agronomy", "Fertilizer, harvesting, treatments"), ("patterns", "The 8 tested patterns"), ("drivers", "What drives yield")],
-                "an analyst or IT": [("about", "Architecture and data flow"), ("quality", "Data quality checks"), ("data", "Run on your own data")]}[role]
+                "an analyst or IT": [("quality", "Data quality checks"), ("forecast", "Forecast model accuracy"), ("data", "Run on your own data")]}[role]
         for key, label in path:
             go_to(key, label, ":material/arrow_right:")
 
@@ -1039,61 +1039,6 @@ def page_block():
         ask_and_open(f"Why is {bid} on the action list, and what should we do first?")
 
 
-def page_about():
-    header("About this POC", "How it's built",
-           "A working prototype, built like a real system: one repeatable pipeline feeds a shared data layer, which serves the web app, "
-           "an AI assistant and a REST API for other systems.")
-    with card("Architecture", "Every component reads the same results, so the app, the API and the AI always agree."):
-        st.graphviz_chart(f"""digraph {{
-  rankdir=TB; bgcolor="transparent"; nodesep=0.5; ranksep=0.35;
-  node [shape=box style="rounded,filled" fillcolor="{SURFACE}" color="{AXIS}" fontname="Segoe UI" fontsize=10 fontcolor="{INK}" margin="0.15,0.08"];
-  edge [color="{MUTED}" arrowsize=0.6 fontname="Segoe UI" fontsize=9 fontcolor="{MUTED}"];
-  src [label="Source data\\nCSV export or\\nSAP / BI extract"];
-  prep [label="1. Prepare\\nschema + 22 quality checks\\n20 engineered features"];
-  ml [label="2. Model\\n5 algorithms compared\\ndrivers · forecast · groups\\nwhat-if levers" fillcolor="#14304f" color="{BLUE}"];
-  store [label="3. Data layer\\nParquet + CSV/JSON results\\ncore/store.py"];
-  ins [label="Insight engine\\ncomputed findings"];
-  llm [label="AI assistant\\nGemini (free) or Claude\\ngrounded on results"];
-  app [label="Streamlit web app\\n15 pages"];
-  api [label="REST API (FastAPI)\\n/summary /actions\\n/forecast /blocks"];
-  ext [label="SAP Analytics Cloud\\nPower BI · other apps"];
-  {{rank=same; src; prep; ml;}} {{rank=same; ins; llm;}} {{rank=same; app; api; ext;}}
-  src -> prep -> ml -> store; store -> ins; store -> app; store -> api; ins -> llm; ins -> app; llm -> app [label="answers"]; api -> ext;
-}}""", use_container_width=True)
-    l, r = st.columns(2)
-    with l, card("Tech stack"):
-        st.markdown("""
-| Layer | Technology |
-|---|---|
-| Data preparation | Python, pandas, PyArrow (Parquet) |
-| Machine learning | scikit-learn (gradient boosting, random forest, extra trees, ridge, k-means), SciPy |
-| Insights and AI | Rule-based insight engine; Google Gemini API (free tier), pluggable to Claude |
-| Web app | Streamlit, Plotly |
-| Integration | FastAPI REST API with OpenAPI docs |
-| Quality | pytest, GitHub Actions CI, Docker |""")
-    with r, card("Data flow, step by step"):
-        st.markdown(f"""
-1. **Ingest:** a CSV (one row per block per harvest cycle) is checked against the {len(required_columns())}-column schema.
-2. **Prepare:** {len(QC)} quality checks, cleaning, and 20 features such as annualised yield and yield vs age peers.
-3. **Model:** 5 algorithms compared on unseen blocks; the best forecasts the next cycle with an 80% range.
-4. **Store:** results saved as Parquet, CSV and JSON; each visitor's upload gets its own private folder.
-5. **Serve:** the app, the insight engine, the AI assistant and the API all read through one data layer.""")
-    l, r = st.columns(2)
-    with l, card("Integration API", "Run `uvicorn api:app` and open /docs for the interactive OpenAPI page."):
-        st.dataframe(pd.DataFrame([("GET /health", "Service status"), ("GET /summary", "Headline numbers, by estate and price"),
-                                   ("GET /insights", "Automated findings"), ("GET /actions", "Ranked action plan, by estate or risk"),
-                                   ("GET /forecast", "Next-cycle forecast with 80% range"), ("GET /blocks/{id}", "One block: summary, history, action")],
-                                  columns=["Endpoint", "Returns"]), hide_index=True, use_container_width=True)
-    with r, card("Engineering quality"):
-        st.markdown("""
-- **Automated tests** for the pipeline outputs, insight engine, AI layer (with a mocked service), API and every app page.
-- **Continuous integration:** GitHub Actions runs the tests on every push.
-- **Docker image** runs the app the same way on any server, including the customer's own.
-- **Security:** API keys live in secrets, never in code; uploads are private per session; the AI has a per-session question limit.
-- **Graceful fallback:** if the AI service is down or over its free limit, the built-in insight engine answers instead.
-- **Two options, one code base:** a switch turns on Option B's AI assistant, company login, SAP data link and AI usage log (login and SAP simulated here).""")
-
-
 def option_b_only(feature):
     """Shown in Option A where a page belongs to Option B."""
     st.info(f"**{feature}** is part of **Option B · Enterprise**. Choose Option B in the sidebar to see it working.", icon="🔒")
@@ -1115,7 +1060,7 @@ def page_signin():
 
 
 def page_sap():
-    header("About this POC", "SAP data link",
+    header("Data and admin", "SAP data link",
            "In Option B the data arrives from SAP every day, so nobody uploads files. "
            "<b>Simulated in this prototype:</b> there is no SAP system to call, so the sync uses the sample file in the same format a real extract would have.")
     if not EDITION["sap"]:
@@ -1142,7 +1087,7 @@ def page_sap():
 
 
 def page_usage():
-    header("About this POC", "AI usage log",
+    header("Data and admin", "AI usage log",
            "Option B records who asked the AI assistant what, and when, so the client can check use and cost.")
     if not EDITION["ai"]:
         option_b_only("The AI usage log")
@@ -1166,7 +1111,6 @@ PG = {"home": st.Page(page_home, title="Start here", icon="🏠", default=True),
       "usage": st.Page(page_usage, title="AI usage log", icon="🧾", url_path="ai-usage"),
       "poc": st.Page(page_poc, title="POC summary", icon="🧪", url_path="poc"),
       "data": st.Page(page_data, title="Run on your data", icon="📤", url_path="run-on-your-data"),
-      "about": st.Page(page_about, title="How it's built", icon="🏗️", url_path="architecture"),
       "overview": st.Page(page_overview, title="Overview", icon="📊", url_path="overview"),
       "quality": st.Page(page_quality, title="Data quality", icon="🧹", url_path="data-quality"),
       "drivers": st.Page(page_drivers, title="Yield drivers", icon="🔍", url_path="drivers"),
@@ -1184,11 +1128,11 @@ pages = {
     "Understand": [PG["drivers"], PG["patterns"], PG["agronomy"], PG["groups"]],
     "Predict": [PG["forecast"]],
     "Recommend": [PG["actions"], PG["block"], PG["simulator"]],
-    "About this POC": [PG["poc"], PG["data"]] + ([PG["sap"]] if EDITION["sap"] else []) + ([PG["usage"]] if USER == "admin" else []) + [PG["about"]],
+    "Data and admin": [PG["poc"], PG["data"]] + ([PG["sap"]] if EDITION["sap"] else []) + ([PG["usage"]] if USER == "admin" else []),
 }
 
 if os.environ.get("PALM_RENDER_ALL"):  # test hook: render every page in one run
-    for fn in [page_home, page_assistant, page_block, page_about, page_poc, page_data, page_sap, page_usage, page_overview, page_quality,
+    for fn in [page_home, page_assistant, page_block, page_poc, page_data, page_sap, page_usage, page_overview, page_quality,
                page_drivers, page_patterns, page_agronomy, page_groups, page_forecast, page_actions, page_simulator]:
         fn()
 elif EDITION["login"] and USER not in ED.DEMO_USERS:  # Option B: sign in first

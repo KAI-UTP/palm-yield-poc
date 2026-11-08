@@ -81,7 +81,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs the tests on every push.
 
 ## Architecture
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and the **How it's built** page in the app.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); the proposal deck has the same diagram.
 
 | Layer | File | What it does |
 |---|---|---|
@@ -90,7 +90,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and the **How it's built** page
 | 3. Data layer | `core/store.py` | Loads results once, filters them to a view; shared by the app, API, insights and tests |
 | 4. Insights | `core/insights.py` | Plain-language findings computed from the results; the AI brief; offline answers |
 | 5. AI | `core/ai.py` | Gemini (free tier) or Claude, grounded on the brief, with safe fallback |
-| 6. App | `app.py` | 15 pages: Start here, AI assistant; Observe; Understand; Predict; Recommend (Action plan, Block profile, What-if simulator); About this POC |
+| 6. App | `app.py` | 14 pages: Start here, AI assistant; Observe; Understand; Predict; Recommend (Action plan, Block profile, What-if simulator); Data and admin (POC summary, Run on your data, plus SAP data link and AI usage log in Option B) |
 | 7. API | `api.py` | FastAPI REST endpoints for SAP Analytics Cloud, Power BI or other systems |
 
 ## Key methods

@@ -15,7 +15,7 @@ Source data (CSV export, or SAP / BI extract)
         ├──► Insight engine (core/insights.py) ──► AI assistant (core/ai.py: Gemini or Claude, grounded)
         │                     │                                   │
         ▼                     ▼                                   ▼
-   Streamlit app (app.py, 15 pages)  ◄─────────────────────────────┘
+   Streamlit app (app.py, 14 pages)  ◄─────────────────────────────┘
         │
    REST API (api.py, FastAPI) ──► SAP Analytics Cloud · Power BI · other systems
 ```

@@ -82,13 +82,15 @@
       if (!b) return null;
       const cats = [...D.meta.cycle_dates.map((d, i) => `C${i + 1}`), "Next"];
       return { title: `${b.id}: yield by harvest cycle and next-cycle forecast (t/ha/yr)`, option: base({
-        tooltip: { trigger: "axis" }, legend: { bottom: 0, textStyle: { fontSize: 11 } }, grid: { left: 8, right: 24, top: 16, bottom: 30, containLabel: true },
-        xAxis: { type: "category", data: cats, ...AX }, yAxis: { type: "value", ...AX, scale: true },
+        tooltip: { trigger: "axis" }, legend: { bottom: 0, data: ["Actual", "Age peers", "Forecast", "80% range"], textStyle: { fontSize: 11 } }, grid: { left: 8, right: 24, top: 16, bottom: 30, containLabel: true },
+        xAxis: { type: "category", data: cats, ...AX },
+        yAxis: { type: "value", ...AX, min: (v) => Math.floor(Math.min(v.min, b.fc_low) - 1), max: (v) => Math.ceil(Math.max(v.max, b.fc_high, b.peer) + 1) },
         series: [
+          { name: "_base", type: "bar", stack: "range", data: [...b.history.map(() => null), b.fc_low], itemStyle: { color: "transparent" }, barWidth: 14, tooltip: { show: false }, silent: true },
+          { name: "80% range", type: "bar", stack: "range", data: [...b.history.map(() => null), +(b.fc_high - b.fc_low).toFixed(2)], itemStyle: { color: "rgba(199,120,31,.28)", borderRadius: 4 }, barWidth: 14, tooltip: { valueFormatter: () => `${fmt.n(b.fc_low, 1)}–${fmt.n(b.fc_high, 1)}` } },
           { name: "Actual", type: "line", data: [...b.history, null], color: "#12241C", symbolSize: 7 },
           { name: "Age peers", type: "line", data: cats.map(() => b.peer), color: "#7A847E", lineStyle: { type: "dashed" }, symbol: "none" },
-          { name: "Forecast (bar = 80% range)", type: "scatter", data: [...b.history.map(() => null), b.fc], color: b.risk === "High" ? "#C0392B" : "#C7781F", symbolSize: 14,
-            markLine: { symbol: "none", lineStyle: { color: "#C7781F", width: 3, opacity: .5 }, data: [[{ coord: ["Next", b.fc_low] }, { coord: ["Next", b.fc_high] }]], label: { show: false } } },
+          { name: "Forecast", type: "scatter", data: [...b.history.map(() => null), b.fc], color: b.risk === "High" ? "#C0392B" : "#C7781F", symbolSize: 14, z: 5 },
         ] }) };
     },
   };
@@ -179,7 +181,7 @@
       <div class="grid g4" style=${{ marginBottom: 16 }}>
         <${Kpi} label="High risk next cycle" value=${S.high} cls="down" note="well below age peers" />
         <${Kpi} label="Forecast yield" value=${fmt.n(S.fc, 1) + " t/ha"} note=${`${fmt.signed(S.fc - S.yield)} vs now`} />
-        <${Kpi} label="Forecast error" value=${"±" + D.forecast_metrics.model.mae} note="t/ha/yr on unseen blocks" />
+        <${Kpi} label="Forecast error" value=${"±" + fmt.n(D.forecast_metrics.model.mae, 2)} note="t/ha/yr on unseen blocks" />
         <${Kpi} label="Range coverage" value=${D.forecast_metrics.range_80_coverage_pct + "%"} note="of results inside the 80% range" />
       </div>
       <div class="grid g-wide">
@@ -206,7 +208,7 @@
       </${Head}>
       ${tab === "plan" ? html`<div>
         <div class="grid g4" style=${{ marginBottom: 16 }}>
-          <${Kpi} label="Value of all first actions" value=${fmt.rm(S.ranked.reduce((s, b) => s + b.gain_t, 0) * S.price)} note="a year, before costs" />
+          <${Kpi} label="Value of all actions" value=${fmt.rm(S.ranked.reduce((s, b) => s + b.gain_t, 0) * S.price)} note="a year, before costs" />
           <${Kpi} label="Top 10% of blocks" value=${fmt.rm(S.ranked.slice(0, Math.round(S.ranked.length / 10)).reduce((s, b) => s + b.gain_t, 0) * S.price)} note=${Math.round(S.ranked.length / 10) + " blocks to start with"} />
           <${Kpi} label="Biggest lever" value=${S.leverT[0] ? S.leverT[0].short : "–"} note=${S.leverT[0] ? fmt.rm(S.leverT[0].t * S.price) + " a year" : ""} />
           <${Kpi} label="Open work orders" value=${orders.filter((o) => o.status !== "done").length} note=${sumRM(orders.filter((o) => o.status !== "done")) + " a year in progress"} />
@@ -269,7 +271,7 @@
           <div class="legend">${legends[mode].map(([c, l]) => html`<span key=${l}><i style=${{ background: c }}></i>${l}</span>`)}<span class="muted">· Block locations from the sample data</span></div></div>
         ${b ? html`<div class="card"><div class="card-head"><div><h2>${b.id}</h2><p>${b.estate} · ${b.division} · ${b.age_band}</p></div><${Risk} r=${b.risk} /></div>
             <div class="grid g2" style=${{ gap: 10, marginBottom: 12 }}><div><div class="small muted">Yield now</div><b style=${{ fontSize: 20 }}>${fmt.n(b.yield, 1)}</b> <span class="small">t/ha/yr</span></div><div><div class="small muted">vs age peers</div><b style=${{ fontSize: 20 }} class=${b.vs_peers < 0 ? "down" : "up"}>${fmt.signed(b.vs_peers)}</b></div>
-            <div><div class="small muted">Forecast next</div><b style=${{ fontSize: 20 }}>${fmt.n(b.fc, 1)}</b></div><div><div class="small muted">First action worth</div><b style=${{ fontSize: 20 }}>${fmt.rm(b.gain_t * S.price)}</b></div></div>
+            <div><div class="small muted">Forecast next</div><b style=${{ fontSize: 20 }}>${fmt.n(b.fc, 1)}</b></div><div><div class="small muted">Fixing it is worth</div><b style=${{ fontSize: 20 }}>${fmt.rm(b.gain_t * S.price)}</b></div></div>
             <p class="small"><b>Why:</b> ${b.issues || "no controllable issue stands out"}</p><p class="small" style=${{ margin: "6px 0 12px" }}><b>Do first:</b> ${b.action}</p>
             <div class="row"><a class="btn sm primary" href=${"#/block/" + b.id}>Open block profile</a><${WoButton} b=${b} ctx=${ctx} /></div></div>`
           : html`<div class="card"><h2>Estates</h2><p class="small muted" style=${{ marginBottom: 8 }}>Area-weighted, worst first. Click a dot on the map for a block.</p>
@@ -302,8 +304,8 @@
       <div class="grid g4" style=${{ marginBottom: 16 }}>
         <${Kpi} label="Yield now" value=${fmt.n(b.yield, 1) + " t/ha"} note=${html`<span class=${b.vs_peers < 0 ? "down" : "up"}>${fmt.signed(b.vs_peers)}</span> vs age peers (${fmt.n(b.peer, 1)})`} />
         <${Kpi} label="Forecast next cycle" value=${fmt.n(b.fc, 1) + " t/ha"} note=${html`80% range ${fmt.n(b.fc_low, 1)}–${fmt.n(b.fc_high, 1)} · <${Risk} r=${b.risk} />`} />
-        <${Kpi} label="First action worth" value=${fmt.rm(b.gain_t * S.price)} note=${fmt.n(b.gain_t) + " t FFB a year"} />
-        <${Kpi} label="All fixes worth" value=${fmt.rm(b.all_levers * b.area * S.price)} note=${fmt.n(b.all_levers, 2) + " t/ha/yr"} />
+        <${Kpi} label="Value of fixing this block" value=${fmt.rm(b.gain_t * S.price)} note=${`${fmt.n(b.gain_t)} t FFB a year (${fmt.n(b.gain_ha, 2)} t/ha)`} />
+        <${Kpi} label="Priority" value=${`#${b.rank}`} note=${`of ${D.blocks.length} blocks, by value and risk`} />
       </div>
       <div class="grid g-wide">
         <${ChartCard} D=${D} S=${S} name="block" block=${b} height=${300} />
@@ -501,8 +503,9 @@
   /* ---------- App ---------- */
   function App({ D }) {
     const route = useRoute();
-    const [option, setOptionRaw] = usePersist("option", new URLSearchParams(location.search).get("option") === "A" ? "A" : "B");
-    const [role, setRole] = usePersist("role", null);
+    const params = new URLSearchParams(location.search);
+    const [option, setOptionRaw] = usePersist("option", params.get("option") === "A" ? "A" : "B");
+    const [role, setRole] = usePersist("role", ROLES[params.get("role")] ? params.get("role") : null);
     const [estate, setEstate] = usePersist("estate", "");
     const [price, setPrice] = usePersist("price", D.meta.price);
     const [key, setKey] = usePersist("gemini", "");

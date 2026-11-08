@@ -35,26 +35,22 @@ python pipeline/model.py        # five-model comparison, drivers, forecast, clus
 To run on new data in the same format, use the **Data sources** page (file, database or SAP), or
 `python pipeline/prepare.py path/to/file.csv` and then `python pipeline/model.py`.
 
-## Sign-in, SAP link and roles
+## Access
 
-Both apps are one complete product: AI assistant, company sign-in, SAP data link and AI usage log are always on.
-In this prototype the sign-in (pick a demo user, no password) and the SAP link (uses the sample file) are **simulated** and say so on screen.
-Database connections use pure-Python drivers (pg8000, PyMySQL); only one read-only SELECT is allowed, up to 500,000 rows.
+- **PalmYield web app:** company sign-in with roles (simulated in the demo); each role sees only its own pages.
+- **Analytics Workbench:** for the analytics team only. Set `WORKBENCH_PASSWORD` in the app's secrets and it asks for
+  that password first; without it the sidebar warns that access is open. In production this is company sign-in limited to
+  the analytics group, and on Streamlit Community Cloud the app can also be made private (Share > Who can view this app).
+- Database connections use pure-Python drivers (pg8000, PyMySQL); only one read-only SELECT is allowed, up to 500,000 rows.
 
-## Switch on the AI assistant (free)
+## AI assistant
 
-The app works without any key: insight cards and the assistant's built-in answers come from the insight engine.
-To add a real AI model for free-text questions:
+The AI assistant lives in the PalmYield web app. Without a key it answers from the built-in engine; to switch on a
+real model, the administrator pastes a free Google Gemini key (from [Google AI Studio](https://aistudio.google.com)) in
+PalmYield's Settings. In production the key sits on the server instead.
 
-1. Get a free key at [Google AI Studio](https://aistudio.google.com) ("Get API key").
-2. Locally: copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and paste the key.
-   On Streamlit Cloud: **App settings → Secrets**, add `GEMINI_API_KEY = "your-key"`.
-3. Never commit the key. The app limits each visitor to 20 AI questions per session, and falls back to the built-in answers
-   if the free limit is reached or the service is down.
-
-The AI layer is pluggable (`core/ai.py`): set `ANTHROPIC_API_KEY` and `AI_PROVIDER = "claude"` to use Claude instead
-(add `anthropic` to `requirements.txt`). Every answer is grounded in a brief of computed results, and the model is told
-not to invent numbers.
+`core/ai.py` is the server-side AI layer for that production setup: pluggable between Gemini and Claude, grounded on a
+brief of computed results, and told never to invent numbers.
 
 ## REST API
 

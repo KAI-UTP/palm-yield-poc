@@ -3,6 +3,7 @@
 Run the pipeline first (python pipeline/prepare.py, then python pipeline/model.py), then:
     streamlit run app.py
 """
+import hmac
 import json
 import os
 import sys
@@ -22,14 +23,13 @@ PROC, MODEL = DEFAULT_DATA / "processed", DEFAULT_DATA / "model"  # the bundled 
 sys.path.insert(0, str(ROOT / "pipeline"))
 from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
-from core import ai, charts, edition as ED, insights as I  # noqa: E402
-from core import connectors as CN
+from core import connectors as CN  # noqa: E402
+from core import insights as I  # noqa: E402
 from core.connectors import SAP_CONFIG, SapConnector  # noqa: E402
 from core.store import Results, View  # noqa: E402
 
 SESSIONS = DEFAULT_DATA / "sessions"   # one private folder per visitor who runs their own file
 SESSION_TTL_HOURS = 24
-AI_LOG = DEFAULT_DATA / "audit" / "ai_usage.jsonl"   # Option B: who asked the AI what, and when
 
 # ---------- Design tokens (validated default data-viz palette, dark mode) ----------
 INK, INK2, MUTED = "#f0efec", "#c3c2b7", "#898781"
@@ -244,6 +244,44 @@ def kpis(items):
         col.metric(label, value, help=help_, border=True)
 
 
+# ---------- Access: the workbench is for the analytics team only ----------
+PALMYIELD_URL = "https://kai-utp.github.io/palm-yield-poc/"
+
+
+def workbench_password():
+    """Set WORKBENCH_PASSWORD in Streamlit secrets (or the environment) to lock the workbench."""
+    try:
+        pw = st.secrets.get("WORKBENCH_PASSWORD")
+    except Exception:  # noqa: BLE001  (no secrets file)
+        pw = None
+    return pw or os.environ.get("WORKBENCH_PASSWORD")
+
+
+def access_gate():
+    pw = workbench_password()
+    if not pw or st.session_state.get("unlocked"):
+        return
+    _, mid, _ = st.columns([1, 2, 1])
+    with mid:
+        st.markdown('<div class="eyebrow">PalmYield Analytics Workbench</div>', unsafe_allow_html=True)
+        st.title("For the analytics team")
+        st.write("This workbench is where analysts add data, check quality and validate the models. "
+                 "Managers, agronomists and field teams use PalmYield.")
+        with st.form("unlock"):
+            typed = st.text_input("Workbench password", type="password")
+            go_in = st.form_submit_button("Open the workbench", type="primary", use_container_width=True)
+        if go_in:
+            if hmac.compare_digest(typed.encode(), str(pw).encode()):
+                st.session_state.unlocked = True
+                st.rerun()
+            st.error("That password is not right. Ask the PalmYield administrator for access.")
+        st.link_button("Go to PalmYield instead ↗", PALMYIELD_URL, use_container_width=True)
+    st.stop()
+
+
+if not os.environ.get("PALM_RENDER_ALL"):
+    access_gate()
+
 # ---------- Sidebar: data source, filters, assumptions ----------
 source = st.session_state.get("source", {"source": "sample"})
 st.logo(str(ROOT / "assets" / "logo.svg"), size="large", icon_image=str(ROOT / "assets" / "icon.svg"))
@@ -255,13 +293,12 @@ def reset_filters():
 
 
 with st.sidebar:
-    EDITION = ED.edition("B")  # one complete product: AI assistant, sign-in, SAP link, usage log
-    USER = st.session_state.get("user") if EDITION["login"] else None
-    if USER in ED.DEMO_USERS:
-        st.caption(f"Signed in as **{ED.DEMO_USERS[USER][0]}** ({ED.DEMO_USERS[USER][1]})")
-        if st.button("Sign out", use_container_width=True):
-            st.session_state.pop("user", None)
+    if workbench_password():
+        if st.button("🔒 Lock the workbench", use_container_width=True):
+            st.session_state.pop("unlocked", None)
             st.rerun()
+    else:
+        st.caption("⚠️ Open access: set WORKBENCH_PASSWORD in the app's secrets to limit it to the analytics team.")
     if source.get("source") == "upload":
         st.markdown(f'<div class="synthetic">Using your data: <b>{source.get("name", "file")}</b>. Only you see it; other visitors see the sample.</div>', unsafe_allow_html=True)
     else:
@@ -880,14 +917,11 @@ def sap_source():
             st.caption(f"{last['blocks']} blocks · {last['estates']} estates · {last['cycles']} cycles · {last['synced_at']} UTC")
         else:
             st.caption("No sync yet in this session. The scheduled job runs daily at 02:00.")
-        admin = USER == "admin"
-        if st.button("Sync now from SAP", type="primary", use_container_width=True, disabled=not admin, key="sap_sync_tab"):
+        if st.button("Sync now from SAP", type="primary", use_container_width=True, key="sap_sync_tab"):
             path, summary = SapConnector(RAW_SAMPLE).extract(SESSIONS / session_id() / "sap")
             st.session_state.sap_sync = summary
             note_source("SAP", "SAP extract (simulated)", summary["rows"])
             run_pipeline(path, label="SAP extract (simulated)")
-        if not admin:
-            st.caption("Only administrators can start a sync.")
 
 
 def check_upload(path, req):
@@ -948,47 +982,7 @@ def run_pipeline(path, label=None):
     st.rerun()
 
 
-# ---------- Start here, AI assistant, Block profile ----------
-CHAT_LIMIT = 20  # AI questions per visitor session, so a public link cannot run up the free quota
-
-
-def ai_provider():
-    """Read the key on every run, so adding a key in secrets takes effect at once. Option A has no AI assistant."""
-    if not EDITION["ai"]:
-        return None
-    try:
-        secrets = st.secrets
-    except Exception:  # noqa: BLE001
-        secrets = None
-    return ai.get_provider(secrets)
-
-
-def draw_spec(s, key):
-    """Draw a chart spec from core/charts.py in the house style."""
-    if not s:
-        return
-    d, x, y = s["data"], s["x"], s["y"]
-    if s["kind"] == "line":
-        fig = px.line(d, x=x, y=y, color=s.get("color"), markers=True, color_discrete_sequence=[BLUE, GREY])
-    else:
-        fig = px.bar(d, x=x, y=y, orientation="h" if s["kind"] == "barh" else "v", color=s.get("color"),
-                     barmode="group", hover_data=list(d.columns), color_discrete_sequence=[BLUE, ORANGE])
-        if not s.get("color"):
-            vals = d[x if s["kind"] == "barh" else y]
-            fig.update_traces(marker_color=[CRIT if s.get("signed") and val < 0 else BLUE for val in vals])
-    fig.update_layout(yaxis_title=None if s["kind"] == "barh" else y, xaxis_title=x)
-    st.markdown(f"**{s['title']}**")
-    chart(fig, key, h=max(260, 28 * len(d)) if s["kind"] == "barh" else 280, data=d)
-    if s.get("note"):
-        st.caption(s["note"])
-
-
-def ask_and_open(question):
-    """Queue a question for the assistant and open its page."""
-    st.session_state.pending_q = question
-    st.switch_page(PG["assistant"])
-
-
+# ---------- Start here, Block profile ----------
 def page_home():
     header("PalmYield Analytics Workbench", "Find where yield is lost, and what to do first",
            f"The analyst's view behind PalmYield: check the data, test the patterns and validate the models before results reach managers and field teams. "
@@ -1008,86 +1002,11 @@ def page_home():
             st.markdown(f'<div class="step"><div class="n">{n}</div><div class="q">{q}</div><div class="a">{a}</div></div>', unsafe_allow_html=True)
             go_to(key, "Open", "➡️")
 
-    l, r = st.columns([3, 2])
-    with l, card("Ask the AI assistant" if EDITION["ai"] else "Ask the data (built-in answers)",
-                 "Answers use only this app's results, so they do not invent numbers."):
-        for i, q in enumerate(I.SUGGESTED[:4]):
-            if st.button(q, key=f"home_q{i}", use_container_width=True):
-                ask_and_open(q)
-    with r, card("Start from your role"):
-        role = st.radio("I am", ["a plantation manager", "an agronomist", "an analyst or IT"], key="role", label_visibility="collapsed")
-        path = {"a plantation manager": [("actions", "Which blocks to fix first"), ("block", "Why a block is on the list"), ("simulator", "Test a change")],
-                "an agronomist": [("agronomy", "Fertilizer, harvesting, treatments"), ("patterns", "The 8 tested patterns"), ("drivers", "What drives yield")],
-                "an analyst or IT": [("quality", "Data quality checks"), ("forecast", "Forecast model accuracy"), ("data", "Run on your own data")]}[role]
-        for key, label in path:
+    st.markdown("#### Analyst checklist")
+    for col, (key, label) in zip(st.columns(4), [("data", "Add or refresh data"), ("quality", "Check data quality"),
+                                                  ("patterns", "Review the 8 patterns"), ("forecast", "Check forecast accuracy")]):
+        with col:
             go_to(key, label, ":material/arrow_right:")
-
-
-def page_assistant():
-    prov = ai_provider()
-    header("Ask", "AI assistant" if EDITION["ai"] else "Ask the data",
-           "Ask about blocks, estates, risk, fertilizer or value, in plain words. Answers use only the results computed in this app "
-           "for the blocks in your sidebar filters, so they do not invent numbers.")
-    st.session_state.setdefault("chat", [])
-    st.session_state.setdefault("ai_used", 0)
-    if not EDITION["ai"]:
-        st.caption("📘 Option A: answers and charts come from the built-in insight engine, with no AI assistant and no AI cost. "
-                   "Choose Option B in the sidebar to use the AI assistant.")
-    elif prov:
-        st.caption(f"✨ AI mode: {prov.name}. {CHAT_LIMIT - st.session_state.ai_used} AI questions left in this session. "
-                   "Synthetic data; findings are associations, gains before costs.")
-    else:
-        st.caption("📘 Offline mode: answers come from the built-in insight engine. Add a GEMINI_API_KEY (free from Google AI Studio) "
-                   "to Streamlit secrets to switch on the AI model.")
-
-    l, r = st.columns([4, 1])
-    with r:
-        if st.button("Clear chat", use_container_width=True, disabled=not st.session_state.chat):
-            st.session_state.chat = []
-            st.rerun()
-    if not st.session_state.chat:
-        st.markdown("**Try one of these:**")
-        cols = st.columns(3)
-        for i, q in enumerate(I.SUGGESTED):
-            if cols[i % 3].button(q, key=f"sug{i}", use_container_width=True):
-                st.session_state.pending_q = q
-                st.rerun()
-
-    for i, m in enumerate(st.session_state.chat):
-        with st.chat_message(m["role"], avatar="🧑‍🌾" if m["role"] == "user" else "✨"):
-            st.markdown(m["content"])
-            if m.get("chart"):
-                draw_spec(charts.spec(V, m["chart"], m.get("question", "")), f"chat_chart_{i}")
-            if m.get("note"):
-                st.caption(m["note"])
-
-    typed = st.chat_input("Ask a question, e.g. 'Why is EST005-D08-B01 high risk?'")
-    q = typed or st.session_state.pop("pending_q", None)
-    if not q:
-        return
-    history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.chat[-6:]]
-    st.session_state.chat.append({"role": "user", "content": q})
-    with st.chat_message("user", avatar="🧑‍🌾"):  # show the question straight away, before the answer arrives
-        st.markdown(q)
-    note, chart = None, charts.pick(q)  # offline: chart chosen from the question's words
-    if prov and st.session_state.ai_used < CHAT_LIMIT:
-        try:
-            with st.chat_message("assistant", avatar="✨"), st.spinner(f"Asking {prov.name}… usually a few seconds."):
-                answer = prov.ask(q, I.ai_context(V, q) + charts.ai_instruction(), history)
-            answer, tag = charts.split_tag(answer)  # the AI picks a chart by name; data comes from the results
-            if tag:
-                chart = None if tag == "none" else tag
-            st.session_state.ai_used += 1
-            note = f"Answered by {prov.name} from this app's results."
-            ED.log_ai_use(AI_LOG, USER or "anonymous", q, prov.name, True)
-        except ai.AIError as e:
-            answer, note = I.offline_answer(V, q), f"{e} Showing the built-in answer instead."
-            ED.log_ai_use(AI_LOG, USER or "anonymous", q, prov.name, False)
-    else:
-        answer = I.offline_answer(V, q)
-        note = "Built-in answer from the insight engine." if not prov else f"AI limit of {CHAT_LIMIT} questions reached; built-in answer."
-    st.session_state.chat.append({"role": "assistant", "content": answer, "note": note, "chart": chart, "question": q})
-    st.rerun()
 
 
 def page_block():
@@ -1121,84 +1040,12 @@ def page_block():
         cond = pd.DataFrame([(LABELS.get(feat, feat), f"{last[feat]:.2f}".rstrip("0").rstrip("."), LEVER_HELP[feat][0])
                              for feat, *_ in LEVERS.values()], columns=["Condition", "Value", "Unit"])
         st.dataframe(cond, hide_index=True, use_container_width=True, height=250)
-    b1, b2 = st.columns(2)
-    if b1.button("Test changes in the What-if simulator", use_container_width=True, disabled=bid not in set(df[df.harvest_cycle_no == df.harvest_cycle_no.max()].block_id)):
+    if st.button("Test changes in the What-if simulator", use_container_width=True, disabled=bid not in set(df[df.harvest_cycle_no == df.harvest_cycle_no.max()].block_id)):
         st.session_state.sim_block = bid
         st.switch_page(PG["simulator"])
-    if b2.button("Ask the AI about this block", use_container_width=True):
-        ask_and_open(f"Why is {bid} on the action list, and what should we do first?")
-
-
-def option_b_only(feature):
-    """Shown in Option A where a page belongs to Option B."""
-    st.info(f"**{feature}** is part of **Option B · Enterprise**. Choose Option B in the sidebar to see it working.", icon="🔒")
-
-
-def page_signin():
-    header("PalmYield Analytics Workbench", "Sign in with your company account",
-           "Staff sign in with the company account they already have (single sign-on) and see what their role allows. "
-           "<b>Simulated in this prototype:</b> pick a demo user below; no password is needed or stored.")
-    cols = st.columns(len(ED.DEMO_USERS))
-    for col, (key, (name, role)) in zip(cols, ED.DEMO_USERS.items()):
-        with col, card(name, role):
-            st.caption({"manager": "All analytics and the AI assistant.", "agronomist": "All analytics and the AI assistant.",
-                        "admin": "Everything, plus the SAP data link and the AI usage log."}[key])
-            if st.button(f"Sign in as {role.lower()}", key=f"signin_{key}", use_container_width=True, type="primary"):
-                st.session_state.user = key
-                st.rerun()
-    st.caption("In production this is Microsoft Entra ID or SAP Identity Authentication; roles come from the client’s directory.")
-
-
-def page_sap():
-    header("Data and admin", "SAP data link",
-           "The data arrives from SAP every day, so nobody uploads files. "
-           "<b>Simulated in this prototype:</b> there is no SAP system to call, so the sync uses the sample file in the same format a real extract would have.")
-    if not EDITION["sap"]:
-        option_b_only("The SAP data link")
-        go_to("data", "Option A uses file upload instead: Run on your data", "📤")
-        return
-    l, r = st.columns([3, 2])
-    with l, card("Connection", "What the real link does; only the source is simulated here."):
-        st.markdown("\n".join(f"- **{k}:** {v}" for k, v in SAP_CONFIG.items()))
-    with r, card("Last sync"):
-        last = st.session_state.get("sap_sync")
-        if last:
-            st.metric("Rows pulled", f"{last['rows']:,}", border=True)
-            st.caption(f"{last['blocks']} blocks · {last['estates']} estates · {last['cycles']} cycles · {last['synced_at']} UTC · {last['file']}")
-        else:
-            st.caption("No sync yet in this session. The scheduled job would run daily at 02:00.")
-        admin = USER == "admin"
-        if st.button("Sync now from SAP", type="primary", use_container_width=True, disabled=not admin, key="sap_sync_btn"):
-            path, summary = SapConnector(RAW_SAMPLE).extract(SESSIONS / session_id() / "sap")
-            st.session_state.sap_sync = summary
-            run_pipeline(path, label="SAP extract (simulated)")
-        if not admin:
-            st.caption("Only administrators can start a sync.")
-
-
-def page_usage():
-    header("Data and admin", "AI usage log",
-           "PalmYield records who asked the AI assistant what, and when, so the client can check use and cost.")
-    if not EDITION["ai"]:
-        option_b_only("The AI usage log")
-        return
-    if USER != "admin":
-        st.warning("Only administrators can see the AI usage log. Sign in as the demo administrator.", icon="🔒")
-        return
-    rows = ED.read_log(AI_LOG)
-    kpis([("AI questions logged", f"{len(rows):,}", "Latest 200"), ("Answered", f"{sum(r['answered'] for r in rows):,}", None),
-          ("Users", f"{len({r['user'] for r in rows})}", None)])
-    with card("Latest questions"):
-        if rows:
-            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
-        else:
-            st.caption("No AI questions yet. Ask one on the AI assistant page.")
 
 
 PG = {"home": st.Page(page_home, title="Start here", icon="🏠", default=True),
-      "assistant": st.Page(page_assistant, title="AI assistant" if EDITION["ai"] else "Ask the data", icon="✨", url_path="assistant"),
-      "sap": st.Page(page_sap, title="SAP data link", icon="🔗", url_path="sap"),
-      "usage": st.Page(page_usage, title="AI usage log", icon="🧾", url_path="ai-usage"),
       "poc": st.Page(page_poc, title="POC summary", icon="🧪", url_path="poc"),
       "data": st.Page(page_data, title="Data sources", icon="🗄️", url_path="data-sources"),
       "overview": st.Page(page_overview, title="Overview", icon="📊", url_path="overview"),
@@ -1213,19 +1060,17 @@ PG = {"home": st.Page(page_home, title="Start here", icon="🏠", default=True),
       "simulator": st.Page(page_simulator, title="What-if simulator", icon="🎛️", url_path="simulator")}
 PG_TITLES = {k: v.title for k, v in PG.items()}
 pages = {
-    "Start": [PG["home"], PG["assistant"]],
+    "Start": [PG["home"]],
     "Observe": [PG["overview"], PG["quality"]],
     "Understand": [PG["drivers"], PG["patterns"], PG["agronomy"], PG["groups"]],
     "Predict": [PG["forecast"]],
     "Recommend": [PG["actions"], PG["block"], PG["simulator"]],
-    "Data and admin": [PG["data"], PG["poc"]] + ([PG["usage"]] if USER == "admin" else []),
+    "Data": [PG["data"], PG["poc"]],
 }
 
 if os.environ.get("PALM_RENDER_ALL"):  # test hook: render every page in one run
-    for fn in [page_home, page_assistant, page_block, page_poc, page_data, page_sap, page_usage, page_overview, page_quality,
+    for fn in [page_home, page_block, page_poc, page_data, page_overview, page_quality,
                page_drivers, page_patterns, page_agronomy, page_groups, page_forecast, page_actions, page_simulator]:
         fn()
-elif EDITION["login"] and USER not in ED.DEMO_USERS:  # sign in first
-    st.navigation([st.Page(page_signin, title="Sign in", icon="🔐", default=True)], position="hidden").run()
 else:
     st.navigation(pages, expanded=True).run()

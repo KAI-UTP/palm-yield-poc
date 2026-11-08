@@ -883,7 +883,7 @@ def ask_and_open(question):
 
 def page_home():
     header("Palm Yield Optimization POC", "Find where yield is lost, and what to do first",
-           f"An AI-assisted analytics tool for oil palm plantations: it explains why yield differs, forecasts the next harvest cycle, and ranks "
+           f"A working prototype of an AI-assisted analytics tool for oil palm plantations: it explains why yield differs, forecasts the next harvest cycle, and ranks "
            f"every block by the action worth the most. {'Your uploaded data' if source.get('source') == 'upload' else 'Synthetic sample data'}: "
            f"{df.block_id.nunique():,} blocks in {df.estate_name.nunique()} estates. Use the sidebar filters to focus on a region or estate.")
     insight_cards(I.home(V), "AI insights: what stands out")
@@ -1015,7 +1015,7 @@ def page_block():
 
 def page_about():
     header("About this POC", "How it's built",
-           "A complete, working system, not only a dashboard: one repeatable pipeline feeds a shared data layer, which serves the web app, "
+           "A working prototype, built like a real system: one repeatable pipeline feeds a shared data layer, which serves the web app, "
            "an AI assistant and a REST API for other systems.")
     with card("Architecture", "Every component reads the same results, so the app, the API and the AI always agree."):
         st.graphviz_chart(f"""digraph {{

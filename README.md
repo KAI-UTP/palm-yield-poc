@@ -4,6 +4,16 @@ A working, AI-assisted proof of concept that takes plantation field data from ba
 **Observe → Understand → Predict → Recommend.** Built on the synthetic SOPB sample (3,200 rows: 640 blocks × 5 harvest cycles).
 The data is synthetic, not real SOPB results.
 
+## Two front ends
+
+- **PalmYield web app (`web/`)** is the product: a management command centre (briefing, early warnings, action plan with
+  work orders, block map, what-if simulator, AI assistant), built with React and ECharts. It is published on GitHub Pages
+  at <https://kai-utp.github.io/palm-yield-poc/> by `.github/workflows/pages.yml` on every push.
+  Run it locally: `python -m http.server 8600 --directory web`, then open <http://localhost:8600>.
+  After the pipeline re-runs, refresh its data with `python web/build_data.py`.
+  Option B's AI uses a Google Gemini key that each user enters in Settings; it stays in that browser.
+- **Streamlit analytics app (`app.py`)** is the analyst workbench and the backup for demos.
+
 ## Run it
 
 ```bash

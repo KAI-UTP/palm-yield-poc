@@ -431,9 +431,10 @@
           <${ChartCard} D=${D} S=${null} name="accuracy" height=${220} bare=${true} /></div>
       </div>
       <div class="grid g2" style=${{ marginTop: 16 }}>
-        <div class="card"><h2>${ctx.option === "B" ? "SAP connection" : "Upload a new harvest cycle"}</h2>
-          ${ctx.option === "B" ? html`<div class="list" style=${{ marginTop: 8 }}>${[["Source", "SAP S/4HANA plantation data via SAP Datasphere"], ["Schedule", "Daily at 02:00"], ["Status", "Demo: sample extract in the SAP format"], ["Last extract", `${D.meta.rows.toLocaleString()} rows · ${D.meta.cycle_dates.at(-1)}`]].map(([k, v]) => html`<div class="li" key=${k}><div class="main-t"><b>${k}</b><span>${v}</span></div></div>`)}</div>`
-          : html`<div><p class="small" style=${{ margin: "6px 0 10px" }}>One row per block per harvest cycle, in the 117-column template. The file is checked here first.</p><input type="file" accept=".csv" onChange=${onFile} />${check && html`<div class=${"notice " + (check.ok ? "info" : "")} style=${{ marginTop: 10 }}>${check.msg}</div>`}</div>`}</div>
+        <div class="card"><h2>SAP connection</h2>
+          ${html`<div class="list" style=${{ marginTop: 8 }}>${[["Source", "SAP S/4HANA plantation data via SAP Datasphere"], ["Schedule", "Daily at 02:00"], ["Status", "Demo: sample extract in the SAP format"], ["Last extract", `${D.meta.rows.toLocaleString()} rows · ${D.meta.cycle_dates.at(-1)}`]].map(([k, v]) => html`<div class="li" key=${k}><div class="main-t"><b>${k}</b><span>${v}</span></div></div>`)}</div>`
+}
+          ${html`<div><p class="small" style=${{ margin: "12px 0 8px" }}><b>Manual upload (backup):</b> one row per block per harvest cycle, in the 117-column template. The file is checked here first.</p><input type="file" accept=".csv" onChange=${onFile} />${check && html`<div class=${"notice " + (check.ok ? "info" : "")} style=${{ marginTop: 10 }}>${check.msg}</div>`}</div>`}</div>
         <div class="card"><h2>Integration API</h2><p class="small muted" style=${{ marginBottom: 8 }}>The same REST API (FastAPI) serves this app, the AI and other systems such as SAP Analytics Cloud or Power BI.</p>
           <div class="table-wrap"><table class="t"><tbody>${[["GET /summary", "Headline numbers by estate"], ["GET /insights", "Automated findings"], ["GET /actions", "Ranked action plan"], ["GET /forecast", "Next-cycle forecast and range"], ["GET /blocks/{id}", "One block: history, forecast, action"]].map(([e, d]) => html`<tr key=${e}><td><code>${e}</code></td><td class="small">${d}</td></tr>`)}</tbody></table></div></div>
       </div>
@@ -479,8 +480,8 @@
       <div class="grid g2" style=${{ marginTop: 16 }}>
         <div class="card"><h2 style=${{ marginBottom: 8 }}>Users</h2><div class="list">${Object.entries(ROLES).map(([k, r]) => html`<div class="li" key=${k}><span class="avatar">${r.initials}</span><div class="main-t"><b>${r.name} · ${r.role}</b><span>${r.does}</span></div></div>`)}</div></div>
         <div class="card"><h2 style=${{ marginBottom: 8 }}>How people sign in</h2>
-          <p class="small" style=${{ marginBottom: 8 }}><b>Option A · Lean:</b> email and password with a one-time code; the administrator invites users and sets their role.</p>
-          <p class="small" style=${{ marginBottom: 8 }}><b>Option B · Enterprise:</b> company single sign-on (Microsoft Entra ID or SAP Identity Authentication); roles come from the client's directory groups.</p>
+          <p class="small" style=${{ marginBottom: 8 }}>Company single sign-on (Microsoft Entra ID or SAP Identity Authentication). Roles come from the client's directory groups, so joiners and leavers are handled by IT as usual.</p>
+          <p class="small" style=${{ marginBottom: 8 }}>Every AI question is logged for the administrator, and the AI only sees PalmYield's computed results.</p>
           <p class="small muted">Demo: sign-in is simulated and no password is stored. Work orders, chats and the AI log are kept in this browser.</p></div>
       </div></div>`;
   }
@@ -503,11 +504,9 @@
     return html`<div>
       <${Head} eyebrow="Settings" title="Settings" />
       <div class="grid g2">
-        <div class="card"><h2 style=${{ marginBottom: 10 }}>Proposal option</h2>
-          <div class="seg" style=${{ marginBottom: 10 }}><button class=${ctx.option === "A" ? "on" : ""} onClick=${() => ctx.setOption("A")}>Option A · Lean</button><button class=${ctx.option === "B" ? "on" : ""} onClick=${() => ctx.setOption("B")}>Option B · Enterprise</button></div>
-          <p class="small">${ctx.option === "A" ? "All analytics, early warnings, action plan and simulator, with built-in answers. No AI assistant and no company login: lowest running cost." : "Everything in A, plus the AI assistant and AI briefing, company sign-in with roles, the SAP data link and the AI usage log."}</p>
-          <div class="field" style=${{ marginTop: 16 }}><label>FFB price (RM per tonne)</label><input type="number" min="300" max="2000" step="10" value=${ctx.price} onInput=${(e) => ctx.setPrice(+e.target.value || 930)} /><span class="hint">Used to value every gain. MPOB 2025 average: RM 930.</span></div></div>
-        <div class="card"><h2 style=${{ marginBottom: 10 }}>AI assistant (Option B)</h2>
+        <div class="card"><h2 style=${{ marginBottom: 10 }}>Valuation</h2>
+          <div class="field"><label>FFB price (RM per tonne)</label><input type="number" min="300" max="2000" step="10" value=${ctx.price} onInput=${(e) => ctx.setPrice(+e.target.value || 930)} /><span class="hint">Used to value every gain. MPOB 2025 average: RM 930.</span></div></div>
+        <div class="card"><h2 style=${{ marginBottom: 10 }}>AI assistant</h2>
           <div class="field"><label>Google Gemini API key</label><input type="password" autocomplete="off" placeholder="Paste your key" value=${k} onInput=${(e) => setK(e.target.value)} />
             <span class="hint">Stored only in this browser and sent only to Google. Get a free key at aistudio.google.com. In production the key sits on the server, never in the browser.</span></div>
           <div class="row"><button class="btn primary" onClick=${save}>Save and test</button>${ctx.key && html`<button class="btn" onClick=${() => { setK(""); ctx.setKey(""); setTest({ ok: true, msg: "Key removed." }); }}>Remove key</button>`}</div>
@@ -520,18 +519,16 @@
   }
 
   function SignIn({ ctx }) {
-    const B = ctx.option === "B";
     return html`<div class="login">
       <div class="hero"><div><div class="brand" style=${{ padding: 0 }}><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>AI yield assistant</small></div></div>
         <h1>Ask where yield is lost, why, and what to do first.</h1>
         <ul><li>An assistant that answers from your own plantation data</li><li>Early warnings before the yield is lost</li><li>Ranked, valued actions turned into work orders</li><li>Each person sees only what their role needs</li></ul></div>
         <p class="small" style=${{ color: "#8EA698" }}>Demo on a synthetic sample · not real SOPB results</p></div>
       <div class="panel">
-        <div class="seg" style=${{ alignSelf: "flex-start" }}><button class=${!B ? "on" : ""} onClick=${() => ctx.setOption("A")}>Option A · Lean</button><button class=${B ? "on" : ""} onClick=${() => ctx.setOption("B")}>Option B · Enterprise</button></div>
         <h2 style=${{ fontSize: 24 }}>Sign in</h2>
-        <p class="muted">${B ? "In production you sign in with your company account (single sign-on)." : "In production you sign in with your email, a password and a one-time code."} Your role sets what you see. For this demo, pick a person:</p>
+        <p class="muted">In production you sign in with your company account (single sign-on). Your role sets what you see. For this demo, pick a person:</p>
         ${Object.entries(ROLES).map(([k, r]) => html`<button class="role" key=${k} onClick=${() => ctx.signIn(k)}><span class="avatar">${r.initials}</span><span><b>${r.name} · ${r.role}</b><span class="small muted">${r.does}</span></span><span style=${{ marginLeft: "auto" }}>→</span></button>`)}
-        <p class="small muted">${B ? "Option B: AI assistant, company sign-in, SAP data link, AI usage log." : "Option A: built-in answers, no AI cost, CSV upload."}</p></div>
+        <p class="small muted">Sign-in is simulated in this demo; no password is stored.</p></div>
     </div>`;
   }
 
@@ -539,7 +536,7 @@
   function App({ D }) {
     const route = useRoute();
     const params = new URLSearchParams(location.search);
-    const [option, setOptionRaw] = usePersist("option", params.get("option") === "A" ? "A" : "B");
+    const option = "B";  // one complete product: AI, SAP link, company sign-in, roles
     const [role, setRole] = usePersist("role", ROLES[params.get("role")] ? params.get("role") : null);
     const [estate, setEstate] = usePersist("estate", "");
     const [price, setPrice] = usePersist("price", D.meta.price);
@@ -561,7 +558,6 @@
     const ctx = {
       D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats, allowed,
       canAssign: ["manager", "agronomist"].includes(role),
-      setOption: (o) => { setOptionRaw(o); toast(o === "A" ? "Option A · Lean: built-in answers, email sign-in" : "Option B · Enterprise: AI, company sign-in, SAP link"); },
       setEstate, setPrice, setKey,
       signIn: (k) => { setRole(k); go("home"); },
       ask: (q) => { setPending(q); setChatKey((k) => k + 1); go("home"); },
@@ -613,7 +609,7 @@
         <button class="newchat" onClick=${ctx.newChat}><span>＋</span> New chat</button>
         ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
         ${chats.length > 0 && html`<div class="nav-sec">Recent chats</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
-        <div class="side-foot">${option === "A" ? "Option A · Lean" : "Option B · Enterprise"}<br />Synthetic sample data<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics prototype ↗</a></div>
+        <div class="side-foot">Synthetic sample data<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics prototype ↗</a></div>
       </aside>
       <div class="main">
         <header class="top">
@@ -621,7 +617,6 @@
           <span class="small muted hide-sm">Estate</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">All estates (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
           <span class="chip syn hide-sm">Synthetic sample data</span>
           <span class="grow"></span>
-          <button class=${"chip " + (option === "A" ? "a" : "b")} style=${{ border: 0 }} onClick=${() => allowed("settings") ? go("settings") : toast("Sign out to switch options")} title="Proposal option">${option === "A" ? "Option A · Lean" : "Option B · Enterprise"}</button>
           ${allowed("dashboard") && html`<button class="btn sm hide-sm" onClick=${() => go("dashboard")}>◉ Dashboard</button>`}
           <div class="user"><span class="avatar">${user.initials}</span><span class="hide-sm"><b>${user.name}</b><br /><span class="small muted">${user.role}</span></span>
             <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>Sign out</button></div>
@@ -640,7 +635,7 @@
     }
   }
 
-  fetch("data/app.json?v=4").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=5").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

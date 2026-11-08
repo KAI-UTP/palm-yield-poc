@@ -42,7 +42,7 @@
     return html`<div class=${"ask-box" + (big ? " big" : "")}>
       <textarea ref=${ta} rows=${big ? 2 : 1} value=${v} maxLength="500" placeholder=${big ? "Ask anything about your yield, blocks, risks or actions…" : "Reply or ask something new…"}
         onInput=${(e) => { setV(e.target.value); grow(e.target); }} onKeyDown=${(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}></textarea>
-      <div class="bar"><span class="small muted">${ai ? (hasKey ? "✦ AI on · answers only from your data" : canSet ? html`AI is off on this device · <a href="#/settings">add a key</a>` : "AI is off on this device · built-in answers") : "Built-in answers · Option A"}</span>
+      <div class="bar"><span class="small muted">${ai ? (hasKey ? "✦ AI on · answers only from your data" : canSet ? html`AI is off on this device · <a href="#/settings">add a key</a>` : "AI is off on this device · built-in answers") : "Built-in answers"}</span>
         <button class="send" onClick=${submit} disabled=${busy || !v.trim()} aria-label="Send">↑</button></div>
     </div>`;
   }

@@ -430,6 +430,9 @@
           ${D.models.map((m) => html`<tr key=${m.model}><td>${m.model}${m.chosen ? html` <span class="risk Low">chosen</span>` : ""}</td><td class="num">${m.mae}</td><td class="num">${m.r2}</td></tr>`)}</tbody></table></div>
           <${ChartCard} D=${D} S=${null} name="accuracy" height=${220} bare=${true} /></div>
       </div>
+      <div class="card add-src" style=${{ marginTop: 16 }}><div class="card-head"><div><h2>Add a data source</h2><p>New data goes in through the Analytics Workbench, where it is checked and every model re-runs. PalmYield then updates for every role.</p></div>
+        <a class="btn primary" href=${STREAMLIT + "data-sources"} target="_blank" rel="noopener">Open Data sources ↗</a></div>
+        <div class="grid g3">${[["📄", "Upload a file", "CSV or Excel in the 117-column template"], ["🗄️", "Connect a database", "PostgreSQL, MySQL or SQLite: a table or a read-only SQL query"], ["🔗", "SAP link", "Daily extract from SAP via Datasphere (simulated in this demo)"]].map(([i, t, d]) => html`<a key=${t} class="src-tile" href=${STREAMLIT + "data-sources"} target="_blank" rel="noopener"><span>${i}</span><b>${t}</b><span class="small muted">${d}</span></a>`)}</div></div>
       <div class="grid g2" style=${{ marginTop: 16 }}>
         <div class="card"><h2>SAP connection</h2>
           ${html`<div class="list" style=${{ marginTop: 8 }}>${[["Source", "SAP S/4HANA plantation data via SAP Datasphere"], ["Schedule", "Daily at 02:00"], ["Status", "Demo: sample extract in the SAP format"], ["Last extract", `${D.meta.rows.toLocaleString()} rows · ${D.meta.cycle_dates.at(-1)}`]].map(([k, v]) => html`<div class="li" key=${k}><div class="main-t"><b>${k}</b><span>${v}</span></div></div>`)}</div>`
@@ -514,7 +517,7 @@
       </div>
       <div class="card" style=${{ marginTop: 16 }}><h2 style=${{ marginBottom: 8 }}>Demo data</h2>
         <p class="small" style=${{ marginBottom: 10 }}>This hosted demo runs on a synthetic sample, not real SOPB results. Work orders and the AI log are kept in this browser only.</p>
-        <div class="row"><button class="btn" onClick=${() => { if (confirm("Delete all work orders and the AI log in this browser?")) ctx.resetDemo(); }}>Reset demo data</button><a class="btn" href=${STREAMLIT} target="_blank" rel="noopener">Open the analytics prototype (backup) ↗</a></div></div>
+        <div class="row"><button class="btn" onClick=${() => { if (confirm("Delete all work orders and the AI log in this browser?")) ctx.resetDemo(); }}>Reset demo data</button><a class="btn" href=${STREAMLIT} target="_blank" rel="noopener">Open the Analytics Workbench ↗</a></div></div>
     </div>`;
   }
 
@@ -609,7 +612,7 @@
         <button class="newchat" onClick=${ctx.newChat}><span>＋</span> New chat</button>
         ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
         ${chats.length > 0 && html`<div class="nav-sec">Recent chats</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
-        <div class="side-foot">Synthetic sample data<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics prototype ↗</a></div>
+        <div class="side-foot">Synthetic sample data<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics Workbench ↗</a></div>
       </aside>
       <div class="main">
         <header class="top">
@@ -635,7 +638,7 @@
     }
   }
 
-  fetch("data/app.json?v=5").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=6").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

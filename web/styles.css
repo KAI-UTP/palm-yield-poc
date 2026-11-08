@@ -249,3 +249,7 @@ table.t td.num, table.t th.num { text-align: right; white-space: nowrap; }
 }
 
 @media (max-width: 1150px) { .user span.hide-sm { display: none; } }
+
+.src-tile { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--ink); text-decoration: none; }
+.src-tile:hover { border-color: var(--green); }
+.src-tile > span:first-child { font-size: 20px; }

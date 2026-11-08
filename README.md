@@ -11,9 +11,11 @@ The data is synthetic, not real SOPB results.
   at <https://kai-utp.github.io/palm-yield-poc/> by `.github/workflows/pages.yml` on every push.
   Run it locally: `python -m http.server 8600 --directory web`, then open <http://localhost:8600>.
   After the pipeline re-runs, refresh its data with `python web/build_data.py`.
-  Option B's AI uses a Google Gemini key that the administrator enters in Settings; it stays in that browser.
+  The AI uses a Google Gemini key that the administrator enters in Settings; it stays in that browser.
   Access is by role: estate manager, agronomist, field supervisor (My tasks only) and administrator each see only their own pages.
-- **Streamlit analytics app (`app.py`)** is the analyst workbench and the backup for demos.
+- **PalmYield Analytics Workbench (`app.py`, Streamlit)** is for analysts: add new data on the **Data sources** page
+  (CSV or Excel file, a PostgreSQL / MySQL / SQLite database table or read-only query, or the simulated SAP link),
+  check data quality, test the patterns and validate the models. It is also the backup for demos.
 
 ## Run it
 
@@ -30,18 +32,14 @@ python pipeline/prepare.py      # quality checks, cleaning, feature engineering
 python pipeline/model.py        # five-model comparison, drivers, forecast, clustering, what-if, action plan
 ```
 
-To run the whole POC on another file in the same format, use the **Run on your data** page, or
+To run on new data in the same format, use the **Data sources** page (file, database or SAP), or
 `python pipeline/prepare.py path/to/file.csv` and then `python pipeline/model.py`.
 
-## Two proposal options in one app
+## Sign-in, SAP link and roles
 
-A switch at the top of the sidebar shows either option live:
-
-- **Option A · Lean, low cost:** all analytics, forecast, action plan and simulator, with built-in answers. No AI assistant, no login, data by file upload.
-- **Option B · Enterprise:** everything in A, plus the AI assistant, company login, a SAP data link and an AI usage log for administrators.
-  In this prototype the login (pick a demo user, no password) and the SAP link (uses the sample file) are **simulated** and say so on screen.
-
-Set the default for a deployment with the environment variable `PALM_EDITION=A` or `B` (default B).
+Both apps are one complete product: AI assistant, company sign-in, SAP data link and AI usage log are always on.
+In this prototype the sign-in (pick a demo user, no password) and the SAP link (uses the sample file) are **simulated** and say so on screen.
+Database connections use pure-Python drivers (pg8000, PyMySQL); only one read-only SELECT is allowed, up to 500,000 rows.
 
 ## Switch on the AI assistant (free)
 
@@ -101,7 +99,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); the proposal deck has the same
 | 3. Data layer | `core/store.py` | Loads results once, filters them to a view; shared by the app, API, insights and tests |
 | 4. Insights | `core/insights.py` | Plain-language findings computed from the results; the AI brief; offline answers |
 | 5. AI | `core/ai.py` | Gemini (free tier) or Claude, grounded on the brief, with safe fallback |
-| 6. App | `app.py` | 14 pages: Start here, AI assistant; Observe; Understand; Predict; Recommend (Action plan, Block profile, What-if simulator); Data and admin (POC summary, Run on your data, plus SAP data link and AI usage log in Option B) |
+| 6. App | `app.py` | 14 pages: Start here, AI assistant; Observe; Understand; Predict; Recommend (Action plan, Block profile, What-if simulator); Data and admin (Data sources, POC summary, AI usage log for administrators) |
 | 7. API | `api.py` | FastAPI REST endpoints for SAP Analytics Cloud, Power BI or other systems |
 
 ## Key methods

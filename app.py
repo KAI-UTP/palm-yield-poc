@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
 from core import ai, charts, edition as ED, insights as I  # noqa: E402
+from core import connectors as CN
 from core.connectors import SAP_CONFIG, SapConnector  # noqa: E402
 from core.store import Results, View  # noqa: E402
 
@@ -68,7 +69,7 @@ pio.templates["palm"] = go.layout.Template(layout=dict(
     margin=dict(l=4, r=12, t=8, b=4)))
 px.defaults.template = "plotly_dark+palm"
 
-st.set_page_config(page_title="Palm Yield Optimization", page_icon="🌴", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="PalmYield Analytics Workbench", page_icon="🌴", layout="wide", initial_sidebar_state="expanded")
 st.markdown(f"""<style>
   .block-container {{padding-top: 2.2rem; padding-bottom: 3rem; max-width: 1400px;}}
   h1 {{font-size: 1.9rem !important; font-weight: 650 !important; letter-spacing: -0.01em; margin-bottom: 0 !important;}}
@@ -254,12 +255,7 @@ def reset_filters():
 
 
 with st.sidebar:
-    if st.session_state.get("edition") not in ED.EDITIONS:  # default option for this deployment, then the visitor's choice
-        st.session_state.edition = os.environ.get("PALM_EDITION", "B").upper() if os.environ.get("PALM_EDITION", "B").upper() in ED.EDITIONS else "B"
-    st.radio("Proposal option", list(ED.EDITIONS), key="edition", format_func=lambda c: ED.EDITIONS[c]["name"],
-             help="Option A: lean and low cost, with built-in answers and no AI assistant. "
-                  "Option B: adds the AI assistant, company login, a SAP data link and an AI usage log.")
-    EDITION = ED.edition(st.session_state.edition)
+    EDITION = ED.edition("B")  # one complete product: AI assistant, sign-in, SAP link, usage log
     USER = st.session_state.get("user") if EDITION["login"] else None
     if USER in ED.DEMO_USERS:
         st.caption(f"Signed in as **{ED.DEMO_USERS[USER][0]}** ({ED.DEMO_USERS[USER][1]})")
@@ -713,7 +709,7 @@ def page_poc():
           ("Forecast vs baseline", f"{fm['mae_improvement_vs_last_cycle_pct']:.0f}% better", "Lower average error than 'same as last cycle', on unseen blocks"),
           ("Value identified a year", rm(all_gain * price), f"What-if gain across all blocks at RM {price:,.0f}/t FFB")])
 
-    with card("What was built", "One repeatable pipeline from raw file to ranked actions. Upload a new file on the Run on your data page and every step re-runs."):
+    with card("What was built", "One repeatable pipeline from raw file to ranked actions. Add new data on the Data sources page (file, database or SAP) and every step re-runs."):
         st.graphviz_chart(f"""digraph {{
   rankdir=LR; bgcolor="transparent"; nodesep=0.35; ranksep=0.45;
   node [shape=box style="rounded,filled" fillcolor="{SURFACE}" color="{AXIS}" fontname="Segoe UI" fontsize=11 fontcolor="{INK}" margin="0.18,0.1"];
@@ -754,48 +750,144 @@ The method works end to end and every criterion can be measured again on real da
 
 
 def page_data():
-    header("POC", "Run on your data",
-           "Upload a file in the same format as the sample: one row per block per harvest cycle. The app checks it, then re-runs data preparation "
-           "and every model, and all pages update. This is how the POC moves from sample data to real data. "
-           "<b>Your file and results are private to your browser session</b>; other visitors keep seeing the sample.")
+    header("Data", "Data sources",
+           "Add new data to PalmYield from a file, a database or SAP. Every source goes through the same checks; then the pipeline re-runs "
+           "every model and all pages update. <b>In this demo your data and results are private to your browser session</b>; other visitors keep seeing the sample.")
     req = required_columns()
-    using = "Uploaded file: " + source.get("name", "") if source.get("source") == "upload" else "Synthetic sample (SOPB_Palm_Yield_Optimization_POC_SAC.csv)"
-    kpis([("Data in use", "Uploaded" if source.get("source") == "upload" else "Sample", using),
+    using = source.get("name", "") if source.get("source") == "upload" else "Synthetic sample (SOPB_Palm_Yield_Optimization_POC_SAC.csv)"
+    kpis([("Data in use", "Your data" if source.get("source") == "upload" else "Sample", using),
           ("Rows", f"{len(df):,}", None), ("Blocks", f"{df.block_id.nunique():,}", None), ("Harvest cycles", f"{df.harvest_cycle_no.nunique()}", None)])
-    l, r = st.columns([2, 3])
-    with l, card("1. Get the template", f"The file needs these {len(req)} columns, with the same names. Extra columns are ignored."):
-        st.download_button("Download CSV template", (",".join(req) + "\n").encode(), "palm_yield_template.csv", "text/csv", use_container_width=True)
-        with st.expander("See required columns"):
-            st.dataframe(pd.DataFrame({"column": req}), hide_index=True, use_container_width=True, height=260)
-        if source.get("source") == "upload" and st.button("Back to the sample data", use_container_width=True):
-            st.session_state.pop("data_dir", None)
-            st.session_state.pop("source", None)
-            st.rerun()
-    path, ready, why = None, False, "Upload a file in step 2, or use the sample file, to turn on this button."
-    with r, card("2. Upload and check", "Drag a CSV file here or browse for one. The file is checked straight away; nothing changes until you press Run in step 3."):
-        up = st.file_uploader("CSV file", type="csv", label_visibility="collapsed", key="upload_file")
-        if st.button("Or use the sample file to try it", use_container_width=True, disabled=up is not None):
-            st.session_state.use_sample = True
-        if up is not None:
-            st.session_state.use_sample = False
-            upload_dir = SESSIONS / session_id() / "upload"
-            upload_dir.mkdir(parents=True, exist_ok=True)
+    if source.get("source") == "upload" and st.button("Back to the sample data", key="back_to_sample"):
+        st.session_state.pop("data_dir", None)
+        st.session_state.pop("source", None)
+        st.rerun()
+    with st.expander(f"Format every source must have: {len(req)} columns, one row per block per harvest cycle"):
+        st.download_button("Download CSV template", (",".join(req) + "\n").encode(), "palm_yield_template.csv", "text/csv")
+        st.dataframe(pd.DataFrame({"column": req}), hide_index=True, use_container_width=True, height=240)
+    t_file, t_db, t_sap = st.tabs(["📄 Upload a file", "🗄️ Connect a database", "🔗 SAP link"])
+    with t_file:
+        file_source(req)
+    with t_db:
+        database_source(req)
+    with t_sap:
+        sap_source()
+    added = st.session_state.get("sources_added", [])
+    if added:
+        with card("Sources added in this session"):
+            st.dataframe(pd.DataFrame(added), hide_index=True, use_container_width=True)
+
+
+def note_source(kind, name, rows):
+    from datetime import datetime
+    st.session_state.setdefault("sources_added", []).append(
+        {"added": datetime.now().strftime("%d %b %Y %H:%M"), "type": kind, "source": name, "rows": rows})
+
+
+def run_step(path, ready, why, key, kind, name):
+    """The shared last step: show the check result and offer Run."""
+    if ready:
+        st.success("The data passed every check. Press Run to use it.", icon="✅")
+    elif path is not None:
+        st.warning(why, icon="⚠️")
+    if st.button("Run the pipeline on this data", type="primary", use_container_width=True, disabled=not ready, key=key):
+        note_source(kind, name, int(pd.read_csv(path, usecols=[0]).shape[0]))
+        run_pipeline(path, label=name)
+
+
+def file_source(req):
+    st.caption("CSV or Excel, in the template format. Nothing changes until you press Run.")
+    up = st.file_uploader("CSV or Excel file", type=["csv", "xlsx"], label_visibility="collapsed", key="upload_file")
+    path = None
+    if st.button("Or use the sample file to try it", disabled=up is not None, key="use_sample_btn"):
+        st.session_state.use_sample = True
+    if up is not None:
+        st.session_state.use_sample = False
+        upload_dir = SESSIONS / session_id() / "upload"
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        if up.name.lower().endswith(".xlsx"):
+            try:
+                path = CN.save_extract(pd.read_excel(up), upload_dir, Path(up.name).stem)
+            except Exception as e:  # noqa: BLE001
+                st.error(f"The Excel file could not be read: {e}")
+        else:
             path = upload_dir / Path(up.name).name
             path.write_bytes(up.getvalue())
-        elif st.session_state.get("use_sample"):
-            path = RAW_SAMPLE
-            st.caption(f"Using the sample file: {RAW_SAMPLE.name}")
-        if path is not None:
-            ready, why = check_upload(path, req)
-    with card("3. Run the pipeline", "Re-runs data preparation and every model on the checked file, then updates every page for you only. Takes one to two minutes."):
-        if ready:
-            st.success("The file passed every check. Press Run to use it.", icon="✅")
-        elif path is not None:
-            st.warning(why, icon="⚠️")
+    elif st.session_state.get("use_sample"):
+        path = RAW_SAMPLE
+        st.caption(f"Using the sample file: {RAW_SAMPLE.name}")
+    ready, why = check_upload(path, req) if path is not None else (False, "")
+    run_step(path, ready, why, "run_pipeline", "File", up.name if up is not None else "sample file (your own run)")
+
+
+def database_source(req):
+    st.caption("Read block data straight from a database. Use a read-only account; only SELECT queries are allowed, up to "
+               f"{CN.MAX_ROWS:,} rows. In production, connections are saved in the server's secret store, not typed in.")
+    kind = st.selectbox("Database type", list(CN.DB_KINDS), key="db_kind")
+    with st.form("db_form"):
+        if kind == "SQLite file":
+            db_file = st.file_uploader("SQLite database file", type=["db", "sqlite", "sqlite3"], key="db_file")
+            host = port = database = user = password = None
         else:
-            st.info(why, icon="ℹ️")
-        if st.button("Run the pipeline on this file", type="primary", use_container_width=True, disabled=not ready, key="run_pipeline"):
-            run_pipeline(path)
+            db_file = None
+            c1, c2 = st.columns([3, 1])
+            host = c1.text_input("Host", placeholder="db.company.com")
+            port = c2.number_input("Port", value=CN.DB_KINDS[kind], step=1)
+            c3, c4, c5 = st.columns(3)
+            database = c3.text_input("Database")
+            user = c4.text_input("User")
+            password = c5.text_input("Password", type="password")
+        mode = st.radio("Read", ["A table", "A SQL query"], horizontal=True)
+        table = st.text_input("Table name", placeholder="harvest_cycle or plantation.harvest_cycle") if mode == "A table" else None
+        query = st.text_area("SQL query (SELECT only)", placeholder="SELECT * FROM harvest_cycle WHERE harvest_cycle_no >= 1") if mode == "A SQL query" else None
+        go = st.form_submit_button("Connect and load", type="primary", use_container_width=True)
+    if go:
+        try:
+            sql = CN.build_query(table, query)
+            sqlite_path = None
+            if kind == "SQLite file":
+                if db_file is None:
+                    raise ValueError("Choose a SQLite file first.")
+                d = SESSIONS / session_id() / "db"
+                d.mkdir(parents=True, exist_ok=True)
+                sqlite_path = d / Path(db_file.name).name
+                sqlite_path.write_bytes(db_file.getvalue())
+            with st.spinner("Connecting and reading…"):
+                data, cut = CN.read_database(CN.connect(kind, host, port, database, user, password, sqlite_path), sql)
+            name = f"{kind}: {table or 'query'}" + (f" @ {host}/{database}" if host else "")
+            path = CN.save_extract(data, SESSIONS / session_id() / "db", "db_extract")
+            st.session_state.db_loaded = {"path": str(path), "name": name, "rows": len(data), "cut": cut}
+        except ValueError as e:
+            st.error(str(e))
+        except Exception as e:  # noqa: BLE001
+            st.error(f"Could not read from the database: {type(e).__name__}: {str(e)[:300]}")
+    loaded = st.session_state.get("db_loaded")
+    if loaded:
+        st.info(f"Loaded **{loaded['rows']:,} rows** from {loaded['name']}" + (f" (cut at {CN.MAX_ROWS:,} rows)" if loaded["cut"] else "") + ".", icon="🗄️")
+        path = Path(loaded["path"])
+        ready, why = check_upload(path, req)
+        run_step(path, ready, why, "run_pipeline_db", "Database", loaded["name"])
+
+
+def sap_source():
+    st.caption("The data arrives from SAP every day, so nobody uploads files. Simulated here: there is no SAP system to call, so the sync uses the sample file in the SAP extract format.")
+    l, r = st.columns([3, 2])
+    with l:
+        st.markdown("\n".join(f"- **{k}:** {v}" for k, v in SAP_CONFIG.items()))
+    with r:
+        last = st.session_state.get("sap_sync")
+        if last:
+            st.metric("Rows pulled", f"{last['rows']:,}", border=True)
+            st.caption(f"{last['blocks']} blocks · {last['estates']} estates · {last['cycles']} cycles · {last['synced_at']} UTC")
+        else:
+            st.caption("No sync yet in this session. The scheduled job runs daily at 02:00.")
+        admin = USER == "admin"
+        if st.button("Sync now from SAP", type="primary", use_container_width=True, disabled=not admin, key="sap_sync_tab"):
+            path, summary = SapConnector(RAW_SAMPLE).extract(SESSIONS / session_id() / "sap")
+            st.session_state.sap_sync = summary
+            note_source("SAP", "SAP extract (simulated)", summary["rows"])
+            run_pipeline(path, label="SAP extract (simulated)")
+        if not admin:
+            st.caption("Only administrators can start a sync.")
 
 
 def check_upload(path, req):
@@ -898,14 +990,12 @@ def ask_and_open(question):
 
 
 def page_home():
-    header("Palm Yield Optimization", "Find where yield is lost, and what to do first",
-           f"An analytics tool for oil palm plantations: it explains why yield differs, forecasts the next harvest cycle, and ranks "
+    header("PalmYield Analytics Workbench", "Find where yield is lost, and what to do first",
+           f"The analyst's view behind PalmYield: check the data, test the patterns and validate the models before results reach managers and field teams. "
            f"every block by the action worth the most. {'Your uploaded data' if source.get('source') == 'upload' else 'Synthetic sample data'}: "
            f"{df.block_id.nunique():,} blocks in {df.estate_name.nunique()} estates. Use the sidebar filters to focus on a region or estate.")
-    st.info(f"You are viewing **{EDITION['name']}**. "
-            + ("All analytics, plus the AI assistant, company login, a SAP data link and an AI usage log (login and SAP link simulated here)."
-               if EDITION["ai"] else "All analytics with built-in answers; no AI assistant and no running cost. Switch options in the sidebar."),
-            icon="🧭")
+    st.info("Managers, agronomists and field teams use the **PalmYield web app**; analysts use this workbench to add data and check every number. "
+            "[Open PalmYield ↗](https://kai-utp.github.io/palm-yield-poc/)", icon="🧭")
     insight_cards(I.home(V), "What stands out")
 
     st.markdown("#### Follow the journey")
@@ -1045,8 +1135,8 @@ def option_b_only(feature):
 
 
 def page_signin():
-    header("Option B · Enterprise", "Sign in with your company account",
-           "Option B uses the client’s single sign-on, so staff log in with the account they already have and see what their role allows. "
+    header("PalmYield Analytics Workbench", "Sign in with your company account",
+           "Staff sign in with the company account they already have (single sign-on) and see what their role allows. "
            "<b>Simulated in this prototype:</b> pick a demo user below; no password is needed or stored.")
     cols = st.columns(len(ED.DEMO_USERS))
     for col, (key, (name, role)) in zip(cols, ED.DEMO_USERS.items()):
@@ -1061,7 +1151,7 @@ def page_signin():
 
 def page_sap():
     header("Data and admin", "SAP data link",
-           "In Option B the data arrives from SAP every day, so nobody uploads files. "
+           "The data arrives from SAP every day, so nobody uploads files. "
            "<b>Simulated in this prototype:</b> there is no SAP system to call, so the sync uses the sample file in the same format a real extract would have.")
     if not EDITION["sap"]:
         option_b_only("The SAP data link")
@@ -1088,7 +1178,7 @@ def page_sap():
 
 def page_usage():
     header("Data and admin", "AI usage log",
-           "Option B records who asked the AI assistant what, and when, so the client can check use and cost.")
+           "PalmYield records who asked the AI assistant what, and when, so the client can check use and cost.")
     if not EDITION["ai"]:
         option_b_only("The AI usage log")
         return
@@ -1110,7 +1200,7 @@ PG = {"home": st.Page(page_home, title="Start here", icon="🏠", default=True),
       "sap": st.Page(page_sap, title="SAP data link", icon="🔗", url_path="sap"),
       "usage": st.Page(page_usage, title="AI usage log", icon="🧾", url_path="ai-usage"),
       "poc": st.Page(page_poc, title="POC summary", icon="🧪", url_path="poc"),
-      "data": st.Page(page_data, title="Run on your data", icon="📤", url_path="run-on-your-data"),
+      "data": st.Page(page_data, title="Data sources", icon="🗄️", url_path="data-sources"),
       "overview": st.Page(page_overview, title="Overview", icon="📊", url_path="overview"),
       "quality": st.Page(page_quality, title="Data quality", icon="🧹", url_path="data-quality"),
       "drivers": st.Page(page_drivers, title="Yield drivers", icon="🔍", url_path="drivers"),
@@ -1128,14 +1218,14 @@ pages = {
     "Understand": [PG["drivers"], PG["patterns"], PG["agronomy"], PG["groups"]],
     "Predict": [PG["forecast"]],
     "Recommend": [PG["actions"], PG["block"], PG["simulator"]],
-    "Data and admin": [PG["poc"], PG["data"]] + ([PG["sap"]] if EDITION["sap"] else []) + ([PG["usage"]] if USER == "admin" else []),
+    "Data and admin": [PG["data"], PG["poc"]] + ([PG["usage"]] if USER == "admin" else []),
 }
 
 if os.environ.get("PALM_RENDER_ALL"):  # test hook: render every page in one run
     for fn in [page_home, page_assistant, page_block, page_poc, page_data, page_sap, page_usage, page_overview, page_quality,
                page_drivers, page_patterns, page_agronomy, page_groups, page_forecast, page_actions, page_simulator]:
         fn()
-elif EDITION["login"] and USER not in ED.DEMO_USERS:  # Option B: sign in first
+elif EDITION["login"] and USER not in ED.DEMO_USERS:  # sign in first
     st.navigation([st.Page(page_signin, title="Sign in", icon="🔐", default=True)], position="hidden").run()
 else:
     st.navigation(pages, expanded=True).run()

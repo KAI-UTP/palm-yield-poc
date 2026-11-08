@@ -1067,7 +1067,7 @@ def page_about():
 - **Graceful fallback:** if the AI service is down or over its free limit, the built-in insight engine answers instead.""")
 
 
-PG = {"home": st.Page(page_home, title="Start here", icon="🏠", url_path="home", default=True),
+PG = {"home": st.Page(page_home, title="Start here", icon="🏠", default=True),
       "assistant": st.Page(page_assistant, title="AI assistant", icon="✨", url_path="assistant"),
       "poc": st.Page(page_poc, title="POC summary", icon="🧪", url_path="poc"),
       "data": st.Page(page_data, title="Run on your data", icon="📤", url_path="run-on-your-data"),

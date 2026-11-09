@@ -8,7 +8,7 @@
   /* ---------- Storage: per-browser, wrapped so private windows still work ---------- */
   const store = {
     get(k, d) { try { const v = localStorage.getItem("py." + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-    set(k, v) { try { localStorage.setItem("py." + k, JSON.stringify(v)); } catch { /* storage blocked */ } },
+    set(k, v) { try { localStorage.setItem("py." + k, JSON.stringify(v)); } catch { dispatchEvent(new Event("py-store-full")); } },
   };
   function usePersist(key, init) {
     const [v, setV] = useState(() => { const got = store.get(key, undefined); return got !== undefined ? got : typeof init === "function" ? init() : init; });
@@ -36,12 +36,69 @@
   const ownerFor = (action) => /ganoderma|bagworm|potassium|kieserite|leaf/i.test(action) ? "Agronomist"
     : /harvest/i.test(action) ? "Harvest team" : /road|water gate|drain/i.test(action) ? "Maintenance team" : "Field assistant";
   function seedOrders(D) {
-    const day = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    const at = (n, h = 9) => { const d = new Date(); d.setDate(d.getDate() + n); d.setHours(h, 0, 0, 0); return d.toISOString(); };
     const top = [...D.blocks].sort((a, b) => a.rank - b.rank).slice(0, 9);
     const st = ["inprog", "inprog", "done", "todo", "todo", "todo", "todo", "todo", "todo"];
     const o = {};
-    top.forEach((b, i) => { o[b.id] = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner: ownerFor(b.action), status: st[i], due: day(i < 3 ? 2 + i : 7 + i), created: new Date().toISOString(), by: "Aina Rahman" }; });
+    top.forEach((b, i) => {
+      const owner = ownerFor(b.action), doer = owner === "Agronomist" ? "Daniel Wong" : "Hafiz Osman";
+      const created = at(i < 3 ? -6 : -1, 8 + (i % 3));
+      const history = [{ at: created, by: "Aina Rahman", kind: "created" }];
+      if (st[i] !== "todo") history.push({ at: at(-4 + i, 7), by: doer, kind: "status", v: "inprog" });
+      const w = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner, status: st[i], due: at(i < 3 ? 2 + i : 7 + i).slice(0, 10), created, by: "Aina Rahman", history };
+      if (st[i] === "done") {
+        w.doneAt = at(-1, 16);
+        w.proof = { note: "Work finished on the whole block. Checked with the mandor before closing.", by: doer, at: w.doneAt };
+        history.push({ at: w.doneAt, by: doer, kind: "status", v: "done" });
+      }
+      o[b.id] = w;
+    });
     return o;
+  }
+
+  /* ---------- Bahasa Malaysia for field staff (My tasks, menu, notifications) ---------- */
+  const BM = {
+    "Repair field roads and harvesting paths": "Baiki jalan ladang dan laluan menuai",
+    "Run a Ganoderma census; sanitise and isolate infected palms": "Buat bancian Ganoderma; sanitasi dan asingkan pokok yang dijangkiti",
+    "Supply-plant vacant points": "Tanam sulaman di titik kosong",
+    "Cut the harvest round to 10 days (good practice is 7 to 10); rebalance harvest teams": "Pendekkan pusingan tuai kepada 10 hari (amalan baik 7 hingga 10); susun semula pasukan menuai",
+    "Install or repair water gates and outlets in flood-prone blocks": "Pasang atau baiki pintu air dan saluran keluar di blok mudah banjir",
+    "Census bagworm; apply biological or targeted chemical control": "Bancian ulat bungkus; guna kawalan biologi atau racun bersasar",
+    "Long harvest round": "Pusingan tuai panjang", "Poor road access": "Jalan sukar dilalui", "Drains poorly kept": "Parit tidak dijaga",
+    "Flooding": "Banjir", "Low leaf K": "K daun rendah", "Low leaf Mg": "Mg daun rendah", "Bagworm": "Ulat bungkus",
+    "Missing palms": "Pokok hilang", "Weed competition": "Persaingan rumpai",
+    "Harvest team": "Pasukan menuai", "Field assistant": "Pembantu ladang", "Maintenance team": "Pasukan penyelenggaraan", "Agronomist": "Ahli agronomi",
+    "To do": "Belum mula", "In progress": "Sedang dibuat", "Done": "Selesai", "Open": "Terbuka", "All": "Semua",
+    "Ask PalmYield": "Tanya PalmYield", "My tasks": "Tugasan saya", "Block profile": "Profil blok", "New chat": "Sembang baru", "Sign out": "Log keluar",
+    "Recent chats": "Sembang terkini", "Estate": "Estet", "All estates": "Semua estet", "Synthetic sample data": "Data sampel sintetik",
+    "Notifications": "Notifikasi", "Nothing new.": "Tiada yang baru.", "Mark all read": "Tandakan semua dibaca",
+    "New task": "Tugasan baru", "is late": "sudah lewat", "due": "tarikh akhir",
+    "Why": "Sebab", "Due": "Tarikh akhir", "late": "lewat", "worth": "bernilai", "a year": "setahun",
+    "Start": "Mula", "Mark done": "Tandakan selesai", "Reopen": "Buka semula", "Block details": "Butiran blok", "Ask how": "Tanya cara",
+    "History": "Sejarah", "Created by": "Dibuat oleh", "Started": "Dimulakan", "Assigned to": "Diserah kepada", "Due date": "Tarikh akhir",
+    "Proof of work": "Bukti kerja", "What was done? (for the manager)": "Apa yang dibuat? (untuk pengurus)",
+    "Add photo": "Tambah gambar", "Change photo": "Tukar gambar", "Add my location": "Tambah lokasi saya", "Location added": "Lokasi ditambah",
+    "Save and mark done": "Simpan dan tandakan selesai", "Cancel": "Batal", "Photo": "Gambar", "by": "oleh",
+    "No open tasks": "Tiada tugasan terbuka", "open task": "tugasan terbuka", "open tasks": "tugasan terbuka", "You have": "Anda ada",
+    "Nothing here. New work orders from the estate manager appear in this list.": "Tiada apa-apa. Arahan kerja baru daripada pengurus estet akan muncul di sini.",
+    "Update the status as you go; the estate manager sees it straight away.": "Kemas kini status semasa bekerja; pengurus estet nampak serta-merta.",
+    "Work orders for": "Arahan kerja untuk", "Language": "Bahasa", "Field supervisor": "Penyelia ladang",
+  };
+  const makeT = (lang) => (s) => (lang === "ms" && BM[s]) || s;
+  const trIssues = (t, s) => (s || "").split(", ").map(t).join(", ");
+
+  /* Make a phone photo small enough to keep: longest side 720 px, JPEG. */
+  function shrinkPhoto(file) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, 720 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", 0.6));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error("That file is not a photo")); };
+      img.src = url;
+    });
   }
 
   /* ---------- Router ---------- */
@@ -76,7 +133,9 @@
       inst.current = echarts.init(el.current, null, { renderer: "svg" });
       const ro = new ResizeObserver(() => inst.current && inst.current.resize());
       ro.observe(el.current);
-      return () => { ro.disconnect(); inst.current.dispose(); inst.current = null; };
+      const fit = () => inst.current && inst.current.resize({ animation: { duration: 0 } });  // redraw at the printed page width, no animation
+      addEventListener("py-fit", fit);
+      return () => { ro.disconnect(); removeEventListener("py-fit", fit); inst.current.dispose(); inst.current = null; };
     }, []);
     useEffect(() => { inst.current && inst.current.setOption(option, true); }, [option]);
     return html`<div ref=${el} style=${{ width: "100%", height: height + "px" }}></div>`;
@@ -140,6 +199,46 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
+  /* Work order trail: who did what, when; and the field proof (note, photo, location). */
+  const when = (iso) => new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  function History({ o, t }) {
+    const h = o.history || [];
+    if (!h.length) return null;
+    const line = (x) => x.kind === "created" ? `${t("Created by")} ${x.by}` : x.kind === "status" ? `${t(STATUS[x.v])} · ${x.by}`
+      : x.kind === "owner" ? `${t("Assigned to")} ${t(x.v)} · ${x.by}` : x.kind === "due" ? `${t("Due date")} ${x.v} · ${x.by}` : `${x.v || ""} · ${x.by}`;
+    return html`<details class="hist"><summary>${t("History")} (${h.length})</summary><ul>${[...h].reverse().map((x, i) => html`<li key=${i}><span class="muted">${when(x.at)}</span> ${line(x)}</li>`)}</ul></details>`;
+  }
+  function Proof({ p, t }) {
+    if (!p) return null;
+    const map = p.loc && `https://www.openstreetmap.org/?mlat=${p.loc[0]}&mlon=${p.loc[1]}#map=17/${p.loc[0]}/${p.loc[1]}`;
+    return html`<div class="proof">${p.photo && html`<img src=${p.photo} alt=${t("Photo")} title="Click to enlarge" onClick=${(e) => e.currentTarget.classList.toggle("big")} />`}
+      <div><b class="small">✓ ${t("Proof of work")}</b> <span class="small muted">${t("by")} ${p.by} · ${when(p.at)}${map ? html` · <a href=${map} target="_blank" rel="noopener">📍 ${p.loc[0].toFixed(4)}, ${p.loc[1].toFixed(4)}</a>` : ""}</span>
+      ${p.note && html`<p class="small" style=${{ marginTop: 2 }}>${p.note}</p>`}</div></div>`;
+  }
+  function ProofForm({ o, ctx, t, onClose }) {
+    const [note, setNote] = useState(""); const [photo, setPhoto] = useState(null); const [loc, setLoc] = useState(null); const [busy, setBusy] = useState(false);
+    async function pick(e) { const f = e.target.files && e.target.files[0]; if (!f) return; setBusy(true); try { setPhoto(await shrinkPhoto(f)); } catch (err) { ctx.toast(err.message); } setBusy(false); }
+    function locate() {
+      if (!navigator.geolocation) { ctx.toast("Location is not available on this device"); return; }
+      navigator.geolocation.getCurrentPosition((p) => { setLoc([+p.coords.latitude.toFixed(5), +p.coords.longitude.toFixed(5)]); }, () => ctx.toast("Could not get the location"), { enableHighAccuracy: true, timeout: 10000 });
+    }
+    function save() {
+      const now = new Date().toISOString();
+      ctx.updateOrder(o.id, { status: "done", doneAt: now, proof: { note: note.trim(), photo, loc, by: ctx.user.name, at: now } });
+      ctx.toast(`${t("Done")}: ${o.id}`); onClose();
+    }
+    return html`<div class="proof-form">
+      <b class="small">${t("Proof of work")}</b>
+      <textarea rows="3" placeholder=${t("What was done? (for the manager)")} value=${note} onInput=${(e) => setNote(e.target.value)}></textarea>
+      <div class="row">
+        <label class="btn">📷 ${photo ? t("Change photo") : t("Add photo")}<input type="file" accept="image/*" capture="environment" onChange=${pick} hidden /></label>
+        <button class="btn" onClick=${locate}>📍 ${loc ? t("Location added") : t("Add my location")}</button>
+        ${photo && html`<img class="thumb" src=${photo} alt="" />`}
+      </div>
+      <div class="row"><button class="btn primary" disabled=${busy} onClick=${save}>✓ ${t("Save and mark done")}</button><button class="btn" onClick=${onClose}>${t("Cancel")}</button></div>
+    </div>`;
+  }
+
   /* ---------- Pages ---------- */
   function Home({ D, S, ctx }) {
     const brief = useMemo(() => PY.briefing(D, S), [S]);
@@ -156,7 +255,10 @@
       setBusy(false);
     }
     return html`<div>
-      <${Head} eyebrow="Dashboard" title="What needs you this cycle" sub=${`${S.blocks.length} blocks in ${S.estates.length} estates · last harvest cycle ended ${new Date(D.meta.cycle_dates.at(-1)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`} />
+      <div class="print-only print-head"><b>PalmYield · Management report</b><span>${ctx.estate || "All estates"} · printed ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} by ${ctx.user.name} · synthetic sample data, not real SOPB results</span></div>
+      <${Head} eyebrow="Dashboard" title="What needs you this cycle" sub=${`${S.blocks.length} blocks in ${S.estates.length} estates · last harvest cycle ended ${new Date(D.meta.cycle_dates.at(-1)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`}>
+        <button class="btn sm" onClick=${() => window.print()} title="Print or save as PDF for the management meeting">🖨 Print report</button>
+      </${Head}>
       <div class="brief">
         <div class="brief-top"><div><div class="ai-tag">✦ AUTOMATED ANALYSIS · UPDATED EVERY HARVEST CYCLE</div><h2>Management briefing</h2></div>
           <div class="row">${ctx.option === "B" && (aiOn || ctx.allowed("settings")) && html`<button class="btn sm" onClick=${aiOn ? aiBrief : () => go("settings")} disabled=${busy}>${busy ? "Writing…" : aiOn ? "✦ Write it with AI" : "✦ Switch on AI in Settings"}</button>`}
@@ -250,8 +352,9 @@
           ${col.map((o) => html`<div class="wo" key=${o.id}><div class="t"><a href=${"#/block/" + o.id}>${o.id}</a> · ${fmt.rm(o.gain_t * S.price)}/yr</div><div class="d">${o.action}</div>
             <div class="row"><select value=${o.owner} onChange=${(e) => ctx.updateOrder(o.id, { owner: e.target.value })}>${OWNERS.map((w) => html`<option key=${w}>${w}</option>`)}</select>
             <select value=${o.status} onChange=${(e) => ctx.updateOrder(o.id, { status: e.target.value })}>${Object.entries(STATUS).map(([k, v]) => html`<option key=${k} value=${k}>${v}</option>`)}</select>
-            <span class="small muted">Due ${o.due}</span><button class="btn sm" title="Remove" onClick=${() => ctx.removeOrder(o.id)}>✕</button></div></div>`)}</div>`; })}</div>
-        ${orders.length > 0 && html`<div class="row" style=${{ marginTop: 14 }}><button class="btn sm" onClick=${() => download("work_orders.csv", orders.map((o) => ({ block: o.id, estate: o.estate, action: o.action, owner: o.owner, status: STATUS[o.status], due: o.due, gain_rm_yr: Math.round(o.gain_t * S.price) })))}>⇩ Export work orders</button><span class="small muted">Saved in this browser for the demo; in production, saved to the database and visible to the whole team.</span></div>`}
+            <span class="small muted">Due ${o.due}</span><button class="btn sm" title="Remove" onClick=${() => ctx.removeOrder(o.id)}>✕</button></div>
+            ${o.status === "done" && html`<${Proof} p=${o.proof} t=${ctx.t} />`}<${History} o=${o} t=${ctx.t} /></div>`)}</div>`; })}</div>
+        ${orders.length > 0 && html`<div class="row" style=${{ marginTop: 14 }}><button class="btn sm" onClick=${() => download("work_orders.csv", orders.map((o) => ({ block: o.id, estate: o.estate, action: o.action, owner: o.owner, status: STATUS[o.status], due: o.due, gain_rm_yr: Math.round(o.gain_t * S.price), created_by: o.by, done_at: o.doneAt || "", done_by: (o.proof && o.proof.by) || "", field_note: (o.proof && o.proof.note) || "", photo: o.proof && o.proof.photo ? "yes" : "", gps: o.proof && o.proof.loc ? o.proof.loc.join(" ") : "" })))}>⇩ Export work orders</button><span class="small muted">Saved in this browser for the demo; in production, saved to the database and visible to the whole team.</span></div>`}
       </div>`}
     </div>`;
   }
@@ -445,22 +548,27 @@
       .sort((a, b) => order[a.status] - order[b.status] || a.due.localeCompare(b.due));
     const open = mine.filter((o) => o.status !== "done");
     const today = new Date().toISOString().slice(0, 10);
+    const t = ctx.t;
+    const [proofFor, setProofFor] = useState(null);
     return html`<div>
-      <${Head} eyebrow=${ctx.user.role} title=${open.length ? `You have ${open.length} open task${open.length > 1 ? "s" : ""}` : "No open tasks"} sub=${`Work orders for ${ctx.user.teams.join(", ").toLowerCase()}. Update the status as you go; the estate manager sees it straight away.`}>
-        <div class="seg">${[["open", "Open"], ["done", "Done"], ["all", "All"]].map(([k, l]) => html`<button key=${k} class=${show === k ? "on" : ""} onClick=${() => setShow(k)}>${l}</button>`)}</div>
+      <${Head} eyebrow=${t(ctx.user.role)} title=${open.length ? `${t("You have")} ${open.length} ${t(open.length > 1 ? "open tasks" : "open task")}` : t("No open tasks")} sub=${`${t("Work orders for")} ${ctx.user.teams.map(t).join(", ").toLowerCase()}. ${t("Update the status as you go; the estate manager sees it straight away.")}`}>
+        <div class="seg">${[["open", "Open"], ["done", "Done"], ["all", "All"]].map(([k, l]) => html`<button key=${k} class=${show === k ? "on" : ""} onClick=${() => setShow(k)}>${t(l)}</button>`)}</div>
       </${Head}>
-      ${!rows.length && html`<div class="card"><p class="muted">Nothing here. New work orders from the estate manager appear in this list.</p></div>`}
+      ${!rows.length && html`<div class="card"><p class="muted">${t("Nothing here. New work orders from the estate manager appear in this list.")}</p></div>`}
       <div class="tasks">${rows.map((o) => { const b = D.blocks.find((x) => x.id === o.id) || {}; const late = o.status !== "done" && o.due < today; return html`<div class="task card" key=${o.id}>
-        <div class="row" style=${{ justifyContent: "space-between" }}><div><a href=${"#/block/" + o.id}><b>${o.id}</b></a> <span class="muted small">· ${o.estate.replace(" Estate", "")}</span></div><span class=${"status " + o.status}>${STATUS[o.status]}</span></div>
-        <h3 style=${{ margin: "8px 0 4px" }}>${o.action}</h3>
-        <p class="small muted">Why: ${b.issues || "–"} · ${o.owner} · <span class=${late ? "down" : ""}>Due ${o.due}${late ? " (late)" : ""}</span> · worth ${fmt.rm(o.gain_t * S.price)} a year</p>
-        <div class="row" style=${{ marginTop: 10 }}>
-          ${o.status === "todo" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "inprog" }); ctx.toast("Started: " + o.id); }}>▶ Start</button>`}
-          ${o.status === "inprog" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "done", doneAt: new Date().toISOString() }); ctx.toast("Marked done: " + o.id); }}>✓ Mark done</button>`}
-          ${o.status === "done" && html`<button class="btn" onClick=${() => ctx.updateOrder(o.id, { status: "inprog" })}>↺ Reopen</button>`}
-          <a class="btn" href=${"#/block/" + o.id}>Block details</a>
-          <button class="btn" onClick=${() => ctx.ask(`How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)}?`)}>✦ Ask how</button>
-        </div></div>`; })}</div>
+        <div class="row" style=${{ justifyContent: "space-between" }}><div><a href=${"#/block/" + o.id}><b>${o.id}</b></a> <span class="muted small">· ${o.estate.replace(" Estate", "")}</span></div><span class=${"status " + o.status}>${t(STATUS[o.status])}</span></div>
+        <h3 style=${{ margin: "8px 0 4px" }}>${t(o.action)}</h3>
+        <p class="small muted">${t("Why")}: ${trIssues(t, b.issues) || "–"} · ${t(o.owner)} · <span class=${late ? "down" : ""}>${t("Due")} ${o.due}${late ? ` (${t("late")})` : ""}</span> · ${t("worth")} ${fmt.rm(o.gain_t * S.price)} ${t("a year")}</p>
+        ${o.status === "done" && html`<${Proof} p=${o.proof} t=${t} />`}
+        ${proofFor === o.id ? html`<${ProofForm} o=${o} ctx=${ctx} t=${t} onClose=${() => setProofFor(null)} />` : html`<div class="row" style=${{ marginTop: 10 }}>
+          ${o.status === "todo" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "inprog" }); ctx.toast(t("Started") + ": " + o.id); }}>▶ ${t("Start")}</button>`}
+          ${o.status === "inprog" && html`<button class="btn primary" onClick=${() => setProofFor(o.id)}>✓ ${t("Mark done")}</button>`}
+          ${o.status === "done" && html`<button class="btn" onClick=${() => ctx.updateOrder(o.id, { status: "inprog" })}>↺ ${t("Reopen")}</button>`}
+          <a class="btn" href=${"#/block/" + o.id}>${t("Block details")}</a>
+          <button class="btn" onClick=${() => ctx.ask(ctx.lang === "ms" ? `Bagaimana cara ${t(o.action).charAt(0).toLowerCase() + t(o.action).slice(1)}?` : `How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)}?`)}>✦ ${t("Ask how")}</button>
+        </div>`}
+        <${History} o=${o} t=${t} />
+        </div>`; })}</div>
     </div>`;
   }
 
@@ -526,6 +634,29 @@
     </div>`;
   }
 
+  /* ---------- Notifications: what changed for this person ---------- */
+  function notifications(D, S, ctx, t) {
+    const { user, role, orders } = ctx;
+    const today = new Date().toISOString().slice(0, 10);
+    const ago = (iso) => { const m = Math.round((Date.now() - new Date(iso)) / 60000); return m < 1 ? "now" : m < 60 ? m + " min ago" : m < 1440 && m > 0 ? Math.round(m / 60) + " h ago" : new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); };
+    const out = [];
+    const mine = (o) => !user.teams || user.teams.includes(o.owner);
+    const short = (o) => `${o.id} · ${t(o.action).split(";")[0]}`;
+    Object.values(orders).forEach((o) => {
+      if (user.teams && mine(o) && o.status === "todo") out.push({ at: o.created, icon: "☑", text: `${t("New task")}: ${short(o)}`, href: "#/tasks" });
+      if (o.status !== "done" && o.due < today && (mine(o) || ctx.canAssign)) out.push({ at: o.due + "T00:00:00.000Z", icon: "⚠", text: `${o.id} ${t("is late")} (${t("due")} ${o.due})`, href: user.teams ? "#/tasks" : "#/actions/board" });
+      if (role === "manager" && o.status === "done" && o.doneAt) out.push({ at: o.doneAt, icon: "✓", text: `${o.id} done by ${(o.proof && o.proof.by) || o.owner}${o.proof && o.proof.photo ? " · with photo" : ""}`, href: "#/actions/board" });
+      if (role === "manager" && o.status === "inprog") { const h = (o.history || []).filter((x) => x.kind === "status" && x.v === "inprog").pop(); if (h) out.push({ at: h.at, icon: "▶", text: `${o.id} started by ${h.by}`, href: "#/actions/board" }); }
+    });
+    const cycle = D.meta.cycle_dates.at(-1) + "T12:00:00.000Z";
+    if (role === "manager" || role === "agronomist") out.push({ at: cycle, icon: "⚠", text: `${S.high} blocks at high risk next cycle: act before the harvest`, href: "#/warnings" });
+    if (role === "admin") {
+      out.push({ at: cycle, icon: "⛁", text: `Data refreshed: harvest cycle of ${D.meta.cycle_dates.at(-1)} loaded and models retrained`, href: "#/system" });
+      if (!ctx.key) out.push({ at: cycle, icon: "✦", text: "AI is using built-in answers: add the Gemini key in Settings", href: "#/settings" });
+    }
+    return out.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 12).map((n) => ({ ...n, when: ago(n.at) }));
+  }
+
   /* ---------- App ---------- */
   function App({ D }) {
     const route = useRoute();
@@ -535,7 +666,10 @@
     const [estate, setEstate] = usePersist("estate", "");
     const [price, setPrice] = usePersist("price", D.meta.price);
     const [key, setKey] = usePersist("gemini", "");
-    const [orders, setOrders] = usePersist("orders.v2", () => seedOrders(D));
+    const [orders, setOrders] = usePersist("orders.v3", () => seedOrders(D));
+    const [lang, setLang] = usePersist("lang", "en");
+    const [seen, setSeen] = usePersist("seen", {});
+    const [bell, setBell] = useState(false);
     const [aiLog, setAiLog] = usePersist("ailog", []);
     const [pending, setPending] = useState(null);
     const [chatsBy, setChatsBy] = usePersist("chats.v2", {});  // { role: [chat, ...] }: each person sees only their own chats
@@ -543,15 +677,24 @@
     const [chatKey, setChatKey] = useState(0);
     const [toastMsg, setToast] = useState(null);
     const [menu, setMenu] = useState(false);
-    useEffect(() => { setMenu(false); }, [route.join("/")]);
+    useEffect(() => { setMenu(false); setBell(false); }, [route.join("/")]);
+    useEffect(() => { const f = () => toast("Storage on this device is full: the last change was not kept. Reset the demo data in Settings."); addEventListener("py-store-full", f); return () => removeEventListener("py-store-full", f); }, []);
     useEffect(() => { if (user) document.title = "PalmYield · " + user.role; }, [role]);
+    useEffect(() => {  // printing: switch to the A4 layout first so the charts redraw at page width
+      const root = document.documentElement;
+      const pre = () => { root.classList.add("print-prep"); dispatchEvent(new Event("py-fit")); };
+      const post = () => { root.classList.remove("print-prep"); dispatchEvent(new Event("py-fit")); };
+      addEventListener("beforeprint", pre); addEventListener("afterprint", post);
+      return () => { removeEventListener("beforeprint", pre); removeEventListener("afterprint", post); };
+    }, []);
     const toast = (m) => { setToast(m); clearTimeout(window.__t); window.__t = setTimeout(() => setToast(null), 2600); };
     const S = useMemo(() => PY.scope(D, estate, price), [estate, price]);
     const user = ROLES[role] || null;
     const allowed = (pg) => !!user && user.pages.includes(pg === "chat" || pg === "assistant" ? "home" : pg);
     const due = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); };
+    const t = makeT(role === "field" ? lang : "en");
     const ctx = {
-      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats, allowed,
+      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats, allowed, t, lang: role === "field" ? lang : "en",
       canAssign: ["manager", "agronomist"].includes(role),
       setEstate, setPrice, setKey,
       signIn: (k) => { setRole(k); go("home"); },
@@ -563,18 +706,31 @@
       createOrders: (bs) => {
         const add = bs.filter((b) => !orders[b.id]);
         if (!add.length) { toast("Already on the work order board"); return; }
-        setOrders((o) => { const n = { ...o }; add.forEach((b) => { n[b.id] = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner: ownerFor(b.action), status: "todo", due: due(b.risk === "High" ? 7 : 21), created: new Date().toISOString(), by: user ? user.name : "" }; }); return n; });
+        setOrders((o) => { const n = { ...o }; add.forEach((b) => { const now = new Date().toISOString(); n[b.id] = { id: b.id, estate: b.estate, action: b.action, gain_t: b.gain_t, owner: ownerFor(b.action), status: "todo", due: due(b.risk === "High" ? 7 : 21), created: now, by: user ? user.name : "", history: [{ at: now, by: user ? user.name : "", kind: "created" }] }; }); return n; });
         toast(`${add.length} work order${add.length > 1 ? "s" : ""} created · ${fmt.rm(add.reduce((s, b) => s + b.gain_t, 0) * price)} a year`);
       },
-      updateOrder: (id, patch) => setOrders((o) => ({ ...o, [id]: { ...o[id], ...patch } })),
+      updateOrder: (id, patch) => setOrders((o) => {
+        const old = o[id]; if (!old) return o;
+        const ev = [];  // every change is kept in the work order's history
+        const by = user ? user.name : "", at = new Date().toISOString();
+        if (patch.status && patch.status !== old.status) ev.push({ at, by, kind: "status", v: patch.status });
+        if (patch.owner && patch.owner !== old.owner) ev.push({ at, by, kind: "owner", v: patch.owner });
+        if (patch.due && patch.due !== old.due) ev.push({ at, by, kind: "due", v: patch.due });
+        const extra = patch.status && patch.status !== "done" ? { proof: null, doneAt: null } : {};
+        return { ...o, [id]: { ...old, ...extra, ...patch, history: [...(old.history || []), ...ev] } };
+      }),
       removeOrder: (id) => setOrders((o) => { const n = { ...o }; delete n[id]; return n; }),
-      resetDemo: () => { setOrders(seedOrders(D)); setAiLog([]); setChatsBy({}); toast("Demo data reset"); },
+      resetDemo: () => { setOrders(seedOrders(D)); setAiLog([]); setChatsBy({}); setSeen({}); toast("Demo data reset"); },
       toast,
     };
 
     if (!user) return html`<${SignIn} ctx=${ctx} />`;
     const [page, sub] = route;
     const myOpen = Object.values(orders).filter((o) => o.status !== "done" && (!user.teams || user.teams.includes(o.owner))).length;
+    const notes = notifications(D, S, ctx, t);
+    const lastSeen = seen[role] || "";
+    const unread = notes.filter((n) => n.at > lastSeen).length;
+    const openBell = () => { if (!bell) setTimeout(() => setSeen((x) => ({ ...x, [role]: new Date().toISOString() })), 1500); setBell(!bell); };
     const NAV = [
       ["", [["home", "✦", "Ask PalmYield"], ["dashboard", "◉", "Dashboard"], ["tasks", "☑", "My tasks", myOpen]]],
       ["Act", [["warnings", "⚠", "Early warnings", S.high], ["actions", "✓", "Action plan"]]],
@@ -601,20 +757,24 @@
     return html`<div class="shell">
       <aside class=${"side" + (menu ? " open" : "")}>
         <a class="brand" href="#/home"><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>AI yield assistant</small></div></a>
-        <button class="newchat" onClick=${ctx.newChat}><span>＋</span> New chat</button>
-        ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
-        ${chats.length > 0 && html`<div class="nav-sec">Recent chats</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
+        <button class="newchat" onClick=${ctx.newChat}><span>＋</span> ${t("New chat")}</button>
+        ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${t(label)}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
+        ${chats.length > 0 && html`<div class="nav-sec">${t("Recent chats")}</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
         <div class="side-foot">Synthetic sample data${allowed("system") ? html`<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics Workbench ↗</a>` : ""}</div>
       </aside>
       <div class="main">
         <header class="top">
           <button class="menu" onClick=${() => setMenu(!menu)} aria-label="Menu">☰</button>
-          <span class="small muted hide-sm">Estate</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">All estates (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
-          <span class="chip syn hide-sm">Synthetic sample data</span>
+          <span class="small muted hide-sm">${t("Estate")}</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">${t("All estates")} (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
+          <span class="chip syn hide-sm">${t("Synthetic sample data")}</span>
           <span class="grow"></span>
           ${allowed("dashboard") && html`<button class="btn sm hide-sm" onClick=${() => go("dashboard")}>◉ Dashboard</button>`}
+          ${role === "field" && html`<div class="seg lang" title=${t("Language")}>${[["en", "EN"], ["ms", "BM"]].map(([k, l]) => html`<button key=${k} class=${lang === k ? "on" : ""} onClick=${() => setLang(k)}>${l}</button>`)}</div>`}
+          <div class="bell-wrap"><button class="btn sm bell" onClick=${openBell} aria-label=${t("Notifications")} title=${t("Notifications")}>🔔${unread > 0 ? html`<span class="badge">${unread}</span>` : ""}</button>
+            ${bell && html`<div class="bell-back" onClick=${() => setBell(false)}></div><div class="bell-pop"><div class="bell-head"><b>${t("Notifications")}</b></div>
+              ${notes.length ? notes.map((n, i) => html`<a key=${i} class=${"note-i" + (n.at > lastSeen ? " new" : "")} href=${allowed(n.href.slice(2).split("/")[0]) ? n.href : "#/home"} onClick=${() => setBell(false)}><span class="ico">${n.icon}</span><span><span>${n.text}</span><span class="small muted" style=${{ display: "block" }}>${n.when}</span></span></a>`) : html`<p class="muted small" style=${{ padding: 12 }}>${t("Nothing new.")}</p>`}</div>`}</div>
           <div class="user"><span class="avatar">${user.initials}</span><span class="hide-sm"><b>${user.name}</b><br /><span class="small muted">${user.role}</span></span>
-            <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>Sign out</button></div>
+            <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>${t("Sign out")}</button></div>
         </header>
         <main class=${"content" + (!pages[page] || page === "home" || page === "chat" || page === "assistant" ? " wide" : "")}>${view}</main>
       </div>
@@ -630,7 +790,7 @@
     }
   }
 
-  fetch("data/app.json?v=9").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=10").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

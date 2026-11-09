@@ -13,6 +13,9 @@ The data is synthetic, not real SOPB results.
   After the pipeline re-runs, refresh its data with `python web/build_data.py`.
   The AI uses a Google Gemini key that the administrator enters in Settings; it stays in that browser.
   Access is by role: estate manager, agronomist, field supervisor (My tasks only) and administrator each see only their own pages.
+  Field features: install it on a phone (it is a web app with an offline cache, `sw.js`), close a work order with a note,
+  photo and GPS location as proof of work, a full history on every work order, and Bahasa Malaysia for the field supervisor.
+  Everyone gets a notification bell (new tasks, late work, completed work), and the dashboard prints as an A4 management report.
 - **PalmYield Analytics Workbench (`app.py`, Streamlit)** is for analysts: add new data on the **Data sources** page
   (CSV or Excel file, a PostgreSQL / MySQL / SQLite database table or read-only query, or the simulated SAP link),
   check data quality, test the patterns and validate the models. It is also the backup for demos.

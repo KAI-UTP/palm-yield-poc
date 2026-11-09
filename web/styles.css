@@ -253,3 +253,64 @@ table.t td.num, table.t th.num { text-align: right; white-space: nowrap; }
 .src-tile { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--ink); text-decoration: none; }
 .src-tile:hover { border-color: var(--green); }
 .src-tile > span:first-child { font-size: 20px; }
+
+/* Work order history and field proof */
+.hist { margin-top: 8px; font-size: 12px; }
+.hist summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.hist ul { margin: 6px 0 0; padding-left: 16px; }
+.hist li { margin: 2px 0; }
+.proof { display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; padding: 8px; background: var(--green-soft); border-radius: 9px; }
+.proof img { width: 64px; height: 64px; object-fit: cover; border-radius: 7px; cursor: zoom-in; flex: none; }
+.proof img.big { width: 100%; height: auto; max-width: 420px; cursor: zoom-out; }
+.proof:has(img.big) { flex-direction: column; }
+.proof-form { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-2); }
+.proof-form textarea { font: inherit; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; resize: vertical; }
+.proof-form label.btn { display: inline-flex; align-items: center; gap: 6px; }
+.proof-form .thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 7px; }
+
+/* Language switch and notifications */
+.seg.lang button { padding: 5px 9px; font-size: 12px; }
+.bell-wrap { position: relative; }
+.bell { position: relative; }
+.bell .badge { position: absolute; top: -6px; right: -6px; background: var(--red); color: #fff; font-size: 10.5px; line-height: 17px; min-width: 17px; padding: 0 4px; border-radius: 99px; }
+.bell-back { position: fixed; inset: 0; z-index: 600; }
+.bell-pop { position: absolute; right: 0; top: calc(100% + 8px); width: min(360px, calc(100vw - 32px)); max-height: 70vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(20,34,27,.16); z-index: 601; }
+.bell-head { padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.note-i { display: flex; gap: 10px; padding: 10px 14px; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--line); font-size: 13px; }
+.note-i:hover { background: var(--surface-2); }
+.note-i.new { background: var(--blue-soft); }
+.note-i .ico { width: 18px; flex: none; text-align: center; }
+@media (max-width: 820px) { .bell-pop { position: fixed; left: 16px; right: 16px; top: 60px; width: auto; } }
+
+/* Printed management report */
+.print-only { display: none; }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body, html { background: #fff; }
+  .side, .top, .toast, .btn, .seg, .bell-wrap, .ai-narr + * .btn { display: none !important; }
+  .shell { display: block; }
+  .content { padding: 0 !important; max-width: none !important; }
+  .print-only { display: block; }
+  .print-head { border-bottom: 2px solid var(--brand); padding-bottom: 6px; margin-bottom: 12px; }
+  .print-head b { font-family: "Space Grotesk", sans-serif; font-size: 18px; display: block; }
+  .print-head span { font-size: 11px; color: var(--muted); }
+  .card, .brief, .brief-card { box-shadow: none !important; break-inside: avoid; }
+  .grid { break-inside: avoid; }
+}
+.wo .proof { flex-direction: column; gap: 6px; }
+.wo .proof img { width: 100%; height: 90px; }
+.wo .proof img.big { height: auto; }
+@media print {
+  .brief-grid, .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .g2, .g-wide { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .brief { padding: 14px !important; }
+  .kpi .value { font-size: 22px !important; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+@media print { .shell, .main, .content { background: #fff !important; min-height: 0 !important; } }
+html.print-prep .shell { display: block; }
+html.print-prep .side, html.print-prep .top { display: none; }
+html.print-prep .content { width: 700px; max-width: 700px; padding: 0; }
+@media print { :root, html, body { background: #fff !important; } }
+html.print-prep .brief-grid, html.print-prep .g4, html.print-prep .g2, html.print-prep .g-wide { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+html.print-prep .content { margin: 0 !important; }

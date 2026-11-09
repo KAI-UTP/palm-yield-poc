@@ -119,12 +119,12 @@
 
   /* Practical steps for each controllable issue (general good practice; confirm locally). */
   const HOW = {
-    road_access: { words: ["road", "path", "jalan", "laluan"], msName: "Jalan sukar dilalui", ms: ["Ratakan dan turap semula jalan ladang dan laluan menuai; baiki pembetung", "Mula dengan laluan ke blok yang pusingan tuainya panjang", "Periksa semula akses selepas musim hujan"], steps: ["Grade and resurface field roads and harvesting paths; repair culverts", "Start with paths serving blocks that also have long harvest rounds", "Check access again after the wet season"] },
-    flooding: { words: ["flood", "water gate", "waterlog", "pintu air", "banjir"], msName: "Banjir", ms: ["Pasang atau baiki pintu air dan saluran keluar", "Bersihkan saluran tersumbat sebelum musim hujan", "Di tanah gambut, kekalkan paras air sekitar 50–75 cm"], steps: ["Install or repair water gates and outlets", "Clear blocked outlets before the wet season", "On peat, keep the water table at about 50–75 cm"] },
-    ganoderma: { words: ["ganoderma", "basal stem rot"], msName: "Ganoderma", ms: ["Buat bancian blok dan tanda pokok yang dijangkiti", "Tumbang dan musnahkan pokok serta bonggol yang dijangkiti; asingkan dengan parit", "Tanam semula dengan teliti dan periksa setiap pusingan"], steps: ["Census the block and mark infected palms", "Remove and destroy infected palms and boles; isolate with trenches", "Replant carefully and re-check every cycle"] },
-    missing_palms: { words: ["missing", "supply", "sulaman", "titik kosong"], msName: "Pokok hilang", ms: ["Tanam sulaman di titik kosong dengan anak benih baik dari baka yang sama", "Lindungi pokok muda daripada tikus dan rumpai", "Rekod kadar hidup pada bancian seterusnya"], steps: ["Supply-plant vacant points with good seedlings of the same genetic line", "Protect young palms from rats and weeds", "Record survival at the next census"] },
-    harvest_round: { words: ["harvest round", "round", "interval", "pusingan"], msName: "Pusingan tuai panjang", ms: ["Pendekkan pusingan kepada 10 hari atau kurang (amalan baik 7 hingga 10)", "Susun semula pasukan menuai antara divisyen", "Pastikan tandan masak sampai ke jalan pada hari yang sama"], steps: ["Bring the round to 10 days or less (good practice is 7 to 10)", "Rebalance harvest teams across divisions", "Check that ripe bunches reach the road the same day"] },
-    bagworm: { words: ["bagworm", "ulat bungkus"], msName: "Ulat bungkus", ms: ["Buat bancian ulat bungkus untuk cari kawasan teruk", "Guna kawalan biologi dahulu; racun bersasar hanya di kawasan teruk", "Buat bancian semula selepas rawatan"], steps: ["Census bagworm to find hotspots", "Use biological control first; targeted treatment only where heavy", "Re-census after treatment"] },
+    road_access: { words: ["road", "path"], steps: ["Grade and resurface field roads and harvesting paths; repair culverts", "Start with paths serving blocks that also have long harvest rounds", "Check access again after the wet season"] },
+    flooding: { words: ["flood", "water gate", "waterlog"], steps: ["Install or repair water gates and outlets", "Clear blocked outlets before the wet season", "On peat, keep the water table at about 50–75 cm"] },
+    ganoderma: { words: ["ganoderma", "basal stem rot"], steps: ["Census the block and mark infected palms", "Remove and destroy infected palms and boles; isolate with trenches", "Replant carefully and re-check every cycle"] },
+    missing_palms: { words: ["missing", "supply"], steps: ["Supply-plant vacant points with good seedlings of the same genetic line", "Protect young palms from rats and weeds", "Record survival at the next census"] },
+    harvest_round: { words: ["harvest round", "round", "interval"], steps: ["Bring the round to 10 days or less (good practice is 7 to 10)", "Rebalance harvest teams across divisions", "Check that ripe bunches reach the road the same day"] },
+    bagworm: { words: ["bagworm"], steps: ["Census bagworm to find hotspots", "Use biological control first; targeted treatment only where heavy", "Re-census after treatment"] },
     weeds: { words: ["weed"], steps: ["Circle-weed and path-weed", "Bring weed cover under 15%"] },
     drain_upkeep: { words: ["drain"], steps: ["Clear and deepen drains", "Check outlets before the wet season"] },
     leaf_k: { words: ["potassium", "leaf k", "mop"], steps: ["Raise potassium (MOP) in the next fertilizer round", "Check timing and drainage first if leaf K stays low despite fertilizer", "Re-sample leaf 17"] },
@@ -139,14 +139,10 @@
       return { text: c.map((x) => `**${x.title}:** ${x.head}. ${x.body}`).join("\n\n"), chart: "levers" };
     }
     const id = (q.match(/EST\d{3}-D\d{2}-B\d{2}/i) || [])[0];
-    const ms = has(q, "bagaimana", "cara", "langkah");
-    const lv = !id && (ms || has(q, "how", "fix", "steps", "do we", "deal with")) && Object.keys(HOW).find((k) => HOW[k].words.some((w) => has(q, w)));
+    const lv = !id && has(q, "how", "fix", "steps", "do we", "deal with") && Object.keys(HOW).find((k) => HOW[k].words.some((w) => has(q, w)));
     if (lv) {
       const l = S.leverT.find((x) => x.lever === lv);
       const top = S.ranked.filter((b) => b.levers[lv]).sort((a, b) => b.levers[lv] * b.area - a.levers[lv] * a.area).slice(0, 3);
-      if (ms && HOW[lv].ms) return { text: `**${HOW[lv].msName}**${l ? ` menjejaskan ${l.blocks} blok; membaikinya bernilai kira-kira ${fmt.n(l.t)} t BTS (${fmt.rm(l.t * S.price)}) setahun` : ""}.`+"\n\n" +
-        `Langkah biasa (sahkan dengan ahli agronomi):\n` + HOW[lv].ms.map((x) => `- ${x}`).join("\n") +
-        (top.length ? `\n\nMula dengan: ${top.map((b) => `**${b.id}**`).join(", ")}.` : ""), chart: "levers" };
       return { text: `**${LEVERS[lv].issue}**${l ? ` holds back ${l.blocks} blocks; fixing it is worth about ${fmt.n(l.t)} t FFB (${fmt.rm(l.t * S.price)}) a year` : " is not a problem in the blocks in view"}.\n\n` +
         `Typical steps (confirm with your agronomist):\n` + HOW[lv].steps.map((x) => `- ${x}`).join("\n") +
         (top.length ? `\n\nStart with: ${top.map((b) => `**${b.id}**`).join(", ")}.` : ""), chart: "levers" };
@@ -222,7 +218,7 @@
   const MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-2.5-flash"];
   const SYSTEM = "You are PalmYield's assistant for oil palm plantation managers. Answer ONLY from the RESULTS below; never invent numbers. " +
     "Be brief and practical: lead with the answer, then the reason, then the action and its expected value in RM. Use short bullet points and markdown bold. " +
-    "If the RESULTS do not cover the question, say so. The data is a synthetic sample. Reply in the language of the question (English or Bahasa Malaysia). " +
+    "If the RESULTS do not cover the question, say so. The data is a synthetic sample. " +
     "If a chart would help, end with one line 'CHART: <name>' using one of: estates, risk, levers, top_blocks, drivers, age_curve, accuracy, block.";
 
   function context(D, S, q) {

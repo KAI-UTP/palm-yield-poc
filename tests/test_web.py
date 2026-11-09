@@ -35,11 +35,11 @@ def test_one_cache_version_everywhere():
     assert f'palmyield-v{versions.pop()}' in sw
 
 
-def test_every_action_has_a_malay_translation():
-    data = json.loads(read("data/app.json"))
+def test_chat_history_can_be_managed():
     app = read("app.js")
-    for action in {b["action"] for b in data["blocks"]}:
-        assert json.dumps(action) + ":" in app, action
+    for name in ["deleteChats", "renameChat", "starChat", "askDelete", 'chats: () =>']:
+        assert name in app, name
+    assert "This can't be undone." in app  # deleting always asks first
 
 
 def test_ai_never_cached_offline():

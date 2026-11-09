@@ -1,8 +1,8 @@
 /* PalmYield offline support: the app opens without a signal in the field.
    App files and data: network first, cached copy when offline.
    Libraries and fonts from CDNs: cache first (they are versioned). */
-const CACHE = "palmyield-v10";
-const SHELL = ["./", "index.html", "styles.css?v=10", "engine.js?v=10", "ask.js?v=10", "app.js?v=10", "data/app.json?v=10", "icon.svg", "icon-192.png", "manifest.webmanifest"];
+const CACHE = "palmyield-v11";
+const SHELL = ["./", "index.html", "styles.css?v=11", "engine.js?v=11", "ask.js?v=11", "app.js?v=11", "data/app.json?v=11", "icon.svg", "icon-192.png", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

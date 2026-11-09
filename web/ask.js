@@ -24,11 +24,6 @@
       ["🔎", "Tell me about EST005-D08-B01", "Why this block needs work"],
       ["🛠", "How do we fix poor road access?", "What the action involves"],
       ["⏱", "Why does the harvest round matter?", "7 to 10 days, and why"]],
-    field_ms: [
-      ["📋", "Apakah tugasan saya hari ini?", "Arahan kerja pasukan anda"],
-      ["🛠", "Bagaimana cara baiki jalan ladang?", "Langkah kerja"],
-      ["🍄", "Bagaimana cara buat bancian Ganoderma?", "Langkah kerja"],
-      ["⏱", "Bagaimana cara pendekkan pusingan tuai?", "7 hingga 10 hari"]],
     admin: [
       ["◎", "How accurate is the forecast?", "Model checks on unseen blocks"],
       ["☀", "Brief me on this cycle", "Problem, cause, action and value"],
@@ -36,16 +31,16 @@
       ["⌖", "Which estate needs the most attention?", "Estates against age peers"]],
   };
 
-  const greeting = (ms) => { const h = new Date().getHours(); return ms ? (h < 12 ? "Selamat pagi" : h < 19 ? "Selamat petang" : "Selamat malam") : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; };
+  const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; };
 
-  function Composer({ onSend, busy, big, ai, hasKey, autoFocus, canSet, ms }) {
+  function Composer({ onSend, busy, big, ai, hasKey, autoFocus, canSet }) {
     const [v, setV] = useState("");
     const ta = useRef(null);
     useEffect(() => { if (autoFocus && ta.current && window.innerWidth > 820) ta.current.focus(); }, []);
     const grow = (el) => { el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight, 220) + "px"; };
     const submit = () => { const q = v.trim(); if (!q || busy) return; onSend(q); setV(""); if (ta.current) { ta.current.style.height = "auto"; } };
     return html`<div class=${"ask-box" + (big ? " big" : "")}>
-      <textarea ref=${ta} rows=${big ? 2 : 1} value=${v} maxLength="500" placeholder=${ms ? "Tanya apa sahaja tentang tugasan dan blok anda…" : big ? "Ask anything about your yield, blocks, risks or actions…" : "Reply or ask something new…"}
+      <textarea ref=${ta} rows=${big ? 2 : 1} value=${v} maxLength="500" placeholder=${big ? "Ask anything about your yield, blocks, risks or actions…" : "Reply or ask something new…"}
         onInput=${(e) => { setV(e.target.value); grow(e.target); }} onKeyDown=${(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}></textarea>
       <div class="bar"><span class="small muted">${ai ? (hasKey ? "✦ AI on · answers only from your data" : canSet ? html`AI is off on this device · <a href="#/settings">add a key</a>` : "AI is off on this device · built-in answers") : "Built-in answers"}</span>
         <button class="send" onClick=${submit} disabled=${busy || !v.trim()} aria-label="Send">↑</button></div>
@@ -71,13 +66,6 @@
       .sort((a, b) => (a.status === "inprog" ? 0 : 1) - (b.status === "inprog" ? 0 : 1) || a.due.localeCompare(b.due));
     const who = ctx.user.teams ? "Your team has" : "There are";
     const rm = mine.reduce((s, o) => s + o.gain_t, 0) * ctx.price;
-    if (ctx.lang === "ms") {
-      const t = ctx.t;
-      if (!mine.length) return { text: "Pasukan anda tiada arahan kerja terbuka sekarang.", chart: "tasks" };
-      return { text: `Pasukan anda ada **${mine.length} arahan kerja terbuka**, bernilai ${fmt.rm(rm)} setahun:\n` +
-        mine.slice(0, 6).map((o) => `- **${o.id}** (${o.estate.replace(" Estate", "")}): ${t(o.action)}. ${t(o.status === "inprog" ? "In progress" : "To do")}, tarikh akhir ${o.due}, ${t(o.owner).toLowerCase()}`).join("\n") +
-        (mine.length > 6 ? `\n\n…dan ${mine.length - 6} lagi.` : ""), chart: "tasks" };
-    }
     if (!mine.length) return { text: `${who} no open work orders right now.`, chart: "tasks" };
     return { text: `${who} **${mine.length} open work order${mine.length > 1 ? "s" : ""}**, worth ${fmt.rm(rm)} a year in total:\n` +
       mine.slice(0, 6).map((o) => `- **${o.id}** (${o.estate.replace(" Estate", "")}): ${o.action}. ${o.status === "inprog" ? "In progress" : "To do"}, due ${o.due}, ${o.owner.toLowerCase()}`).join("\n") +
@@ -113,7 +101,7 @@
       const hist = msgs.filter((m) => m.text);
       setMsgs((m) => [...m, { role: "user", text: q }, { role: "bot", text: "", streaming: true }]);
       setBusy(true);
-      const local = /\b(tasks?|work orders?|to do today|tugasan|arahan kerja)\b/i.test(q) && !/\bEST\d{3}/i.test(q) ? tasksAnswer(ctx) : PY.answer(D, S, q);
+      const local = /\b(tasks?|work orders?|to do today)\b/i.test(q) && !/\bEST\d{3}/i.test(q) ? tasksAnswer(ctx) : PY.answer(D, S, q);
       const finish = (text, chart, block, src) => {
         patchLast({ text, chart, block, src, streaming: false, follow: PY.followUps(q, chart, D, S) });
         setBusy(false);
@@ -137,23 +125,22 @@
 
     useEffect(() => { if (ctx.pending) { const q = ctx.pending; ctx.clearPending(); send(q); } }, [ctx.pending]);
 
-    const ms = ctx.lang === "ms";
     if (!msgs.length) {
       const openWO = Object.values(ctx.orders).filter((o) => o.status !== "done");
       const myOpen = openWO.filter((o) => !ctx.user.teams || ctx.user.teams.includes(o.owner));
       return html`<div class="ask"><div class="ask-hero">
         <div class="hero-mark">✦</div>
-        <h1>${greeting(ms)}, ${ctx.user.name.split(" ")[0]}</h1>
-        <p class="hero-sub">${ms ? "Apa yang anda mahu tahu tentang tugasan dan blok anda hari ini?" : ai ? "What would you like to know about your plantation today?" : "Ask a question about your plantation's yield."} ${ctx.estate ? html`<b>${ctx.estate}</b>` : ms ? `${S.blocks.length} blok, ${S.estates.length} estet` : `${S.blocks.length} blocks, ${S.estates.length} estates`}.</p>
-        <${Composer} big=${true} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} autoFocus=${true} canSet=${ctx.allowed("settings")} ms=${ms} />
-        <div class="starters">${(STARTERS[ms ? "field_ms" : ctx.role] || STARTERS.manager).map(([i, q, d]) => html`<button class="starter" key=${q} onClick=${() => send(q)}><span class="i">${i}</span><b>${q}</b><span>${d}</span></button>`)}</div>
-        <div class="glance-head small muted">${ms ? "Pusingan ini sekilas pandang" : "This cycle at a glance"}</div>
+        <h1>${greeting()}, ${ctx.user.name.split(" ")[0]}</h1>
+        <p class="hero-sub">${ai ? "What would you like to know about your plantation today?" : "Ask a question about your plantation's yield."} ${ctx.estate ? html`<b>${ctx.estate}</b>` : `${S.blocks.length} blocks, ${S.estates.length} estates`}.</p>
+        <${Composer} big=${true} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} autoFocus=${true} canSet=${ctx.allowed("settings")} />
+        <div class="starters">${(STARTERS[ctx.role] || STARTERS.manager).map(([i, q, d]) => html`<button class="starter" key=${q} onClick=${() => send(q)}><span class="i">${i}</span><b>${q}</b><span>${d}</span></button>`)}</div>
+        <div class="glance-head small muted">This cycle at a glance</div>
         <div class="glance">${[
           ["dashboard", "#/dashboard", fmt.rm(S.totalRM), "a year at stake", ""],
           ["warnings", "#/warnings", S.high, "blocks at high risk", "down"],
           ["actions", "#/actions", S.leverT[0] ? S.leverT[0].short : "–", "biggest fix", ""],
           ["actions", "#/actions/board", openWO.length, "open work orders", ""],
-          ["tasks", "#/tasks", myOpen.length, ms ? "tugasan terbuka saya" : "my open tasks", ""],
+          ["tasks", "#/tasks", myOpen.length, "my open tasks", ""],
           ["insights", "#/insights", "8 of 8", "patterns confirmed", ""],
           ["system", "#/system", "±" + fmt.n(D.forecast_metrics.model.mae, 2), "forecast error, t/ha/yr", ""],
         ].filter(([pg]) => ctx.allowed(pg)).slice(0, 4).map(([pg, href, v, l, cls]) => html`<a key=${href} href=${href}><div class=${"v " + cls}>${v}</div><div class="l">${l}</div></a>`)}</div>
@@ -174,7 +161,7 @@
           </div></div>`)}
         <div ref=${end}></div>
       </div>
-      <div class="dock"><${Composer} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} canSet=${ctx.allowed("settings")} ms=${ms} />
+      <div class="dock"><${Composer} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} canSet=${ctx.allowed("settings")} />
         <div class="small muted" style=${{ textAlign: "center", marginTop: 6 }}>Answers use only PalmYield's computed results · synthetic sample data</div></div>
     </div>`;
   }

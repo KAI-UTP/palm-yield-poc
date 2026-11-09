@@ -56,37 +56,6 @@
     return o;
   }
 
-  /* ---------- Bahasa Malaysia for field staff (My tasks, menu, notifications) ---------- */
-  const BM = {
-    "Repair field roads and harvesting paths": "Baiki jalan ladang dan laluan menuai",
-    "Run a Ganoderma census; sanitise and isolate infected palms": "Buat bancian Ganoderma; sanitasi dan asingkan pokok yang dijangkiti",
-    "Supply-plant vacant points": "Tanam sulaman di titik kosong",
-    "Cut the harvest round to 10 days (good practice is 7 to 10); rebalance harvest teams": "Pendekkan pusingan tuai kepada 10 hari (amalan baik 7 hingga 10); susun semula pasukan menuai",
-    "Install or repair water gates and outlets in flood-prone blocks": "Pasang atau baiki pintu air dan saluran keluar di blok mudah banjir",
-    "Census bagworm; apply biological or targeted chemical control": "Bancian ulat bungkus; guna kawalan biologi atau racun bersasar",
-    "Long harvest round": "Pusingan tuai panjang", "Poor road access": "Jalan sukar dilalui", "Drains poorly kept": "Parit tidak dijaga",
-    "Flooding": "Banjir", "Low leaf K": "K daun rendah", "Low leaf Mg": "Mg daun rendah", "Bagworm": "Ulat bungkus",
-    "Missing palms": "Pokok hilang", "Weed competition": "Persaingan rumpai",
-    "Harvest team": "Pasukan menuai", "Field assistant": "Pembantu ladang", "Maintenance team": "Pasukan penyelenggaraan", "Agronomist": "Ahli agronomi",
-    "To do": "Belum mula", "In progress": "Sedang dibuat", "Done": "Selesai", "Open": "Terbuka", "All": "Semua",
-    "Ask PalmYield": "Tanya PalmYield", "My tasks": "Tugasan saya", "Block profile": "Profil blok", "New chat": "Sembang baru", "Sign out": "Log keluar",
-    "Recent chats": "Sembang terkini", "Estate": "Estet", "All estates": "Semua estet", "Synthetic sample data": "Data sampel sintetik",
-    "Notifications": "Notifikasi", "Nothing new.": "Tiada yang baru.", "Mark all read": "Tandakan semua dibaca",
-    "New task": "Tugasan baru", "is late": "sudah lewat", "due": "tarikh akhir",
-    "Why": "Sebab", "Due": "Tarikh akhir", "late": "lewat", "worth": "bernilai", "a year": "setahun",
-    "Start": "Mula", "Mark done": "Tandakan selesai", "Reopen": "Buka semula", "Block details": "Butiran blok", "Ask how": "Tanya cara",
-    "History": "Sejarah", "Created by": "Dibuat oleh", "Started": "Dimulakan", "Assigned to": "Diserah kepada", "Due date": "Tarikh akhir",
-    "Proof of work": "Bukti kerja", "What was done? (for the manager)": "Apa yang dibuat? (untuk pengurus)",
-    "Add photo": "Tambah gambar", "Change photo": "Tukar gambar", "Add my location": "Tambah lokasi saya", "Location added": "Lokasi ditambah",
-    "Save and mark done": "Simpan dan tandakan selesai", "Cancel": "Batal", "Photo": "Gambar", "by": "oleh",
-    "No open tasks": "Tiada tugasan terbuka", "open task": "tugasan terbuka", "open tasks": "tugasan terbuka", "You have": "Anda ada",
-    "Nothing here. New work orders from the estate manager appear in this list.": "Tiada apa-apa. Arahan kerja baru daripada pengurus estet akan muncul di sini.",
-    "Update the status as you go; the estate manager sees it straight away.": "Kemas kini status semasa bekerja; pengurus estet nampak serta-merta.",
-    "Work orders for": "Arahan kerja untuk", "Language": "Bahasa", "Field supervisor": "Penyelia ladang",
-  };
-  const makeT = (lang) => (s) => (lang === "ms" && BM[s]) || s;
-  const trIssues = (t, s) => (s || "").split(", ").map(t).join(", ");
-
   /* Make a phone photo small enough to keep: longest side 720 px, JPEG. */
   function shrinkPhoto(file) {
     return new Promise((res, rej) => {
@@ -201,21 +170,21 @@
 
   /* Work order trail: who did what, when; and the field proof (note, photo, location). */
   const when = (iso) => new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-  function History({ o, t }) {
+  function History({ o }) {
     const h = o.history || [];
     if (!h.length) return null;
-    const line = (x) => x.kind === "created" ? `${t("Created by")} ${x.by}` : x.kind === "status" ? `${t(STATUS[x.v])} · ${x.by}`
-      : x.kind === "owner" ? `${t("Assigned to")} ${t(x.v)} · ${x.by}` : x.kind === "due" ? `${t("Due date")} ${x.v} · ${x.by}` : `${x.v || ""} · ${x.by}`;
-    return html`<details class="hist"><summary>${t("History")} (${h.length})</summary><ul>${[...h].reverse().map((x, i) => html`<li key=${i}><span class="muted">${when(x.at)}</span> ${line(x)}</li>`)}</ul></details>`;
+    const line = (x) => x.kind === "created" ? `Created by ${x.by}` : x.kind === "status" ? `${STATUS[x.v]} · ${x.by}`
+      : x.kind === "owner" ? `Assigned to ${x.v} · ${x.by}` : x.kind === "due" ? `Due date ${x.v} · ${x.by}` : `${x.v || ""} · ${x.by}`;
+    return html`<details class="hist"><summary>History (${h.length})</summary><ul>${[...h].reverse().map((x, i) => html`<li key=${i}><span class="muted">${when(x.at)}</span> ${line(x)}</li>`)}</ul></details>`;
   }
-  function Proof({ p, t }) {
+  function Proof({ p }) {
     if (!p) return null;
     const map = p.loc && `https://www.openstreetmap.org/?mlat=${p.loc[0]}&mlon=${p.loc[1]}#map=17/${p.loc[0]}/${p.loc[1]}`;
-    return html`<div class="proof">${p.photo && html`<img src=${p.photo} alt=${t("Photo")} title="Click to enlarge" onClick=${(e) => e.currentTarget.classList.toggle("big")} />`}
-      <div><b class="small">✓ ${t("Proof of work")}</b> <span class="small muted">${t("by")} ${p.by} · ${when(p.at)}${map ? html` · <a href=${map} target="_blank" rel="noopener">📍 ${p.loc[0].toFixed(4)}, ${p.loc[1].toFixed(4)}</a>` : ""}</span>
+    return html`<div class="proof">${p.photo && html`<img src=${p.photo} alt="Photo" title="Click to enlarge" onClick=${(e) => e.currentTarget.classList.toggle("big")} />`}
+      <div><b class="small">✓ Proof of work</b> <span class="small muted">by ${p.by} · ${when(p.at)}${map ? html` · <a href=${map} target="_blank" rel="noopener">📍 ${p.loc[0].toFixed(4)}, ${p.loc[1].toFixed(4)}</a>` : ""}</span>
       ${p.note && html`<p class="small" style=${{ marginTop: 2 }}>${p.note}</p>`}</div></div>`;
   }
-  function ProofForm({ o, ctx, t, onClose }) {
+  function ProofForm({ o, ctx, onClose }) {
     const [note, setNote] = useState(""); const [photo, setPhoto] = useState(null); const [loc, setLoc] = useState(null); const [busy, setBusy] = useState(false);
     async function pick(e) { const f = e.target.files && e.target.files[0]; if (!f) return; setBusy(true); try { setPhoto(await shrinkPhoto(f)); } catch (err) { ctx.toast(err.message); } setBusy(false); }
     function locate() {
@@ -225,17 +194,17 @@
     function save() {
       const now = new Date().toISOString();
       ctx.updateOrder(o.id, { status: "done", doneAt: now, proof: { note: note.trim(), photo, loc, by: ctx.user.name, at: now } });
-      ctx.toast(`${t("Done")}: ${o.id}`); onClose();
+      ctx.toast(`Done: ${o.id}`); onClose();
     }
     return html`<div class="proof-form">
-      <b class="small">${t("Proof of work")}</b>
-      <textarea rows="3" placeholder=${t("What was done? (for the manager)")} value=${note} onInput=${(e) => setNote(e.target.value)}></textarea>
+      <b class="small">Proof of work</b>
+      <textarea rows="3" placeholder="What was done? (for the manager)" value=${note} onInput=${(e) => setNote(e.target.value)}></textarea>
       <div class="row">
-        <label class="btn">📷 ${photo ? t("Change photo") : t("Add photo")}<input type="file" accept="image/*" capture="environment" onChange=${pick} hidden /></label>
-        <button class="btn" onClick=${locate}>📍 ${loc ? t("Location added") : t("Add my location")}</button>
+        <label class="btn">📷 ${photo ? "Change photo" : "Add photo"}<input type="file" accept="image/*" capture="environment" onChange=${pick} hidden /></label>
+        <button class="btn" onClick=${locate}>📍 ${loc ? "Location added" : "Add my location"}</button>
         ${photo && html`<img class="thumb" src=${photo} alt="" />`}
       </div>
-      <div class="row"><button class="btn primary" disabled=${busy} onClick=${save}>✓ ${t("Save and mark done")}</button><button class="btn" onClick=${onClose}>${t("Cancel")}</button></div>
+      <div class="row"><button class="btn primary" disabled=${busy} onClick=${save}>✓ Save and mark done</button><button class="btn" onClick=${onClose}>Cancel</button></div>
     </div>`;
   }
 
@@ -251,7 +220,7 @@
       try {
         const r = await PY.askGemini(ctx.key, D, S, "Write a management briefing for this week in 4 short sentences: the problem, why it is happening, the first actions, and the expected outcome in RM. Name the estates and blocks. No chart.", []);
         setNarr(PY.splitChart(r.text).text); ctx.log("Briefing", true);
-      } catch (e) { setNarr("The AI service did not answer (" + e.message + "). The briefing above is computed from the results and stays valid."); ctx.log("Briefing", false); }
+      } catch (e) { setNarr("The AI service did not answer " + e.message + ". The briefing above is computed from the results and stays valid."); ctx.log("Briefing", false); }
       setBusy(false);
     }
     return html`<div>
@@ -353,7 +322,7 @@
             <div class="row"><select value=${o.owner} onChange=${(e) => ctx.updateOrder(o.id, { owner: e.target.value })}>${OWNERS.map((w) => html`<option key=${w}>${w}</option>`)}</select>
             <select value=${o.status} onChange=${(e) => ctx.updateOrder(o.id, { status: e.target.value })}>${Object.entries(STATUS).map(([k, v]) => html`<option key=${k} value=${k}>${v}</option>`)}</select>
             <span class="small muted">Due ${o.due}</span><button class="btn sm" title="Remove" onClick=${() => ctx.removeOrder(o.id)}>✕</button></div>
-            ${o.status === "done" && html`<${Proof} p=${o.proof} t=${ctx.t} />`}<${History} o=${o} t=${ctx.t} /></div>`)}</div>`; })}</div>
+            ${o.status === "done" && html`<${Proof} p=${o.proof} />`}<${History} o=${o} /></div>`)}</div>`; })}</div>
         ${orders.length > 0 && html`<div class="row" style=${{ marginTop: 14 }}><button class="btn sm" onClick=${() => download("work_orders.csv", orders.map((o) => ({ block: o.id, estate: o.estate, action: o.action, owner: o.owner, status: STATUS[o.status], due: o.due, gain_rm_yr: Math.round(o.gain_t * S.price), created_by: o.by, done_at: o.doneAt || "", done_by: (o.proof && o.proof.by) || "", field_note: (o.proof && o.proof.note) || "", photo: o.proof && o.proof.photo ? "yes" : "", gps: o.proof && o.proof.loc ? o.proof.loc.join(" ") : "" })))}>⇩ Export work orders</button><span class="small muted">Saved in this browser for the demo; in production, saved to the database and visible to the whole team.</span></div>`}
       </div>`}
     </div>`;
@@ -548,26 +517,25 @@
       .sort((a, b) => order[a.status] - order[b.status] || a.due.localeCompare(b.due));
     const open = mine.filter((o) => o.status !== "done");
     const today = new Date().toISOString().slice(0, 10);
-    const t = ctx.t;
     const [proofFor, setProofFor] = useState(null);
     return html`<div>
-      <${Head} eyebrow=${t(ctx.user.role)} title=${open.length ? `${t("You have")} ${open.length} ${t(open.length > 1 ? "open tasks" : "open task")}` : t("No open tasks")} sub=${`${t("Work orders for")} ${ctx.user.teams.map(t).join(", ").toLowerCase()}. ${t("Update the status as you go; the estate manager sees it straight away.")}`}>
-        <div class="seg">${[["open", "Open"], ["done", "Done"], ["all", "All"]].map(([k, l]) => html`<button key=${k} class=${show === k ? "on" : ""} onClick=${() => setShow(k)}>${t(l)}</button>`)}</div>
+      <${Head} eyebrow=${ctx.user.role} title=${open.length ? `You have ${open.length} open task${open.length > 1 ? "s" : ""}` : "No open tasks"} sub=${`Work orders for ${ctx.user.teams.join(", ").toLowerCase()}. Update the status as you go; the estate manager sees it straight away.`}>
+        <div class="seg">${[["open", "Open"], ["done", "Done"], ["all", "All"]].map(([k, l]) => html`<button key=${k} class=${show === k ? "on" : ""} onClick=${() => setShow(k)}>${l}</button>`)}</div>
       </${Head}>
-      ${!rows.length && html`<div class="card"><p class="muted">${t("Nothing here. New work orders from the estate manager appear in this list.")}</p></div>`}
+      ${!rows.length && html`<div class="card"><p class="muted">Nothing here. New work orders from the estate manager appear in this list.</p></div>`}
       <div class="tasks">${rows.map((o) => { const b = D.blocks.find((x) => x.id === o.id) || {}; const late = o.status !== "done" && o.due < today; return html`<div class="task card" key=${o.id}>
-        <div class="row" style=${{ justifyContent: "space-between" }}><div><a href=${"#/block/" + o.id}><b>${o.id}</b></a> <span class="muted small">· ${o.estate.replace(" Estate", "")}</span></div><span class=${"status " + o.status}>${t(STATUS[o.status])}</span></div>
-        <h3 style=${{ margin: "8px 0 4px" }}>${t(o.action)}</h3>
-        <p class="small muted">${t("Why")}: ${trIssues(t, b.issues) || "–"} · ${t(o.owner)} · <span class=${late ? "down" : ""}>${t("Due")} ${o.due}${late ? ` (${t("late")})` : ""}</span> · ${t("worth")} ${fmt.rm(o.gain_t * S.price)} ${t("a year")}</p>
-        ${o.status === "done" && html`<${Proof} p=${o.proof} t=${t} />`}
-        ${proofFor === o.id ? html`<${ProofForm} o=${o} ctx=${ctx} t=${t} onClose=${() => setProofFor(null)} />` : html`<div class="row" style=${{ marginTop: 10 }}>
-          ${o.status === "todo" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "inprog" }); ctx.toast(t("Started") + ": " + o.id); }}>▶ ${t("Start")}</button>`}
-          ${o.status === "inprog" && html`<button class="btn primary" onClick=${() => setProofFor(o.id)}>✓ ${t("Mark done")}</button>`}
-          ${o.status === "done" && html`<button class="btn" onClick=${() => ctx.updateOrder(o.id, { status: "inprog" })}>↺ ${t("Reopen")}</button>`}
-          <a class="btn" href=${"#/block/" + o.id}>${t("Block details")}</a>
-          <button class="btn" onClick=${() => ctx.ask(ctx.lang === "ms" ? `Bagaimana cara ${t(o.action).charAt(0).toLowerCase() + t(o.action).slice(1)}?` : `How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)}?`)}>✦ ${t("Ask how")}</button>
+        <div class="row" style=${{ justifyContent: "space-between" }}><div><a href=${"#/block/" + o.id}><b>${o.id}</b></a> <span class="muted small">· ${o.estate.replace(" Estate", "")}</span></div><span class=${"status " + o.status}>${STATUS[o.status]}</span></div>
+        <h3 style=${{ margin: "8px 0 4px" }}>${o.action}</h3>
+        <p class="small muted">Why: ${b.issues || "–"} · ${o.owner} · <span class=${late ? "down" : ""}>Due ${o.due}${late ? ` (late)` : ""}</span> · worth ${fmt.rm(o.gain_t * S.price)} a year</p>
+        ${o.status === "done" && html`<${Proof} p=${o.proof} />`}
+        ${proofFor === o.id ? html`<${ProofForm} o=${o} ctx=${ctx} onClose=${() => setProofFor(null)} />` : html`<div class="row" style=${{ marginTop: 10 }}>
+          ${o.status === "todo" && html`<button class="btn primary" onClick=${() => { ctx.updateOrder(o.id, { status: "inprog" }); ctx.toast("Started: " + o.id); }}>▶ Start</button>`}
+          ${o.status === "inprog" && html`<button class="btn primary" onClick=${() => setProofFor(o.id)}>✓ Mark done</button>`}
+          ${o.status === "done" && html`<button class="btn" onClick=${() => ctx.updateOrder(o.id, { status: "inprog" })}>↺ Reopen</button>`}
+          <a class="btn" href=${"#/block/" + o.id}>Block details</a>
+          <button class="btn" onClick=${() => ctx.ask(`How do I ${o.action.charAt(0).toLowerCase() + o.action.slice(1)}?`)}>✦ Ask how</button>
         </div>`}
-        <${History} o=${o} t=${t} />
+        <${History} o=${o} />
         </div>`; })}</div>
     </div>`;
   }
@@ -634,17 +602,60 @@
     </div>`;
   }
 
+  /* ---------- Chat history: search, star, rename, delete (like Claude) ---------- */
+  const ago = (t) => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 1440 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " days ago"; };
+  const byStar = (list) => [...list].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.at || 0) - (a.at || 0));
+
+  function Chats({ ctx }) {
+    const [q, setQ] = useState(""); const [sel, setSel] = useState([]);
+    const words = q.trim().toLowerCase();
+    const list = byStar(ctx.chats).filter((c) => !words || (c.title + " " + (c.msgs || []).filter((m) => m.role === "user").map((m) => m.text || "").join(" ")).toLowerCase().includes(words));
+    const picked = sel.filter((id) => list.some((c) => c.id === id));
+    const allOn = list.length > 0 && picked.length === list.length;
+    const toggle = (id) => setSel((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
+    return html`<div>
+      <${Head} eyebrow="Ask PalmYield" title="Your chat history" sub=${`${ctx.chats.length} chat${ctx.chats.length === 1 ? "" : "s"} · only you can see your chats`}>
+        <button class="btn sm primary" onClick=${ctx.newChat}>＋ New chat</button>
+      </${Head}>
+      <div class="card">
+        <input class="chat-search" type="search" placeholder="Search your chats…" value=${q} onInput=${(e) => setQ(e.target.value)} aria-label="Search chats" />
+        ${list.length > 0 && html`<div class="row chats-bar"><label class="small"><input type="checkbox" checked=${allOn} onChange=${() => setSel(allOn ? [] : list.map((c) => c.id))} /> Select all</label>
+          ${picked.length > 0 && html`<span class="small muted">${picked.length} selected</span><button class="btn sm danger" onClick=${() => ctx.askDelete(picked)}>🗑 Delete selected</button><button class="btn sm" onClick=${() => setSel([])}>Cancel</button>`}</div>`}
+        ${!list.length ? html`<p class="muted" style=${{ padding: "18px 4px" }}>${words ? "No chats match your search." : "No chats yet. Ask PalmYield a question to start one."}</p>`
+          : html`<div class="chat-list">${list.map((c) => html`<div key=${c.id} class=${"chat-item" + (picked.includes(c.id) ? " sel" : "")}>
+            <input type="checkbox" checked=${picked.includes(c.id)} onChange=${() => toggle(c.id)} aria-label=${"Select " + c.title} />
+            <a href=${"#/chat/" + c.id}><b>${c.pinned ? "★ " : ""}${c.title}</b><span class="small muted">${(c.msgs || []).filter((m) => m.role === "user").length} question(s) · last message ${ago(c.at || 0)}</span></a>
+            <button class="btn sm" title=${c.pinned ? "Unstar" : "Star"} aria-label=${c.pinned ? "Unstar" : "Star"} onClick=${() => ctx.starChat(c.id)}>${c.pinned ? "★" : "☆"}</button>
+            <button class="btn sm" title="Rename" aria-label="Rename" onClick=${() => ctx.askRename(c)}>✎</button>
+            <button class="btn sm" title="Delete" aria-label="Delete" onClick=${() => ctx.askDelete([c.id])}>🗑</button></div>`)}</div>`}
+      </div></div>`;
+  }
+
+  function Dialog({ modal, close, ctx }) {
+    const [v, setV] = useState(modal.title || "");
+    useEffect(() => { const k = (e) => { if (e.key === "Escape") close(); }; addEventListener("keydown", k); return () => removeEventListener("keydown", k); }, []);
+    const del = modal.kind === "delete", n = del ? modal.ids.length : 0;
+    const rename = () => { if (v.trim()) { ctx.renameChat(modal.id, v.trim()); close(); } };
+    return html`<div class="modal-back" onClick=${close}><div class="modal" role="dialog" aria-modal="true" onClick=${(e) => e.stopPropagation()}>
+      <h2>${del ? (n > 1 ? `Delete ${n} chats?` : "Delete chat?") : "Rename chat"}</h2>
+      ${del ? html`<p class="muted" style=${{ marginTop: 8 }}>${n > 1 ? `These ${n} chats will be deleted.` : "This chat will be deleted."} This can't be undone.</p>`
+        : html`<input class="chat-search" style=${{ marginTop: 12 }} autoFocus value=${v} maxLength="80" onInput=${(e) => setV(e.target.value)} onKeyDown=${(e) => { if (e.key === "Enter") rename(); }} />`}
+      <div class="row" style=${{ justifyContent: "flex-end", marginTop: 18 }}><button class="btn" onClick=${close}>Cancel</button>
+        ${del ? html`<button class="btn danger" onClick=${() => { ctx.deleteChats(modal.ids); close(); }}>Delete</button>` : html`<button class="btn primary" disabled=${!v.trim()} onClick=${rename}>Save</button>`}</div>
+    </div></div>`;
+  }
+
   /* ---------- Notifications: what changed for this person ---------- */
-  function notifications(D, S, ctx, t) {
+  function notifications(D, S, ctx) {
     const { user, role, orders } = ctx;
     const today = new Date().toISOString().slice(0, 10);
     const ago = (iso) => { const m = Math.round((Date.now() - new Date(iso)) / 60000); return m < 1 ? "now" : m < 60 ? m + " min ago" : m < 1440 && m > 0 ? Math.round(m / 60) + " h ago" : new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); };
     const out = [];
     const mine = (o) => !user.teams || user.teams.includes(o.owner);
-    const short = (o) => `${o.id} · ${t(o.action).split(";")[0]}`;
+    const short = (o) => `${o.id} · ${o.action.split(";")[0]}`;
     Object.values(orders).forEach((o) => {
-      if (user.teams && mine(o) && o.status === "todo") out.push({ at: o.created, icon: "☑", text: `${t("New task")}: ${short(o)}`, href: "#/tasks" });
-      if (o.status !== "done" && o.due < today && (mine(o) || ctx.canAssign)) out.push({ at: o.due + "T00:00:00.000Z", icon: "⚠", text: `${o.id} ${t("is late")} (${t("due")} ${o.due})`, href: user.teams ? "#/tasks" : "#/actions/board" });
+      if (user.teams && mine(o) && o.status === "todo") out.push({ at: o.created, icon: "☑", text: `New task: ${short(o)}`, href: "#/tasks" });
+      if (o.status !== "done" && o.due < today && (mine(o) || ctx.canAssign)) out.push({ at: o.due + "T00:00:00.000Z", icon: "⚠", text: `${o.id} is late (due ${o.due})`, href: user.teams ? "#/tasks" : "#/actions/board" });
       if (role === "manager" && o.status === "done" && o.doneAt) out.push({ at: o.doneAt, icon: "✓", text: `${o.id} done by ${(o.proof && o.proof.by) || o.owner}${o.proof && o.proof.photo ? " · with photo" : ""}`, href: "#/actions/board" });
       if (role === "manager" && o.status === "inprog") { const h = (o.history || []).filter((x) => x.kind === "status" && x.v === "inprog").pop(); if (h) out.push({ at: h.at, icon: "▶", text: `${o.id} started by ${h.by}`, href: "#/actions/board" }); }
     });
@@ -667,9 +678,10 @@
     const [price, setPrice] = usePersist("price", D.meta.price);
     const [key, setKey] = usePersist("gemini", "");
     const [orders, setOrders] = usePersist("orders.v3", () => seedOrders(D));
-    const [lang, setLang] = usePersist("lang", "en");
     const [seen, setSeen] = usePersist("seen", {});
     const [bell, setBell] = useState(false);
+    const [chatMenu, setChatMenu] = useState(null);
+    const [modal, setModal] = useState(null);
     const [aiLog, setAiLog] = usePersist("ailog", []);
     const [pending, setPending] = useState(null);
     const [chatsBy, setChatsBy] = usePersist("chats.v2", {});  // { role: [chat, ...] }: each person sees only their own chats
@@ -677,7 +689,7 @@
     const [chatKey, setChatKey] = useState(0);
     const [toastMsg, setToast] = useState(null);
     const [menu, setMenu] = useState(false);
-    useEffect(() => { setMenu(false); setBell(false); }, [route.join("/")]);
+    useEffect(() => { setMenu(false); setBell(false); setChatMenu(null); }, [route.join("/")]);
     useEffect(() => { const f = () => toast("Storage on this device is full: the last change was not kept. Reset the demo data in Settings."); addEventListener("py-store-full", f); return () => removeEventListener("py-store-full", f); }, []);
     useEffect(() => { if (user) document.title = "PalmYield · " + user.role; }, [role]);
     useEffect(() => {  // printing: switch to the A4 layout first so the charts redraw at page width
@@ -690,17 +702,29 @@
     const toast = (m) => { setToast(m); clearTimeout(window.__t); window.__t = setTimeout(() => setToast(null), 2600); };
     const S = useMemo(() => PY.scope(D, estate, price), [estate, price]);
     const user = ROLES[role] || null;
-    const allowed = (pg) => !!user && user.pages.includes(pg === "chat" || pg === "assistant" ? "home" : pg);
+    const allowed = (pg) => !!user && user.pages.includes(pg === "chat" || pg === "assistant" || pg === "chats" ? "home" : pg);
     const due = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); };
-    const t = makeT(role === "field" ? lang : "en");
     const ctx = {
-      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats, allowed, t, lang: role === "field" ? lang : "en",
+      D, S, option, role, user, estate, price, key, orders, aiLog, pending, chats, allowed,
       canAssign: ["manager", "agronomist"].includes(role),
       setEstate, setPrice, setKey,
       signIn: (k) => { setRole(k); go("home"); },
       ask: (q) => { setPending(q); setChatKey((k) => k + 1); go("home"); },
       newChat: () => { setChatKey((k) => k + 1); go("home"); },
-      saveChat: (c) => setChatsBy((all) => ({ ...all, [role]: [c, ...(all[role] || []).filter((x) => x.id !== c.id)].slice(0, 20) })),
+      saveChat: (c) => setChatsBy((all) => {  // keep a renamed title and the star when a chat continues
+        const list = all[role] || [], old = list.find((x) => x.id === c.id);
+        const n = old ? { ...c, title: old.renamed ? old.title : c.title, renamed: old.renamed, pinned: old.pinned } : c;
+        return { ...all, [role]: [n, ...list.filter((x) => x.id !== c.id)].slice(0, 50) };
+      }),
+      starChat: (id) => setChatsBy((all) => ({ ...all, [role]: (all[role] || []).map((c) => (c.id === id ? { ...c, pinned: !c.pinned } : c)) })),
+      renameChat: (id, title) => { setChatsBy((all) => ({ ...all, [role]: (all[role] || []).map((c) => (c.id === id ? { ...c, title, renamed: true } : c)) })); toast("Chat renamed"); },
+      deleteChats: (ids) => {
+        setChatsBy((all) => ({ ...all, [role]: (all[role] || []).filter((c) => !ids.includes(c.id)) }));
+        if (route[0] === "chat" && ids.includes(route[1])) go("home");
+        toast(ids.length > 1 ? `${ids.length} chats deleted` : "Chat deleted");
+      },
+      askDelete: (ids) => setModal({ kind: "delete", ids }),
+      askRename: (c) => setModal({ kind: "rename", id: c.id, title: c.title }),
       clearPending: () => setPending(null),
       log: (q, ok) => setAiLog((l) => [...l.slice(-199), { at: new Date().toLocaleString("en-GB"), user: user ? user.name : "?", q, ok }]),
       createOrders: (bs) => {
@@ -727,7 +751,7 @@
     if (!user) return html`<${SignIn} ctx=${ctx} />`;
     const [page, sub] = route;
     const myOpen = Object.values(orders).filter((o) => o.status !== "done" && (!user.teams || user.teams.includes(o.owner))).length;
-    const notes = notifications(D, S, ctx, t);
+    const notes = notifications(D, S, ctx);
     const lastSeen = seen[role] || "";
     const unread = notes.filter((n) => n.at > lastSeen).length;
     const openBell = () => { if (!bell) setTimeout(() => setSeen((x) => ({ ...x, [role]: new Date().toISOString() })), 1500); setBell(!bell); };
@@ -751,33 +775,45 @@
       system: () => html`<${System} D=${D} ctx=${ctx} />`,
       settings: () => html`<${Settings} ctx=${ctx} />`,
       tasks: () => html`<${Tasks} D=${D} S=${S} ctx=${ctx} />`,
+      chats: () => html`<${Chats} ctx=${ctx} />`,
       access: () => html`<${Access} ctx=${ctx} />`,
     };
+    const starred = byStar(chats.filter((c) => c.pinned)), recent = chats.filter((c) => !c.pinned).slice(0, 6);
+    const chatRow = (c) => html`<div key=${c.id} class=${"chat-row" + (page === "chat" && sub === c.id ? " on" : "") + (chatMenu === c.id ? " open" : "")}>
+      <a href=${"#/chat/" + c.id} title=${c.title}>${c.title}</a>
+      <button class="dots" aria-label="Chat options" title="Options" onClick=${() => setChatMenu(chatMenu === c.id ? null : c.id)}>⋯</button>
+      ${chatMenu === c.id && html`<div class="bell-back" onClick=${() => setChatMenu(null)}></div><div class="chat-menu" role="menu">
+        <button role="menuitem" onClick=${() => { ctx.starChat(c.id); setChatMenu(null); }}>${c.pinned ? "☆ Unstar" : "★ Star"}</button>
+        <button role="menuitem" onClick=${() => { ctx.askRename(c); setChatMenu(null); }}>✎ Rename</button>
+        <button role="menuitem" class="danger" onClick=${() => { ctx.askDelete([c.id]); setChatMenu(null); }}>🗑 Delete</button></div>`}
+    </div>`;
     const view = pages[page] ? (allowed(page) ? pages[page]() : html`<${NoAccess} ctx=${ctx} />`) : pages.home();
     return html`<div class="shell">
       <aside class=${"side" + (menu ? " open" : "")}>
         <a class="brand" href="#/home"><img src="icon.svg" alt="" /><div><b>PalmYield</b><small>AI yield assistant</small></div></a>
-        <button class="newchat" onClick=${ctx.newChat}><span>＋</span> ${t("New chat")}</button>
-        ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${t(label)}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
-        ${chats.length > 0 && html`<div class="nav-sec">${t("Recent chats")}</div><nav class="recent">${chats.slice(0, 6).map((c) => html`<a key=${c.id} href=${"#/chat/" + c.id} class=${page === "chat" && sub === c.id ? "on" : ""} title=${c.title}>${c.title}</a>`)}</nav>`}
+        <button class="newchat" onClick=${ctx.newChat}><span>＋</span> New chat</button>
+        ${NAV.map(([sec, items]) => html`<div key=${sec || "main"}>${sec ? html`<div class="nav-sec">${sec}</div>` : ""}<nav class="nav">${items.map(([k, ico, label, pill]) => html`<a key=${k} href=${"#/" + k} class=${page === k || (k === "map" && page === "block") || (k === "home" && (page === "chat" || page === "assistant")) ? "on" : ""}><span class="ico">${ico}</span>${label}${pill ? html`<span class="pill">${pill}</span>` : ""}</a>`)}</nav></div>`)}
+        ${starred.length > 0 && html`<div class="nav-sec">Starred</div><nav class="recent">${starred.map(chatRow)}</nav>`}
+        ${recent.length > 0 && html`<div class="nav-sec">Recent chats</div><nav class="recent">${recent.map(chatRow)}</nav>`}
+        ${chats.length > 0 && html`<a class="all-chats" href="#/chats">All chats (${chats.length}) →</a>`}
         <div class="side-foot">Synthetic sample data${allowed("system") ? html`<br /><a href=${STREAMLIT} target="_blank" rel="noopener" style=${{ color: "#9DB5A7" }}>Analytics Workbench ↗</a>` : ""}</div>
       </aside>
       <div class="main">
         <header class="top">
           <button class="menu" onClick=${() => setMenu(!menu)} aria-label="Menu">☰</button>
-          <span class="small muted hide-sm">${t("Estate")}</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">${t("All estates")} (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
-          <span class="chip syn hide-sm">${t("Synthetic sample data")}</span>
+          <span class="small muted hide-sm">Estate</span><select value=${estate} onChange=${(e) => setEstate(e.target.value)} aria-label="Estate"><option value="">All estates (${D.meta.estates})</option>${D.estates.map((e) => html`<option key=${e.estate_id} value=${e.estate_name}>${e.estate_name}</option>`)}</select>
+          <span class="chip syn hide-sm">Synthetic sample data</span>
           <span class="grow"></span>
           ${allowed("dashboard") && html`<button class="btn sm hide-sm" onClick=${() => go("dashboard")}>◉ Dashboard</button>`}
-          ${role === "field" && html`<div class="seg lang" title=${t("Language")}>${[["en", "EN"], ["ms", "BM"]].map(([k, l]) => html`<button key=${k} class=${lang === k ? "on" : ""} onClick=${() => setLang(k)}>${l}</button>`)}</div>`}
-          <div class="bell-wrap"><button class="btn sm bell" onClick=${openBell} aria-label=${t("Notifications")} title=${t("Notifications")}>🔔${unread > 0 ? html`<span class="badge">${unread}</span>` : ""}</button>
-            ${bell && html`<div class="bell-back" onClick=${() => setBell(false)}></div><div class="bell-pop"><div class="bell-head"><b>${t("Notifications")}</b></div>
-              ${notes.length ? notes.map((n, i) => html`<a key=${i} class=${"note-i" + (n.at > lastSeen ? " new" : "")} href=${allowed(n.href.slice(2).split("/")[0]) ? n.href : "#/home"} onClick=${() => setBell(false)}><span class="ico">${n.icon}</span><span><span>${n.text}</span><span class="small muted" style=${{ display: "block" }}>${n.when}</span></span></a>`) : html`<p class="muted small" style=${{ padding: 12 }}>${t("Nothing new.")}</p>`}</div>`}</div>
+          <div class="bell-wrap"><button class="btn sm bell" onClick=${openBell} aria-label="Notifications" title="Notifications">🔔${unread > 0 ? html`<span class="badge">${unread}</span>` : ""}</button>
+            ${bell && html`<div class="bell-back" onClick=${() => setBell(false)}></div><div class="bell-pop"><div class="bell-head"><b>Notifications</b></div>
+              ${notes.length ? notes.map((n, i) => html`<a key=${i} class=${"note-i" + (n.at > lastSeen ? " new" : "")} href=${allowed(n.href.slice(2).split("/")[0]) ? n.href : "#/home"} onClick=${() => setBell(false)}><span class="ico">${n.icon}</span><span><span>${n.text}</span><span class="small muted" style=${{ display: "block" }}>${n.when}</span></span></a>`) : html`<p class="muted small" style=${{ padding: 12 }}>Nothing new.</p>`}</div>`}</div>
           <div class="user"><span class="avatar">${user.initials}</span><span class="hide-sm"><b>${user.name}</b><br /><span class="small muted">${user.role}</span></span>
-            <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>${t("Sign out")}</button></div>
+            <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>Sign out</button></div>
         </header>
         <main class=${"content" + (!pages[page] || page === "home" || page === "chat" || page === "assistant" ? " wide" : "")}>${view}</main>
       </div>
+      ${modal && html`<${Dialog} modal=${modal} close=${() => setModal(null)} ctx=${ctx} />`}
       ${toastMsg && html`<div class="toast">${toastMsg}</div>`}
     </div>`;
   }
@@ -790,7 +826,7 @@
     }
   }
 
-  fetch("data/app.json?v=10").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  fetch("data/app.json?v=11").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

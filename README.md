@@ -14,8 +14,10 @@ The data is synthetic, not real SOPB results.
   The AI uses a Google Gemini key that the administrator enters in Settings; it stays in that browser.
   Access is by role: estate manager, agronomist, field supervisor (My tasks only) and administrator each see only their own pages.
   Field features: install it on a phone (it is a web app with an offline cache, `sw.js`), close a work order with a note,
-  photo and GPS location as proof of work, a full history on every work order, and Bahasa Malaysia for the field supervisor.
+  photo and GPS location as proof of work, and a full history on every work order.
   Everyone gets a notification bell (new tasks, late work, completed work), and the dashboard prints as an A4 management report.
+  Chat history works like Claude: each person's chats are private; star, rename or delete a chat from its ⋯ menu,
+  or search and delete several on the All chats page (deleting always asks first).
 - **PalmYield Analytics Workbench (`app.py`, Streamlit)** is for analysts: add new data on the **Data sources** page
   (CSV or Excel file, a PostgreSQL / MySQL / SQLite database table or read-only query, or the simulated SAP link),
   check data quality, test the patterns and validate the models. It is also the backup for demos.

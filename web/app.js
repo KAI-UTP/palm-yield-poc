@@ -485,7 +485,7 @@
         <div class="step"><b>Database + API</b>Results stored once; REST API serves every screen</div><span class="arrow">→</span>
         <div class="step"><b>Act</b>PalmYield: AI assistant, warnings, work orders; SAP Analytics Cloud</div></div></div>
       <div class="grid g2" style=${{ marginTop: 16 }}>
-        <div class="card"><h2>Data quality</h2><p class="small muted" style=${{ marginBottom: 8 }}>${D.meta.rows.toLocaleString()} block-cycles · ${D.meta.blocks} blocks · ${D.meta.estates} estates · ${D.meta.cycles} cycles · synthetic sample</p>
+        <div class="card"><h2>Data quality</h2><p class="small muted" style=${{ marginBottom: 8 }}>${D.meta.rows.toLocaleString()} block-cycles · ${D.meta.blocks} blocks · ${D.meta.estates} estates · ${D.meta.cycles} cycles · ${D.meta.published_at ? `published ${new Date(D.meta.published_at).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })} from ${D.meta.published_from}` : "synthetic sample"}</p>
           <div class="table-wrap scroll" style=${{ maxHeight: 330 }}><table class="t"><thead><tr><th>Check</th><th class="num">Pass rate</th><th>Status</th></tr></thead><tbody>
           ${D.quality.map((q, i) => html`<tr key=${i}><td><b>${q.area}</b> · ${q.check}${q.note && html`<div class="small muted">${q.note}</div>`}</td><td class="num">${q.pass_rate_pct}%</td><td><span class=${"risk " + (q.status === "Pass" ? "Low" : q.status === "Fixed" || q.status === "Info" ? "Medium" : "High")}>${q.status}</span></td></tr>`)}</tbody></table></div></div>
         <div class="card"><h2>Model accuracy</h2><p class="small muted" style=${{ marginBottom: 8 }}>Tested on blocks the models never saw. Forecast error ${fm.mae_improvement_vs_last_cycle_pct}% lower than "same as last cycle".</p>
@@ -660,16 +660,16 @@
       if (role === "manager" && o.status === "inprog") { const h = (o.history || []).filter((x) => x.kind === "status" && x.v === "inprog").pop(); if (h) out.push({ at: h.at, icon: "▶", text: `${o.id} started by ${h.by}`, href: "#/actions/board" }); }
     });
     const cycle = D.meta.cycle_dates.at(-1) + "T12:00:00.000Z";
+    if (D.meta.published_at) out.push({ at: D.meta.published_at, icon: "⛁", text: `New data from the analytics team: ${D.meta.published_from} (${D.meta.blocks} blocks)`, href: role === "admin" ? "#/system" : "#/home" });
     if (role === "manager" || role === "agronomist") out.push({ at: cycle, icon: "⚠", text: `${S.high} blocks at high risk next cycle: act before the harvest`, href: "#/warnings" });
     if (role === "admin") {
-      out.push({ at: cycle, icon: "⛁", text: `Data refreshed: harvest cycle of ${D.meta.cycle_dates.at(-1)} loaded and models retrained`, href: "#/system" });
       if (!ctx.key) out.push({ at: cycle, icon: "✦", text: "AI is using built-in answers: add the Gemini key in Settings", href: "#/settings" });
     }
     return out.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 12).map((n) => ({ ...n, when: ago(n.at) }));
   }
 
   /* ---------- App ---------- */
-  function App({ D }) {
+  function App({ D, fresh, applyFresh }) {
     const route = useRoute();
     const params = new URLSearchParams(location.search);
     const option = "B";  // one complete product: AI, SAP link, company sign-in, roles
@@ -811,6 +811,7 @@
           <div class="user"><span class="avatar">${user.initials}</span><span class="hide-sm"><b>${user.name}</b><br /><span class="small muted">${user.role}</span></span>
             <button class="btn sm" onClick=${() => { setRole(null); location.hash = "#/home"; }}>Sign out</button></div>
         </header>
+        ${fresh && html`<div class="update-bar" role="status"><span>⛁ <b>New data from the analytics team</b> · ${fresh.meta.published_from} · published ${new Date(fresh.meta.published_at).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span><button class="btn sm primary" onClick=${applyFresh}>Update now</button></div>`}
         <main class=${"content" + (!pages[page] || page === "home" || page === "chat" || page === "assistant" ? " wide" : "")}>${view}</main>
       </div>
       ${modal && html`<${Dialog} modal=${modal} close=${() => setModal(null)} ctx=${ctx} />`}
@@ -826,7 +827,26 @@
     }
   }
 
-  fetch("data/app.json?v=11").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${App} D=${D} /><//>`))
+  /* ---------- Data: published by the Analytics Workbench; checked every 2 minutes and when the tab comes back ---------- */
+  const getData = () => fetch("data/app.json?v=12", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const stamp = (D) => (D && D.meta && D.meta.published_at) || "";
+  function Root({ first }) {
+    const [D, setD] = useState(first);
+    const [fresh, setFresh] = useState(null);
+    useEffect(() => {
+      const check = () => getData().then((n) => {
+        if (!stamp(n) || stamp(n) === stamp(D)) return;
+        if (document.hidden) { setD(n); setFresh(null); } else setFresh(n);  // nobody looking: update quietly
+      }).catch(() => {});
+      const t = setInterval(check, 120000);
+      const onShow = () => { if (!document.hidden) check(); };
+      document.addEventListener("visibilitychange", onShow);
+      return () => { clearInterval(t); document.removeEventListener("visibilitychange", onShow); };
+    }, [D]);
+    return html`<${App} key=${stamp(D)} D=${D} fresh=${fresh} applyFresh=${() => { setD(fresh); setFresh(null); }} />`;
+  }
+
+  getData()
+    .then((D) => ReactDOM.createRoot(document.getElementById("root")).render(html`<${Guard}><${Root} first=${D} /><//>`))
     .catch((e) => { document.getElementById("root").innerHTML = '<div class="boot">Could not load the data (' + e.message + '). Please reload.</div>'; });
 })();

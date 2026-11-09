@@ -20,10 +20,12 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_DATA = ROOT / "data"
 PROC, MODEL = DEFAULT_DATA / "processed", DEFAULT_DATA / "model"  # the bundled sample; a visitor's upload uses its own folder
 sys.path.insert(0, str(ROOT / "pipeline"))
+sys.path.insert(0, str(ROOT / "web"))
 from model import CONDITIONS, LABELS, LEVERS, design_matrix, load_driver_model  # noqa: E402
 from prepare import RAW as RAW_SAMPLE, load_raw, quality_checks, required_columns  # noqa: E402
 from core import connectors as CN  # noqa: E402
 from core import insights as I  # noqa: E402
+from core import publish as PUB  # noqa: E402
 from core.connectors import SAP_CONFIG, SapConnector  # noqa: E402
 from core.store import Results, View  # noqa: E402
 
@@ -800,6 +802,7 @@ def page_data():
     with st.expander(f"Format every source must have: {len(req)} columns, one row per block per harvest cycle"):
         st.download_button("Download CSV template", (",".join(req) + "\n").encode(), "palm_yield_template.csv", "text/csv")
         st.dataframe(pd.DataFrame({"column": req}), hide_index=True, use_container_width=True, height=240)
+    publish_panel(using)
     t_file, t_db, t_sap = st.tabs(["📄 Upload a file", "🗄️ Connect a database", "🔗 SAP link"])
     with t_file:
         file_source(req)
@@ -811,6 +814,45 @@ def page_data():
     if added:
         with card("Sources added in this session"):
             st.dataframe(pd.DataFrame(added), hide_index=True, use_container_width=True)
+
+
+def secret(name, default=None):
+    """A value from Streamlit secrets, then the environment."""
+    try:
+        v = st.secrets.get(name)
+    except Exception:  # noqa: BLE001  (no secrets file)
+        v = None
+    return v or os.environ.get(name) or default
+
+
+def publish_panel(name):
+    """Send the data in use to PalmYield, after the analyst has checked it."""
+    import build_data as BUILD
+    token = secret("GITHUB_TOKEN")
+    with card("Publish to PalmYield", "Managers, agronomists and field teams see the last published results"):
+        st.markdown(f"Data in use now: **{name}**. When you have checked it, publish it: PalmYield redeploys in about a minute, "
+                    "and anyone with PalmYield open is offered the new data.")
+        if not token:
+            st.info("Publishing is switched off. To switch it on, add `GITHUB_TOKEN` to this app's secrets: a fine-grained GitHub token "
+                    "with *Contents: read and write* on the PalmYield repository only.", icon="🔌")
+            return
+        st.warning("Demo: PalmYield is a public website, so publish only sample or test data. In the project it runs in the client's cloud "
+                   "behind company sign-in.", icon="⚠️")
+        ok = st.checkbox("I have checked this data; replace the data everyone sees in PalmYield", key="publish_ok")
+        if st.button("Publish to PalmYield", type="primary", disabled=not ok, key="publish_btn"):
+            with st.spinner("Preparing PalmYield's data and publishing…"):
+                try:
+                    data = BUILD.build(BASE, source_name=name, published_by="Analytics Workbench")
+                    res = PUB.publish(BUILD.to_json(data), token, f"Publish data to PalmYield: {name}",
+                                      repo=secret("GITHUB_REPO", PUB.DEFAULT_REPO), branch=secret("GITHUB_BRANCH", "main"))
+                except PUB.PublishError as e:
+                    st.error(f"Not published. {e}")
+                    return
+                except Exception as e:  # noqa: BLE001
+                    st.error(f"The results could not be prepared for PalmYield: {e}")
+                    return
+            st.success(f"Published ({res['sha']}): {data['meta']['blocks']} blocks. PalmYield updates in about a minute. "
+                       f"[Open PalmYield ↗]({PUB.SITE_URL})", icon="✅")
 
 
 def note_source(kind, name, rows):

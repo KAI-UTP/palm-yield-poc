@@ -2,9 +2,11 @@
 
 Run after the pipeline:  python web/build_data.py
 The web app reads only this file, so it always matches the models.
+The Analytics Workbench calls build() and publishes the result to PalmYield (core/publish.py).
 """
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,7 +32,8 @@ def records(df, cols=None, n=3):
             for row in d.to_dict("records")]
 
 
-def main(base=ROOT / "data", out=ROOT / "web" / "data" / "app.json"):
+def build(base=ROOT / "data", source_name=None, published_by=None):
+    """Return the web app's data (a dict) built from the pipeline results in `base`."""
     r = load_results(base)
     df = r.df.sort_values(["block_id", "harvest_cycle_no"])
     last = df.groupby("block_id").tail(1).set_index("block_id")
@@ -69,7 +72,10 @@ def main(base=ROOT / "data", out=ROOT / "web" / "data" / "app.json"):
     data = {
         "meta": {"synthetic": True, "source": "SOPB_Palm_Yield_Optimization_POC_SAC.csv (synthetic sample)",
                  "rows": len(df), "blocks": len(blocks), "estates": int(df.estate_name.nunique()),
-                 "cycles": int(df.harvest_cycle_no.nunique()), "cycle_dates": dates, "price": FFB_PRICE_2025},
+                 "cycles": int(df.harvest_cycle_no.nunique()), "cycle_dates": dates, "price": FFB_PRICE_2025,
+                 "published_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                 "published_from": source_name or "Synthetic sample (SOPB_Palm_Yield_Optimization_POC_SAC.csv)",
+                 "published_by": published_by or "pipeline"},
         "estates": records(est[["estate_id", "estate_name", "region_name", "mill_name", "estate_latitude", "estate_longitude"]], n=4),
         "blocks": blocks,
         "levers": records(r.M["lever_summary"]),
@@ -85,9 +91,18 @@ def main(base=ROOT / "data", out=ROOT / "web" / "data" / "app.json"):
         "age_curve": records(age),
         "cv_sample": records(r.M["forecast_cv"].sample(600, random_state=1)[["actual_next", "predicted"]]),
     }
+    return data
+
+
+def to_json(data):
+    return json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+
+
+def main(base=ROOT / "data", out=ROOT / "web" / "data" / "app.json"):
+    data = build(base)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(data, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
-    print(f"wrote {out} ({out.stat().st_size / 1024:.0f} KB, {len(blocks)} blocks)")
+    out.write_text(to_json(data), encoding="utf-8")
+    print(f"wrote {out} ({out.stat().st_size / 1024:.0f} KB, {len(data['blocks'])} blocks)")
 
 
 if __name__ == "__main__":

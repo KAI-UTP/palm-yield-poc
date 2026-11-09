@@ -10,7 +10,10 @@ The data is synthetic, not real SOPB results.
   work orders, block map, what-if simulator, AI assistant), built with React and ECharts. It is published on GitHub Pages
   at <https://kai-utp.github.io/palm-yield-poc/> by `.github/workflows/pages.yml` on every push.
   Run it locally: `python -m http.server 8600 --directory web`, then open <http://localhost:8600>.
-  After the pipeline re-runs, refresh its data with `python web/build_data.py`.
+  **The two apps are connected:** after an analyst checks new data in the Workbench, *Publish to PalmYield* (Data sources page)
+  commits the results to `web/data/app.json` through the GitHub API (`core/publish.py`); the site redeploys in about a minute,
+  and open PalmYield pages offer "Update now" (or update quietly in the background). Set `GITHUB_TOKEN` in the Workbench's
+  secrets to switch it on. From the command line, `python web/build_data.py` does the same export locally.
   The AI uses a Google Gemini key that the administrator enters in Settings; it stays in that browser.
   Access is by role: estate manager, agronomist, field supervisor (My tasks only) and administrator each see only their own pages.
   Field features: install it on a phone (it is a web app with an offline cache, `sw.js`), close a work order with a note,

@@ -26,7 +26,7 @@ jobs:
       - name: Check the data file is present
         run: test -s web/data/app.json
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: web
       - id: deployment

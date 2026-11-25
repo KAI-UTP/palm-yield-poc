@@ -19,7 +19,47 @@ LEVER_COLS = ["harvest_round", "road_access", "drain_upkeep", "flooding", "leaf_
               "ganoderma", "bagworm", "missing_palms", "weeds"]
 SIGNALS = ["flooding_days", "road_accessibility_score_1_5", "harvest_interval_days", "bagworm_incidence_pct",
            "ganoderma_incidence_pct", "leaf_k_pct", "leaf_mg_pct", "missing_palm_pct", "weed_cover_pct",
-           "soil_moisture_pct", "water_deficit_prior_90d_mm"]
+           "soil_moisture_pct", "water_deficit_prior_90d_mm", "soil_ph", "rainfall_prior_90d_mm", "soil_organic_carbon_pct"]
+
+# Field conditions whose link with yield the chatbot can explain from the data (column, label, unit, fixed bins or None = fifths)
+RELATIONS = [
+    ("soil_ph", "Soil pH", "pH", None),
+    ("rainfall_prior_90d_mm", "Rainfall in the 90 days before harvest", "mm", None),
+    ("rainfall_cycle_mm", "Rainfall during the harvest cycle", "mm", None),
+    ("water_deficit_prior_90d_mm", "Water deficit in the 90 days before harvest", "mm", [0, 0.5, 25, 1000]),
+    ("soil_moisture_pct", "Soil moisture", "%", None),
+    ("flooding_days", "Flooding days in the cycle", "days", [0, 1.5, 2.5, 100]),
+    ("soil_organic_carbon_pct", "Soil organic carbon (high = peat)", "%", None),
+    ("leaf_k_pct", "Leaf potassium (K)", "%", None),
+    ("leaf_mg_pct", "Leaf magnesium (Mg)", "%", None),
+    ("leaf_n_pct", "Leaf nitrogen (N)", "%", None),
+    ("fertilizer_total_kg_ha", "Fertilizer applied", "kg/ha", None),
+    ("drainage_maintenance_score_1_5", "Drainage upkeep score", "1-5", [0, 2.5, 3.5, 5]),
+]
+
+
+def relations(df):
+    """Yield in each range of a field condition, measured as t/ha/yr vs age peers so palm age doesn't hide the effect."""
+    out = []
+    for col, label, unit, bins in RELATIONS:
+        if col not in df:
+            continue
+        x = df[col]
+        cut = pd.cut(x, bins, include_lowest=True) if bins else pd.qcut(x, 5, duplicates="drop")
+        g = df.groupby(cut, observed=True).agg(lo=(col, "min"), hi=(col, "max"), n=(col, "size"),
+                                                 gap=("yield_vs_age_peers", "mean"), y=("yield_ann_t_ha_yr", "median"))
+        rows = [{"lo": r2(r.lo), "hi": r2(r.hi), "n": int(r.n), "gap": r2(r.gap), "y": r2(r.y, 1)} for r in g.itertuples()]
+        best, worst = max(rows, key=lambda r: r["gap"]), min(rows, key=lambda r: r["gap"])
+        out.append({"key": col, "label": label, "unit": unit, "rho": r2(x.corr(df.yield_vs_age_peers, method="spearman")),
+                    "bins": rows, "best": best, "worst": worst, "spread": r2(best["gap"] - worst["gap"])})
+    return out
+
+
+def rain_lags(df):
+    """Correlation of yield (vs age peers) with rainfall 0-3 harvest cycles earlier, within each block."""
+    s = df.sort_values(["block_id", "harvest_cycle_no"])
+    return [{"lag": k, "rho": r2(s.groupby("block_id").rainfall_cycle_mm.shift(k).corr(s.yield_vs_age_peers, method="spearman"), 3)}
+            for k in range(4)]
 
 
 def r2(x, n=2):
@@ -89,7 +129,10 @@ def build(base=ROOT / "data", source_name=None, published_by=None):
         "forecast_metrics": r.J["forecast_metrics"], "driver_metrics": r.J["driver_metrics"],
         "quality": records(r.QC.fillna("")),
         "age_curve": records(age),
-        "cv_sample": records(r.M["forecast_cv"].sample(600, random_state=1)[["actual_next", "predicted"]]),
+        "relations": relations(df),
+        "rain_lags": rain_lags(df),
+        "cycle_days": r2(df.harvest_interval_days.median(), 0),
+        "cv_sample":records(r.M["forecast_cv"].sample(600, random_state=1)[["actual_next", "predicted"]]),
     }
     return data
 

@@ -10,9 +10,11 @@
       ["⚠", "Which blocks will under-perform next cycle?", "Early warnings before the harvest"],
       ["✓", "What should we fix first, and what is it worth?", "Ranked actions in RM"],
       ["⌖", "Which estate needs the most attention?", "Estates against age peers"],
-      ["📋", "What work orders are open?", "Progress of the action plan"],
+      ["🧪", "What is the best soil pH for our blocks?", "Your data plus agronomy references"],
       ["🔎", "Tell me about EST005-D08-B01", "One block's full story"]],
     agronomist: [
+      ["🧪", "What is the best soil pH for our blocks?", "Your data plus agronomy references"],
+      ["🌧", "How does rainfall affect yield, including earlier cycles?", "Rain, drought and delayed effects"],
       ["🌱", "Is fertilizer working?", "Leaf nutrients and feeding"],
       ["🐛", "Which pest treatments work best?", "Ganoderma and bagworm"],
       ["◈", "Why does yield differ between blocks?", "The main drivers"],
@@ -112,7 +114,7 @@
           const r = await PY.askGeminiStream(ctx.key, D, S, q, hist, (t) => patchLast({ text: t.replace(/\n?\s*CHART:[\s\S]*$/i, "") }));
           const s = PY.splitChart(r.text);
           ctx.log(q, true);
-          finish(s.text, s.chart || local.chart, id ? id.toUpperCase() : local.block, `✦ Google Gemini (${r.model}) · answered only from PalmYield's results`);
+          finish(s.text, s.chart || local.chart, id ? id.toUpperCase() : local.block, `✦ Google Gemini (${r.model}) · your data plus sourced agronomy references`);
           return;
         } catch (e) {
           ctx.log(q, false);
@@ -162,7 +164,7 @@
         <div ref=${end}></div>
       </div>
       <div class="dock"><${Composer} onSend=${send} busy=${busy} ai=${ai} hasKey=${!!ctx.key} canSet=${ctx.allowed("settings")} />
-        <div class="small muted" style=${{ textAlign: "center", marginTop: 6 }}>Answers use only PalmYield's computed results · synthetic sample data</div></div>
+        <div class="small muted" style=${{ textAlign: "center", marginTop: 6 }}>Answers use your data first, then sourced agronomy references · synthetic sample data</div></div>
     </div>`;
   }
 

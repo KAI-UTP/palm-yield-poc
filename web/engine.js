@@ -133,6 +133,66 @@
 
   const has = (q, ...words) => words.some((w) => new RegExp("\\b" + w, "i").test(q));
 
+  /* ---------- Field conditions vs yield (soil pH, rainfall, moisture...), measured in the client's own data ---------- */
+  const REL_TOPICS = [
+    [/\bph\b|acid|\blim(e|ing)\b|dolomite|alumin/i, ["soil_ph"], "soil_ph"],
+    [/rain|drought|\bdry\b|water deficit|deficit|weather|climate|el ni/i, ["rainfall_prior_90d_mm", "water_deficit_prior_90d_mm", "rainfall_cycle_mm"], "rainfall"],
+    [/moist|waterlog|flood|water table|\bwet\b/i, ["soil_moisture_pct", "flooding_days"], "waterlogging"],
+    [/peat|organic carbon/i, ["soil_organic_carbon_pct", "soil_ph"], "waterlogging"],
+    [/how much fertili|fertili[sz]er (amount|rate|applied|dose)/i, ["fertilizer_total_kg_ha", "leaf_k_pct", "leaf_mg_pct"], "leaf_nutrients"],
+  ];
+  const LAG_WORDS = /\blag|\bago\b|earlier|previous|past cycle|before|months later|later cycle|next cycle|predict|forecast|cycles? (before|back)/i;
+
+  function relTopic(q) {
+    const t = REL_TOPICS.find(([re]) => re.test(q));
+    return t ? { keys: t[1], note: t[2] } : null;
+  }
+  const relOf = (D, k) => (D.relations || []).find((r) => r.key === k);
+  const rng = (r, x) => (r.unit === "pH" ? `pH ${fmt.n(x.lo, 1)}–${fmt.n(x.hi, 1)}` : `${fmt.n(x.lo, x.hi < 10 ? 2 : 0)}–${fmt.n(x.hi, x.hi < 10 ? 2 : 0)} ${r.unit}`);
+  const relLine = (r) => `- **${r.label}:** best yield at **${rng(r, r.best)}** (${fmt.signed(r.best.gap)} t/ha/yr vs age peers, ${fmt.n(r.best.n)} block-cycles); weakest at **${rng(r, r.worst)}** (${fmt.signed(r.worst.gap)}). A gap of **${fmt.n(r.spread, 1)} t/ha/yr**.`;
+  const inWorst = (S, r) => S.blocks.filter((b) => b.signals && b.signals[r.key] != null && b.signals[r.key] >= r.worst.lo && b.signals[r.key] <= r.worst.hi);
+
+  function lagText(D) {
+    const L = D.rain_lags || [];
+    const days = D.cycle_days || 15;
+    return `**Rainfall in earlier cycles:** each harvest cycle here is about ${days} days, so the ${D.meta.cycles} cycles cover only about ${Math.round((D.meta.cycles * days) / 30)} months. ` +
+      `In that window, rainfall 1 to 3 cycles earlier shows no clear link with yield (correlation ${L.filter((l) => l.lag > 0).map((l) => fmt.n(l.rho, 2)).join(", ")}). That is expected: research links yield to rain about **10 to 24 months** before harvest. ` +
+      `The 90-day rainfall and water-deficit measures above already look back before each harvest. To forecast from rain a year or more earlier, PalmYield needs **at least 2 years** of rainfall and yield history.`;
+  }
+
+  function relAnswer(D, S, q, t) {
+    const rels = t.keys.map((k) => relOf(D, k)).filter(Boolean);
+    if (!rels.length) return null;
+    const main = rels[0];
+    const bad = inWorst(S, main).sort((a, b) => a.vs_peers - b.vs_peers);
+    const notes = [...new Map([...(window.PYK ? PYK.NOTES.filter((n) => n.id === t.note) : []), ...(window.PYK ? PYK.find(q) : [])].map((n) => [n.id, n])).values()]
+      .filter((n) => n.id !== "rain_lag" || LAG_WORDS.test(q)).slice(0, 2);
+    const lag = t.note === "rainfall" && LAG_WORDS.test(q);
+    const head = main.key === "soil_ph"
+      ? `**In your blocks, yield is best at ${rng(main, main.best)}.** Blocks with soil ${rng(main, main.worst)} yield ${fmt.n(Math.abs(main.worst.gap), 1)} t/ha/yr ${main.worst.gap < 0 ? "below" : "above"} their age peers.`
+      : `**${main.label}: yield is best at ${rng(main, main.best)} and weakest at ${rng(main, main.worst)}** (a gap of ${fmt.n(main.spread, 1)} t/ha/yr against age peers).`;
+    const parts = [head, "**Evidence from your data** (yield vs age peers, so palm age does not hide the effect):\n" + rels.map(relLine).join("\n")];
+    if (bad.length) {
+      const area = bad.reduce((s, b) => s + b.area, 0);
+      parts.push(`**Blocks to check:** ${bad.length} blocks in view (${fmt.n(area)} ha) are in the weakest range now. Furthest behind: ` +
+        bad.slice(0, 5).map((b) => `**${b.id}** (${main.unit === "pH" ? "pH " + fmt.n(b.signals[main.key], 1) : fmt.n(b.signals[main.key], 1) + " " + main.unit}, ${fmt.signed(b.vs_peers)} vs peers)`).join(", ") + ".");
+    }
+    if (lag) parts.push(lagText(D));
+    for (const n of notes) parts.push(`**Why (agronomy reference):** ${n.text}\n\n**What to do:**\n` + n.steps.map((s) => `- ${s}`).join("\n"));
+    const src = notes.flatMap((n) => PYK.cite(n));
+    if (src.length) parts.push("**Sources:** " + [...new Set(src.map((s) => s.name))].join("; ") + ".");
+    parts.push("Note: ranges come from the synthetic sample; confirm targets for your soils with your agronomist.");
+    return { text: parts.join("\n\n"), chart: "rel_" + main.key };
+  }
+
+  function knowledgeAnswer(q) {
+    const notes = window.PYK ? PYK.find(q) : [];
+    if (!notes.length) return null;
+    const n = notes[0];
+    return { text: `**${n.title}** (general agronomy, not from your data)\n\n${n.text}\n\n**What to do:**\n` + n.steps.map((s) => `- ${s}`).join("\n") +
+      `\n\n**Sources:** ${PYK.cite(n).map((s) => s.name).join("; ")}.`, chart: null };
+  }
+
   function answer(D, S, q) {
     if (has(q, "brief", "summar", "overview", "this cycle", "needs me", "what needs", "headline", "good morning")) {
       const c = briefing(D, S);
@@ -152,6 +212,9 @@
       if (!b) return { text: `I could not find block ${id.toUpperCase()}. Block IDs look like EST005-D08-B01.` };
       return { text: blockStory(b, S.price), chart: "block", block: b.id };
     }
+    const rt = relTopic(q);
+    if (rt) { const r = relAnswer(D, S, q, rt); if (r) return r; }
+    if (has(q, "lag", "earlier cycle", "previous cycle", "cycles ago") && has(q, "yield", "affect", "effect")) return { text: lagText(D), chart: "rel_rainfall_prior_90d_mm" };
     const est = D.estates.find((e) => q.toLowerCase().includes(e.estate_name.toLowerCase().replace(" estate", "")));
     if (est) {
       const e = S.estates.find((x) => x.estate === est.estate_name) || scope(D, est.estate_name, S.price).estates[0];
@@ -169,6 +232,10 @@
       return { text: `**${S.high} blocks** are forecast high risk next cycle (well below their age peers). The five furthest behind:\n` + w.map((b) => `- **${b.id}** (${b.estate}): forecast ${fmt.n(b.fc, 1)} t/ha/yr, ${fmt.signed(b.fc_vs_peers)} vs peers. Fix: ${b.action.toLowerCase()}`).join("\n") + `\n\nAct now, before the harvest: each has a costed first action.`, chart: "risk" };
     }
     if (has(q, "accura", "trust", "model", "mae", "error")) return accuracy(D);
+    if (has(q, "critical", "threshold", "ideal", "optim", "standard", "level", "range", "best", "boron", "phosph", "nitrogen") && has(q, "nutrient", "leaf", "boron", "phosph", "nitrogen", "potassium", "magnesium")) {
+      const k = knowledgeAnswer(q.replace(/\bph\b/gi, ""));
+      if (k) return { text: k.text + "\n\n**In your data:** " + D.nutrients.map((n) => `${n.share_below_pct}% of leaf samples are below the ${n.nutrient} critical level (${n.critical_level_pct}%)`).join("; ") + ".", chart: "rel_leaf_k_pct" };
+    }
     if (has(q, "fertili", "nutrient", "potassium", "magnesium", "leaf")) {
       const lows = D.feeding.filter((f) => f.situation.startsWith("Low leaf despite"));
       return { text: `Fertilizer mostly reaches the palms: ${D.nutrients.map((n) => `${n.share_below_pct}% of samples are below the ${n.nutrient} critical level`).slice(0, 3).join("; ")}. Where leaf levels stay low **despite** fertilizer, yield trails peers (${lows.map((f) => `${f.nutrient}: ${fmt.signed(f.yield_vs_age_peers)} t/ha/yr`).join(", ")}): check application timing and drainage there before buying more.`, chart: "drivers" };
@@ -193,8 +260,10 @@
     if (has(q, "driver", "why", "cause", "explain")) {
       return { text: "The main drivers of yield, from a model checked on blocks it never saw:\n" + D.drivers.slice(0, 5).map((d) => `- ${d.label}: ${d.share_pct}% of explained variation`).join("\n") + "\n\nPalm age cannot be changed; the controllable ones become the levers on the Action plan.", chart: "drivers" };
     }
+    const k = knowledgeAnswer(q);
+    if (k) return k;
     if (has(q, "hello", "hi", "help", "what can")) {
-      return { text: "I answer questions about the yield results: estates, blocks (e.g. EST005-D08-B01), risk next cycle, what to fix first and its value, fertilizer, pests, harvest rounds and forecast accuracy." };
+      return { text: "I answer questions about the yield results: estates, blocks (e.g. EST005-D08-B01), risk next cycle, what to fix first and its value, fertilizer, pests, harvest rounds, forecast accuracy, and field conditions such as soil pH, rainfall, soil moisture and flooding, with agronomy references." };
     }
     return { text: `Here is the summary for the blocks in view: average yield ${fmt.n(S.yield, 1)} t/ha/yr (${fmt.signed(S.vs_peers)} vs age peers), ${S.high} high-risk blocks next cycle, and ${fmt.rm(S.totalRM)} a year at stake.\n\nTry asking about an estate, a block ID, risk, what to fix first, fertilizer or pests.`, chart: "estates" };
   }
@@ -216,10 +285,16 @@
 
   /* ---------- AI (Option B): grounded on a results brief; key stays in this browser ---------- */
   const MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-2.5-flash"];
-  const SYSTEM = "You are PalmYield's assistant for oil palm plantation managers. Answer ONLY from the RESULTS below; never invent numbers. " +
-    "Be brief and practical: lead with the answer, then the reason, then the action and its expected value in RM. Use short bullet points and markdown bold. " +
-    "If the RESULTS do not cover the question, say so. The data is a synthetic sample. " +
-    "If a chart would help, end with one line 'CHART: <name>' using one of: estates, risk, levers, top_blocks, drivers, age_curve, accuracy, block.";
+  const SYSTEM = "You are PalmYield's assistant for oil palm plantation managers and agronomists. " +
+    "Use three kinds of input, in this order: (1) RESULTS: numbers measured in the client's data; never invent or change numbers; " +
+    "(2) KNOWLEDGE: sourced agronomy notes; name the source when you use one; " +
+    "(3) your general oil palm agronomy knowledge, only when RESULTS and KNOWLEDGE do not cover the question, labelled 'General knowledge (not from your data)'. " +
+    "Never refuse a reasonable agronomy question: answer it, and say which kind of input each part comes from. " +
+    "Structure: **Answer** first (one or two sentences), then **Evidence from your data** (ranges, block counts, block IDs), then **Why**, then **What to do** (numbered practical steps), then expected value in RM when RESULTS give it. " +
+    "For 'best value' questions (e.g. best soil pH) give the range where yield was best in the data AND the agronomy reference, and list blocks outside it. " +
+    "Be honest about limits: the data is a synthetic sample of short harvest cycles, so long-delay weather effects need more history. Use markdown bold and short bullets. " +
+    "If a chart would help, end with one line 'CHART: <name>' using one of: estates, risk, levers, top_blocks, drivers, age_curve, accuracy, block, " +
+    "rel_soil_ph, rel_rainfall_prior_90d_mm, rel_rainfall_cycle_mm, rel_water_deficit_prior_90d_mm, rel_soil_moisture_pct, rel_flooding_days, rel_soil_organic_carbon_pct, rel_leaf_k_pct, rel_leaf_mg_pct, rel_leaf_n_pct, rel_fertilizer_total_kg_ha, rel_drainage_maintenance_score_1_5.";
 
   function context(D, S, q) {
     const lines = [
@@ -235,7 +310,12 @@
       "Fertilizer vs leaf: " + D.feeding.map((f) => `${f.nutrient} ${f.situation}: ${f.share_pct}% of block-cycles, yield vs peers ${f.yield_vs_age_peers}`).join("; "),
       "Treatments (pest, program, change in incidence points): " + D.treatments.map((t) => `${t.pest} ${t.treatment_program} ${t.change_pct_points}`).join("; "),
       `Forecast accuracy: MAE ${D.forecast_metrics.model.mae} t/ha/yr, R2 ${D.forecast_metrics.model.r2}, 80% range coverage ${D.forecast_metrics.range_80_coverage_pct}%.`,
+      "Field conditions vs yield (each range: values, block-cycles, mean t/ha/yr vs age peers): " + (D.relations || []).map((r) =>
+        `${r.label} [${r.unit}]: ` + r.bins.map((x) => `${x.lo}-${x.hi} n${x.n} ${fmt.signed(x.gap)}`).join(", ") + ` (best ${r.best.lo}-${r.best.hi}; blocks in view in weakest range now: ${inWorst(S, r).length})`).join("; "),
+      `Rainfall vs yield 0-3 harvest cycles later (Spearman rho): ${(D.rain_lags || []).map((l) => `lag ${l.lag}: ${l.rho}`).join(", ")}. One harvest cycle is about ${D.cycle_days || 15} days; the data covers ${D.meta.cycles} cycles (${D.meta.cycle_dates[0]} to ${D.meta.cycle_dates[D.meta.cycle_dates.length - 1]}).`,
+      "Most acid blocks in view (id, soil pH, vs peers): " + S.blocks.filter((b) => b.signals && b.signals.soil_ph != null).sort((a, b) => a.signals.soil_ph - b.signals.soil_ph).slice(0, 8).map((b) => `${b.id} ${b.signals.soil_ph} ${fmt.signed(b.vs_peers)}`).join("; "),
     ];
+    if (window.PYK) lines.push("\nKNOWLEDGE (sourced agronomy notes):\n" + PYK.NOTES.map((n) => `- ${n.title}: ${n.text} Steps: ${n.steps.join("; ")}. Source: ${PYK.cite(n).map((s) => s.name).join("; ")}`).join("\n"));
     const id = (q.match(/EST\d{3}-D\d{2}-B\d{2}/i) || [])[0];
     const b = id && D.blocks.find((x) => x.id === id.toUpperCase());
     if (b) lines.push("Block asked about: " + blockStory(b, S.price).replace(/\*\*/g, "") + " Signals: " + JSON.stringify(b.signals) + " History t/ha/yr by cycle: " + b.history.join(", "));
@@ -246,7 +326,7 @@
     const contents = [...history.slice(-6).map((m) => ({ role: m.role === "user" ? "user" : "model", parts: [{ text: m.text }] })),
       { role: "user", parts: [{ text: q }] }];
     const body = { systemInstruction: { parts: [{ text: SYSTEM + "\n\nRESULTS:\n" + context(D, S, q) }] }, contents,
-      generationConfig: { temperature: 0.2, maxOutputTokens: 900 } };
+      generationConfig: { temperature: 0.2, maxOutputTokens: 1600 } };
     let last = "";
     for (const m of MODELS) {
       try {
@@ -269,7 +349,7 @@
     const contents = [...history.slice(-6).map((m) => ({ role: m.role === "user" ? "user" : "model", parts: [{ text: m.text }] })),
       { role: "user", parts: [{ text: q }] }];
     const body = JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM + "\n\nRESULTS:\n" + context(D, S, q) }] }, contents,
-      generationConfig: { temperature: 0.2, maxOutputTokens: 900 } });
+      generationConfig: { temperature: 0.2, maxOutputTokens: 1600 } });
     let last = "";
     for (const m of MODELS) {
       let text = "";
@@ -316,6 +396,9 @@
       age_curve: ["What should we fix first, and what is it worth?", "Which blocks will under-perform next cycle?"],
       top_blocks: [`Tell me about ${top}`, "Which blocks will under-perform next cycle?"],
     };
+    if (chart && chart.startsWith("rel_")) by[chart] = chart === "rel_soil_ph"
+      ? ["Does rainfall affect yield in later cycles?", "Which blocks are too wet or flood?"]
+      : ["What is the best soil pH for our blocks?", "Does rainfall affect yield in later cycles?"];
     return (by[chart] || ["Brief me on this cycle", "What should we fix first, and what is it worth?"]).filter((x) => x.toLowerCase() !== q.toLowerCase());
   }
 

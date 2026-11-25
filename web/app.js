@@ -144,6 +144,21 @@
         ] }) };
     },
   };
+  /* Field condition vs yield: one chart per measured relation (rel_soil_ph, rel_rainfall_prior_90d_mm, ...). */
+  const relChart = (key) => (D) => {
+    const r = (D.relations || []).find((x) => x.key === key);
+    if (!r) return null;
+    const lab = (x) => (r.unit === "pH" ? `${fmt.n(x.lo, 1)}–${fmt.n(x.hi, 1)}` : `${fmt.n(x.lo, x.hi < 10 ? 2 : 0)}–${fmt.n(x.hi, x.hi < 10 ? 2 : 0)}`);
+    return { title: `${r.label} (${r.unit}) vs yield: t/ha/yr against age peers`, option: base({
+      grid: { left: 8, right: 24, top: 24, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, formatter: (p) => { const x = r.bins[p[0].dataIndex]; return `${r.label}: ${lab(x)} ${r.unit}<br>${fmt.signed(x.gap)} t/ha/yr vs age peers<br>median ${fmt.n(x.y, 1)} t/ha/yr · ${x.n} block-cycles`; } },
+      xAxis: { type: "category", data: r.bins.map(lab), ...AX, name: r.unit, nameLocation: "end", nameTextStyle: { color: "#7A847E", fontSize: 11 } },
+      yAxis: { type: "value", ...AX },
+      series: [{ type: "bar", barMaxWidth: 46, data: r.bins.map((x) => ({ value: x.gap, itemStyle: { color: x === r.best || (x.lo === r.best.lo && x.hi === r.best.hi) ? "#2E7D4F" : x.gap < 0 ? "#C0392B" : "#8FBF9F", borderRadius: 3 } })),
+        label: { show: true, position: "top", fontSize: 11, color: "#4A5650", formatter: (p) => fmt.signed(p.value) } }] }) };
+  };
+  for (const k of ["soil_ph", "rainfall_prior_90d_mm", "rainfall_cycle_mm", "water_deficit_prior_90d_mm", "soil_moisture_pct", "flooding_days", "soil_organic_carbon_pct",
+    "leaf_k_pct", "leaf_mg_pct", "leaf_n_pct", "fertilizer_total_kg_ha", "drainage_maintenance_score_1_5"]) CHARTS["rel_" + k] = relChart(k);
 
   function ChartCard({ D, S, name, block, height = 300, bare }) {
     const spec = useMemo(() => (CHARTS[name] ? CHARTS[name](D, S, block) : null), [name, S, block]);
@@ -383,7 +398,9 @@
     const lev = Object.entries(b.levers).sort((x, y) => y[1] - x[1]);
     const nut = (sym) => D.nutrients.find((n) => n.nutrient.includes(`(${sym})`));
     const sig = b.signals;
+    const ph = (D.relations || []).find((r) => r.key === "soil_ph");
     const checks = [
+      ...(ph && sig.soil_ph != null ? [["Soil pH", `pH ${fmt.n(sig.soil_ph, 1)}`, sig.soil_ph > ph.worst.hi, `best yield at ${fmt.n(ph.best.lo, 1)}–${fmt.n(ph.best.hi, 1)} in your data`]] : []),
       ["Harvest round", `${fmt.n(sig.harvest_interval_days)} days`, sig.harvest_interval_days <= 10, "7–10 days"],
       ["Flooding", `${fmt.n(sig.flooding_days)} days`, sig.flooding_days <= 2, "0–2 days"],
       ["Road access score", `${fmt.n(sig.road_accessibility_score_1_5, 1)} of 5`, sig.road_accessibility_score_1_5 >= 3.5, "3.5 or more"],
@@ -828,7 +845,7 @@
   }
 
   /* ---------- Data: published by the Analytics Workbench; checked every 2 minutes and when the tab comes back ---------- */
-  const getData = () => fetch("data/app.json?v=12", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const getData = () => fetch("data/app.json?v=13", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
   const stamp = (D) => (D && D.meta && D.meta.published_at) || "";
   function Root({ first }) {
     const [D, setD] = useState(first);

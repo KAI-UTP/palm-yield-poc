@@ -44,3 +44,24 @@ def test_chat_history_can_be_managed():
 
 def test_ai_never_cached_offline():
     assert "generateContent" in read("sw.js")
+
+
+def test_chatbot_can_answer_soil_ph_and_rainfall():
+    """The client asked about the best soil pH and rainfall vs yield; the app data must carry those results."""
+    d = json.loads(read("data/app.json"))
+    rel = {r["key"]: r for r in d["relations"]}
+    for key in ("soil_ph", "rainfall_prior_90d_mm", "water_deficit_prior_90d_mm", "soil_moisture_pct", "flooding_days"):
+        r = rel[key]
+        assert r["bins"] and r["best"]["gap"] >= r["worst"]["gap"]
+    assert len(d["rain_lags"]) == 4
+    assert "soil_ph" in d["blocks"][0]["signals"]
+
+
+def test_knowledge_base_is_loaded_and_sourced():
+    index, sw, engine, kb = read("index.html"), read("sw.js"), read("engine.js"), read("knowledge.js")
+    assert index.index("knowledge.js") < index.index("engine.js")  # engine uses window.PYK
+    assert "knowledge.js" in sw
+    assert "KNOWLEDGE" in engine and "rel_soil_ph" in engine
+    for note in ("soil_ph", "rainfall", "rain_lag", "leaf_nutrients", "waterlogging"):
+        assert f'id: "{note}"' in kb
+    assert kb.count("sources: [") == kb.count('{ id: "')  # every note cites a source
